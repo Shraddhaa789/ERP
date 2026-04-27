@@ -1,0 +1,525 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .entry-shell {
+        display: grid;
+        gap: 20px;
+    }
+
+    .entry-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .entry-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+        border: 1px solid #d9e1f1;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 16px 28px rgba(43, 62, 98, 0.08);
+    }
+
+    .entry-card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .entry-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 20px 16px;
+        border-bottom: 1px solid #e7ecf7;
+        background: linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
+    }
+
+    .entry-card-header h3 {
+        margin: 0;
+        color: #31456f;
+        font-size: 18px;
+    }
+
+    .entry-card-header span {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6880b7;
+        white-space: nowrap;
+    }
+
+    .entry-card-body {
+        padding: 20px;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .field {
+        display: grid;
+        gap: 8px;
+    }
+
+    .field label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #506180;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .grid-form input,
+    .grid-form select {
+        width: 100%;
+        min-height: 46px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid #d0d8ea;
+        background: #fff;
+        box-shadow: inset 0 1px 1px rgba(20, 32, 58, 0.03);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .grid-form input:focus,
+    .grid-form select:focus {
+        outline: none;
+        border-color: #5f84d8;
+        box-shadow: 0 0 0 4px rgba(95, 132, 216, 0.14);
+        transform: translateY(-1px);
+    }
+
+    .field.span-2,
+    .field.span-3 {
+        grid-column: span 2;
+    }
+
+    .submit-bar {
+        position: sticky;
+        bottom: 16px;
+        z-index: 5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 18px 22px;
+        margin-top: 4px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #d9e1f1;
+        border-radius: 18px;
+        box-shadow: 0 20px 38px rgba(35, 52, 88, 0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .submit-copy strong {
+        display: block;
+        color: #31456f;
+        margin-bottom: 4px;
+    }
+
+    .submit-copy span {
+        color: #667089;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 14px 26px;
+        background: linear-gradient(135deg, #31539d 0%, #4b77d2 100%);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 14px 26px rgba(53, 85, 160, 0.22);
+    }
+
+    .records-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #d9e1f1;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 18px 30px rgba(43, 62, 98, 0.08);
+    }
+
+    .records-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 22px 24px 18px;
+        border-bottom: 1px solid #e7ecf7;
+        background: linear-gradient(180deg, #f7faff 0%, #eef3ff 100%);
+    }
+
+    .records-header h3 {
+        margin: 0 0 6px;
+        color: #31456f;
+        font-size: 28px;
+        letter-spacing: -0.03em;
+    }
+
+    .records-header p {
+        margin: 0;
+        color: #667089;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .records-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #e7efff;
+        color: #4766a4;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        padding: 0 8px 10px;
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    }
+
+    table {
+        width: 100%;
+        min-width: 2600px;
+        border-collapse: collapse;
+        background: #fff;
+    }
+
+    th,
+    td {
+        min-width: 110px;
+        padding: 14px 12px;
+        border-bottom: 1px solid #e7ecf7;
+        text-align: left;
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        background: #eaf0ff;
+        color: #3f5689;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 11px;
+        white-space: nowrap;
+        z-index: 1;
+    }
+
+    td {
+        color: #263652;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #fbfcff;
+    }
+
+    @media (max-width: 1180px) {
+        .entry-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .grid-form {
+            grid-template-columns: 1fr;
+        }
+
+        .field.span-2,
+        .field.span-3 {
+            grid-column: auto;
+        }
+
+        .submit-bar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="entry-shell">
+    <div class="entry-grid">
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Dispatch Core Details</h3>
+                <span>Section 1</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field"><label for="out_sr_no">Sr No</label><input id="out_sr_no"></div>
+                    <div class="field"><label for="out_atn">ATN</label><input id="out_atn"></div>
+                    <div class="field"><label for="out_month">Month</label><input id="out_month" type="date"></div>
+                    <div class="field"><label for="out_warehouse">Warehouse</label><input id="out_warehouse"></div>
+                    <div class="field"><label for="out_shipment_type">Shipment Type</label><input id="out_shipment_type"></div>
+                    <div class="field"><label for="out_dispatch_type">Dispatched Type</label><input id="out_dispatch_type"></div>
+                    <div class="field"><label for="out_in_doc_no">IN. DOC No</label><input id="out_in_doc_no"></div>
+                    <div class="field"><label for="out_dc_no">DC No</label><input id="out_dc_no"></div>
+                    <div class="field"><label for="out_dc_date">DC Date</label><input id="out_dc_date" type="date"></div>
+                    <div class="field"><label for="out_vendor_name">Vendor Name</label><input id="out_vendor_name"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Location and Material</h3>
+                <span>Section 2</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field"><label for="out_gp_location">GP Location</label><input id="out_gp_location"></div>
+                    <div class="field"><label for="out_block">Block</label><input id="out_block"></div>
+                    <div class="field"><label for="out_dist">Dist</label><input id="out_dist"></div>
+                    <div class="field"><label for="out_item_code">Item Code</label><input id="out_item_code"></div>
+                    <div class="field span-2"><label for="out_description">Description</label><input id="out_description"></div>
+                    <div class="field"><label for="out_qty">NO/Qty</label><input id="out_qty" oninput="calculateOutwardTotals()"></div>
+                    <div class="field"><label for="out_physical_qty">Physical NO/Qty</label><input id="out_physical_qty"></div>
+                    <div class="field"><label for="out_unit">Unit</label><input id="out_unit"></div>
+                    <div class="field"><label for="out_rate_per_unit">Rate per unit</label><input id="out_rate_per_unit" oninput="calculateOutwardTotals()"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Value and Tax</h3>
+                <span>Section 3</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field"><label for="out_total_value">Total Value</label><input id="out_total_value" readonly></div>
+                    <div class="field"><label for="out_taxable_value">Taxable Value</label><input id="out_taxable_value" readonly></div>
+                    <div class="field"><label for="out_tsc">TSC0.075%</label><input id="out_tsc" readonly></div>
+                    <div class="field"><label for="out_discount">Discount</label><input id="out_discount" readonly></div>
+                    <div class="field"><label for="out_freight_charge">Freight Charge</label><input id="out_freight_charge" oninput="calculateOutwardTotals()"></div>
+                    <div class="field"><label for="out_total">Total</label><input id="out_total" readonly></div>
+                    <div class="field"><label for="out_cgst">CGST (9.00)</label><input id="out_cgst" readonly></div>
+                    <div class="field"><label for="out_sgst">SGST (9.00)</label><input id="out_sgst" readonly></div>
+                    <div class="field"><label for="out_grand_total">Grand Total</label><input id="out_grand_total" readonly></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Dispatch Tracking</h3>
+                <span>Section 4</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field"><label for="out_transport_name">Transport Name</label><input id="out_transport_name"></div>
+                    <div class="field"><label for="out_vehicle_no">Vehicle No</label><input id="out_vehicle_no"></div>
+                    <div class="field"><label for="out_pkgs_qty">Pkgs Qty</label><input id="out_pkgs_qty"></div>
+                    <div class="field"><label for="out_dispatched_date">Dispatched Date</label><input id="out_dispatched_date" type="date"></div>
+                    <div class="field"><label for="out_mode_of_delivery">Mode of Delivery</label><input id="out_mode_of_delivery"></div>
+                    <div class="field"><label for="out_reporting_time">Reporting Time</label><input id="out_reporting_time" type="time"></div>
+                    <div class="field"><label for="out_loading_time">Loading Time</label><input id="out_loading_time" type="time"></div>
+                    <div class="field"><label for="out_ug_aerial">UG/Aerial</label><input id="out_ug_aerial"></div>
+                    <div class="field"><label for="out_frt">FRT</label><input id="out_frt" placeholder="Enter FRT"></div>
+                    <div class="field span-2"><label for="out_remark">Remark</label><input id="out_remark"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="submit-bar">
+        <div class="submit-copy">
+            <strong>Ready to save this outward entry</strong>
+            <span>Review dispatch values and logistics details, then submit the record.</span>
+        </div>
+        <button class="submit-btn" onclick="submitOutwardForm()">Submit All</button>
+    </div>
+
+    <section class="records-card">
+        <div class="records-header">
+            <div>
+                <h3>Records</h3>
+                <p>Showing all outward data from the sample workbook together with new app submissions.</p>
+            </div>
+            <div class="records-badge">All Outward Entries</div>
+        </div>
+        <div class="table-wrap">
+            <table id="outwardTable">
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>ATN</th>
+                        <th>Month</th>
+                        <th>Warehouse</th>
+                        <th>Shipment Type</th>
+                        <th>Dispatched Type</th>
+                        <th>IN. DOC No</th>
+                        <th>DC No</th>
+                        <th>DC Date</th>
+                        <th>Vendor Name</th>
+                        <th>GP Location</th>
+                        <th>Block</th>
+                        <th>Dist</th>
+                        <th>Item Code</th>
+                        <th>Description</th>
+                        <th>NO/Qty</th>
+                        <th>Physical NO/Qty</th>
+                        <th>Unit</th>
+                        <th>Rate per unit</th>
+                        <th>Total Value</th>
+                        <th>Taxable Value</th>
+                        <th>TSC0.075%</th>
+                        <th>Discount</th>
+                        <th>Freight Charge</th>
+                        <th>Total</th>
+                        <th>CGST</th>
+                        <th>SGST</th>
+                        <th>Grand Total</th>
+                        <th>Transport Name</th>
+                        <th>Vehicle No</th>
+                        <th>Pkgs Qty</th>
+                        <th>Dispatched Date</th>
+                        <th>Mode of Delivery</th>
+                        <th>Reporting Time</th>
+                        <th>Loading Time</th>
+                        <th>Remark</th>
+                        <th>UG/Aerial</th>
+                        <th>FRT</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+const outwardFieldIds = [
+    "out_sr_no", "out_atn", "out_month", "out_warehouse", "out_shipment_type", "out_dispatch_type",
+    "out_in_doc_no", "out_dc_no", "out_dc_date", "out_vendor_name", "out_gp_location", "out_block", "out_dist",
+    "out_item_code", "out_description", "out_qty", "out_physical_qty", "out_unit", "out_rate_per_unit",
+    "out_total_value", "out_taxable_value", "out_tsc", "out_discount", "out_freight_charge", "out_total",
+    "out_cgst", "out_sgst", "out_grand_total", "out_transport_name", "out_vehicle_no", "out_pkgs_qty",
+    "out_dispatched_date", "out_mode_of_delivery", "out_reporting_time", "out_loading_time", "out_remark", "out_ug_aerial", "out_frt"
+];
+
+function outwardValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value : "";
+}
+
+function calculateOutwardTotals() {
+    const qty = parseFloat(outwardValue("out_qty")) || 0;
+    const rate = parseFloat(outwardValue("out_rate_per_unit")) || 0;
+    const freight = parseFloat(outwardValue("out_freight_charge")) || 0;
+
+    const totalValue = qty * rate;
+    const taxableValue = totalValue;
+    const tsc = totalValue * 0.00075;
+    const discount = totalValue * 0.024;
+    const total = taxableValue + tsc - discount + freight;
+    const cgst = total * 0.09;
+    const sgst = total * 0.09;
+    const grandTotal = total + cgst + sgst;
+
+    document.getElementById("out_total_value").value = totalValue.toFixed(2);
+    document.getElementById("out_taxable_value").value = taxableValue.toFixed(2);
+    document.getElementById("out_tsc").value = tsc.toFixed(2);
+    document.getElementById("out_discount").value = discount.toFixed(2);
+    document.getElementById("out_total").value = total.toFixed(2);
+    document.getElementById("out_cgst").value = cgst.toFixed(2);
+    document.getElementById("out_sgst").value = sgst.toFixed(2);
+    document.getElementById("out_grand_total").value = grandTotal.toFixed(2);
+}
+
+function resetOutwardForm() {
+    outwardFieldIds.forEach((id) => {
+        const element = document.getElementById(id);
+        if (!element || element.readOnly) {
+            return;
+        }
+        element.value = "";
+    });
+}
+
+function submitOutwardForm() {
+    const data = Object.fromEntries(outwardFieldIds.map((id) => [id, outwardValue(id)]));
+
+    fetch("/add-outward-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Submit failed with status ${res.status}`);
+        }
+        return res.json();
+    })
+    .then(() => {
+        resetOutwardForm();
+        calculateOutwardTotals();
+        loadOutwardData();
+        alert("Outward entry submitted successfully.");
+    })
+    .catch((error) => {
+        console.error(error);
+        alert("Outward entry could not be submitted. Please try again.");
+    });
+}
+
+function loadOutwardData() {
+    fetch("/outward-info")
+    .then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Load failed with status ${res.status}`);
+        }
+        return res.json();
+    })
+    .then((data) => {
+        const tbody = document.querySelector("#outwardTable tbody");
+        tbody.innerHTML = "";
+
+        if (!Array.isArray(data)) {
+            return;
+        }
+
+        const orderedKeys = [
+            "out_sr_no", "out_atn", "out_month", "out_warehouse", "out_shipment_type", "out_dispatch_type",
+            "out_in_doc_no", "out_dc_no", "out_dc_date", "out_vendor_name", "out_gp_location", "out_block", "out_dist",
+            "out_item_code", "out_description", "out_qty", "out_physical_qty", "out_unit", "out_rate_per_unit",
+            "out_total_value", "out_taxable_value", "out_tsc", "out_discount", "out_freight_charge", "out_total",
+            "out_cgst", "out_sgst", "out_grand_total", "out_transport_name", "out_vehicle_no", "out_pkgs_qty",
+            "out_dispatched_date", "out_mode_of_delivery", "out_reporting_time", "out_loading_time", "out_remark", "out_ug_aerial", "out_frt"
+        ];
+
+        data.forEach((row) => {
+            const tr = document.createElement("tr");
+
+            orderedKeys.forEach((key) => {
+                const td = document.createElement("td");
+                const value = row[key];
+                td.textContent = value === null || value === undefined ? "" : value;
+                tr.appendChild(td);
+            });
+
+            tbody.appendChild(tr);
+        });
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+loadOutwardData();
+</script>
+{% endblock %}

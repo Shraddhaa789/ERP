@@ -1,0 +1,656 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .report-shell { 
+        display: grid;
+        gap: 18px;
+    }
+
+    .report-intro {
+        display: block;
+    }
+
+    .report-intro p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 720px;
+        line-height: 1.5;
+    }
+
+    .stats-grid-report {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .stat-card-report {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        border-radius: 18px;
+        border: 1px solid #d8e3f8;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .stat-icon svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    .stat-icon.records {
+        background: linear-gradient(135deg, #dfe5ff 0%, #ccd7ff 100%);
+        color: #4f46e5;
+    }
+
+    .stat-icon.value {
+        background: linear-gradient(135deg, #dcfce7 0%, #c9f7d8 100%);
+        color: #10b981;
+    }
+
+    .stat-icon.location {
+        background: linear-gradient(135deg, #fff2c6 0%, #ffe8a3 100%);
+        color: #f59e0b;
+    }
+
+    .stat-copy {
+        display: grid;
+        gap: 3px;
+    }
+
+    .stat-card-report .label {
+        color: #60769f;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .stat-card-report .value {
+        color: var(--primary-strong);
+        font-size: 30px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+    }
+
+    .report-control-card {
+        padding: 18px 22px;
+        border: 1px solid #d8e3f8;
+        border-radius: 18px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .report-control-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .report-control-row .field {
+        min-width: 240px;
+    }
+
+    .report-filter-group {
+        display: flex;
+        gap: 16px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        flex: 1 1 auto;
+    }
+
+    .report-control-row label {
+        display: block;
+        margin-bottom: 8px;
+        color: #60769f;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .report-select {
+        min-height: 50px;
+        padding: 12px 18px;
+        border-radius: 14px;
+        border: 2px solid #b7cbff;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        color: #2b4f98;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 0 0 4px rgba(80, 121, 209, 0.08);
+    }
+
+    .download-btn {
+        min-height: 44px;
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid #23324f;
+        background: #fff;
+        color: #111827;
+        font-weight: 700;
+        box-shadow: none;
+    }
+
+    .download-btn:hover {
+        background: #f6f8ff;
+    }
+
+    .download-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .report-card {
+        border: 1px solid #d8e3f8;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .report-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e4ecfb;
+        background: linear-gradient(180deg, #f7faff 0%, #eef4ff 100%);
+    }
+
+    .report-card-header h3 {
+        margin: 0 0 4px;
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+    .report-card-header p {
+        margin: 0;
+        color: var(--muted);
+    }
+
+    .report-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #e7efff;
+        color: #4766a4;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        max-height: 650px;
+        padding-bottom: 10px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    }
+
+    table {
+        width: 100%;
+        min-width: 2400px;
+        border-collapse: collapse;
+        background: #fff;
+    }
+
+    th,
+    td {
+        min-width: 105px;
+        padding: 14px 12px;
+        border-bottom: 1px solid #e8eef8;
+        text-align: left;
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+    .group-header {
+        background: #16233e;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .column-header {
+        position: sticky;
+        top: 0;
+        background: #ffffff;
+        color: #5d78a6;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+        z-index: 1;
+    }
+
+    td {
+        color: #263652;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #fafcff;
+    }
+
+    .empty-state {
+        padding: 42px 24px;
+        text-align: center;
+        color: var(--muted);
+    }
+
+    @media (max-width: 860px) {
+        .report-filter-group {
+            width: 100%;
+        }
+
+        .report-control-row .field {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="report-shell">
+    <div class="report-intro">
+    </div>
+
+    <div class="stats-grid-report">
+        <div class="stat-card-report">
+            <div class="stat-icon records">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"></path>
+                    <path d="M14 2v5h5"></path>
+                    <path d="M9 13h6"></path>
+                    <path d="M9 17h4"></path>
+                </svg>
+            </div>
+            <div class="stat-copy">
+                <span class="label">Total Records</span>
+                <div class="value" id="report_total_records">0</div>
+            </div>
+        </div>
+
+        <div class="stat-card-report">
+            <div class="stat-icon value">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1v22"></path>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+            </div>
+            <div class="stat-copy">
+                <span class="label">Total Value</span>
+                <div class="value" id="report_total_value">₹ 0</div>
+            </div>
+        </div>
+
+        <div class="stat-card-report">
+            <div class="stat-icon location">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+            </div>
+            <div class="stat-copy">
+                <span class="label">Unique Locations</span>
+                <div class="value" id="report_location_count">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-control-card">
+        <div class="report-control-row">
+            <div class="report-filter-group">
+                <div class="field">
+                    <label for="report_type">View Mode</label>
+                    <select id="report_type" class="report-select" onchange="loadReport()">
+                        <option value="inward">INWARD ENTRIES</option>
+                        <option value="outward">OUTWARD ENTRIES</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="report_search_field">Search In Field</label>
+                    <select id="report_search_field" class="report-select" onchange="renderCurrentReport()"></select>
+                </div>
+                <div class="field">
+                    <label for="report_search">Search Fields</label>
+                    <input id="report_search" class="report-select" type="text" placeholder="Search any table value" oninput="renderCurrentReport()">
+                </div>
+            </div>
+            <button class="action-btn download-btn" type="button" onclick="downloadReport()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <path d="M7 10l5 5 5-5"></path>
+                    <path d="M12 15V3"></path>
+                </svg>
+                <span>Download Excel</span>
+            </button>
+        </div>
+    </div>
+
+    <section class="report-card">
+        <div class="report-card-header">
+            <div>
+                <h3 id="report_title">Inward Report</h3>
+                <p id="report_subtitle">Showing all inward entries created in the system.</p>
+            </div>
+            <div class="report-badge" id="report_badge">Inward</div>
+        </div>
+
+        <div class="table-wrap">
+            <table id="report_table">
+                <thead id="report_head"></thead>
+                <tbody id="report_body"></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+const reportConfigs = {
+    inward: {
+        title: "Inward Report",
+        subtitle: "Showing all inward entries created in the system.",
+        badge: "Inward",
+        locationKey: "warehouse",
+        totalKey: "grand_total",
+        groups: [
+            { name: "Basic Information", count: 8 },
+            { name: "Order & Dispatch", count: 4 },
+            { name: "Vendor / PO", count: 3 },
+            { name: "Invoice", count: 2 },
+            { name: "Material Details", count: 5 },
+            { name: "Pricing & Taxes", count: 9 },
+            { name: "Logistics", count: 5 },
+            { name: "Delivery", count: 3 },
+            { name: "Time Tracking", count: 3 },
+            { name: "Compliance", count: 2 },
+            { name: "Inspection", count: 2 },
+            { name: "PM Tool Tracking", count: 8 },
+            { name: "Approvals", count: 2 },
+            { name: "Task", count: 1 },
+            { name: "Chamber Invoice", count: 4 }
+        ],
+        headers: [
+            { key: "sr_no", label: "Sr No" },
+            { key: "atn", label: "ATN" },
+            { key: "shifting", label: "Shifting" },
+            { key: "original_wh", label: "Original WH" },
+            { key: "date", label: "Date" },
+            { key: "warehouse", label: "Warehouse" },
+            { key: "shipment_type", label: "Shipment Type" },
+            { key: "dispatch_type", label: "Dispatched Type" },
+            { key: "in_doc_no", label: "IN. DOC No" },
+            { key: "order_no", label: "Order No" },
+            { key: "dc_no", label: "DC No" },
+            { key: "challan_date", label: "Challan Date" },
+            { key: "oem", label: "OEM" },
+            { key: "po_no", label: "PO No" },
+            { key: "po_name", label: "PO Name" },
+            { key: "invoice_no", label: "Invoice No" },
+            { key: "invoice_date", label: "Invoice Date" },
+            { key: "item_code", label: "Item Code" },
+            { key: "description", label: "Description" },
+            { key: "qty", label: "Qty" },
+            { key: "physical_qty", label: "Physical Qty" },
+            { key: "unit", label: "Unit" },
+            { key: "rate", label: "Rate" },
+            { key: "total_value", label: "Total Value" },
+            { key: "taxable_value", label: "Taxable Value" },
+            { key: "tsc", label: "TSC" },
+            { key: "discount", label: "Discount" },
+            { key: "freight", label: "Freight" },
+            { key: "cgst", label: "CGST" },
+            { key: "sgst", label: "SGST" },
+            { key: "grand_total", label: "Grand Total" },
+            { key: "unloading", label: "Unloading" },
+            { key: "transport", label: "Transport" },
+            { key: "vehicle", label: "Vehicle" },
+            { key: "lr_no", label: "LR No" },
+            { key: "lr_date", label: "LR Date" },
+            { key: "pkgs_qty", label: "Pkgs Qty" },
+            { key: "delivery_date", label: "Delivery Date" },
+            { key: "mode", label: "Mode" },
+            { key: "reporting_time", label: "Reporting Time" },
+            { key: "unloading_time", label: "Unloading Time" },
+            { key: "wh_remark", label: "WH Remark" },
+            { key: "eway_bill", label: "e-WAY Bill" },
+            { key: "shipment_type2", label: "Shipment Type 2" },
+            { key: "inspection_date", label: "Inspection Date" },
+            { key: "inspection_person", label: "Inspection Person" },
+            { key: "pm_update_date", label: "PM Update Date" },
+            { key: "doc_remark", label: "Doc Remark" },
+            { key: "pm_update_by", label: "PM Update By" },
+            { key: "reupload", label: "Re-Upload" },
+            { key: "reupload_reason", label: "Re-Upload Reason" },
+            { key: "pm_remark", label: "PM Remark" },
+            { key: "inspection_status", label: "PM Inspection Status" },
+            { key: "pm_submit_date", label: "PM Submit Date" },
+            { key: "approved_dpm", label: "Approved DPM" },
+            { key: "approved_tpa", label: "Approved TPA" },
+            { key: "task_id", label: "Task ID" },
+            { key: "ch_invoice_no", label: "Ch Invoice No" },
+            { key: "ch_invoice_date", label: "Ch Invoice Date" },
+            { key: "ch_submitted", label: "Ch Submitted" },
+            { key: "ch_remark", label: "Ch Remark" }
+        ]
+    },
+    outward: {
+        title: "Outward Report",
+        subtitle: "Showing all outward entries created in the system.",
+        badge: "Outward",
+        locationKey: "out_warehouse",
+        totalKey: "out_grand_total",
+        groups: [
+            { name: "Basic Information", count: 4 },
+            { name: "Dispatch Details", count: 5 },
+            { name: "Location Details", count: 4 },
+            { name: "Material Info", count: 5 },
+            { name: "Pricing & Taxes", count: 10 },
+            { name: "Logistics", count: 3 },
+            { name: "Time Tracking", count: 4 },
+            { name: "Other", count: 2 }
+        ],
+        headers: [
+            { key: "out_sr_no", label: "Sr No" },
+            { key: "out_atn", label: "ATN" },
+            { key: "out_month", label: "Month" },
+            { key: "out_warehouse", label: "Warehouse" },
+            { key: "out_shipment_type", label: "Shipment Type" },
+            { key: "out_dispatch_type", label: "Dispatched Type" },
+            { key: "out_in_doc_no", label: "IN. DOC No" },
+            { key: "out_dc_no", label: "DC No" },
+            { key: "out_dc_date", label: "DC Date" },
+            { key: "out_vendor_name", label: "Vendor Name" },
+            { key: "out_gp_location", label: "GP Location" },
+            { key: "out_block", label: "Block" },
+            { key: "out_dist", label: "Dist" },
+            { key: "out_item_code", label: "Item Code" },
+            { key: "out_description", label: "Description" },
+            { key: "out_qty", label: "NO/Qty" },
+            { key: "out_physical_qty", label: "Physical NO/Qty" },
+            { key: "out_unit", label: "Unit" },
+            { key: "out_rate_per_unit", label: "Rate per Unit" },
+            { key: "out_total_value", label: "Total Value" },
+            { key: "out_taxable_value", label: "Taxable Value" },
+            { key: "out_tsc", label: "TSC0.075%" },
+            { key: "out_discount", label: "Discount" },
+            { key: "out_freight_charge", label: "Freight Charge" },
+            { key: "out_total", label: "Total" },
+            { key: "out_cgst", label: "CGST" },
+            { key: "out_sgst", label: "SGST" },
+            { key: "out_grand_total", label: "Grand Total" },
+            { key: "out_transport_name", label: "Transport Name" },
+            { key: "out_vehicle_no", label: "Vehicle No" },
+            { key: "out_pkgs_qty", label: "Pkgs Qty" },
+            { key: "out_dispatched_date", label: "Dispatched Date" },
+            { key: "out_mode_of_delivery", label: "Mode of Delivery" },
+            { key: "out_reporting_time", label: "Reporting Time" },
+            { key: "out_loading_time", label: "Loading Time" },
+            { key: "out_remark", label: "Remark" },
+            { key: "out_ug_aerial", label: "UG/Aerial" }
+        ]
+    }
+};
+
+let currentReportRows = [];
+let filteredReportRows = [];
+
+function numberValue(value) {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function safeValue(value) {
+    return value === null || value === undefined || value === "" ? "-" : value;
+}
+
+function loadReport() {
+    const type = document.getElementById("report_type").value;
+    const config = reportConfigs[type];
+
+    document.getElementById("report_title").textContent = config.title;
+    document.getElementById("report_subtitle").textContent = config.subtitle;
+    document.getElementById("report_badge").textContent = config.badge;
+    populateSearchFields(config);
+
+    fetch(`/report-data?type=${type}`)
+        .then(async (res) => {
+            if (!res.ok) {
+                throw new Error(`Load failed with status ${res.status}`);
+            }
+            return res.json();
+        })
+        .then((rows) => {
+            currentReportRows = Array.isArray(rows) ? rows : [];
+            renderCurrentReport();
+        })
+        .catch((error) => {
+            console.error(error);
+            currentReportRows = [];
+            renderCurrentReport();
+        });
+}
+
+function renderCurrentReport() {
+    const type = document.getElementById("report_type").value;
+    const config = reportConfigs[type];
+    const searchTerm = document.getElementById("report_search").value.trim().toLowerCase();
+    const fieldSelect = document.getElementById("report_search_field");
+    const searchField = fieldSelect.value;
+
+    filteredReportRows = currentReportRows.filter((row) => {
+        if (!searchTerm) {
+            return true;
+        }
+
+        if (searchField === "all") {
+            return config.headers.some((header) => String(safeValue(row[header.key])).toLowerCase().includes(searchTerm));
+        }
+
+        return String(safeValue(row[searchField])).toLowerCase().includes(searchTerm);
+    });
+
+    renderReportTable(config, filteredReportRows);
+    updateReportStats(config, filteredReportRows);
+}
+
+function populateSearchFields(config) {
+    const select = document.getElementById("report_search_field");
+    const current = select.value || "all";
+
+    select.innerHTML = `<option value="all">All Fields</option>` +
+        config.headers.map((header) => `<option value="${header.key}">${header.label}</option>`).join("");
+
+    if ([...select.options].some((option) => option.value === current)) {
+        select.value = current;
+    } else {
+        select.value = "all";
+    }
+}
+
+function renderReportTable(config, rows) {
+    const thead = document.getElementById("report_head");
+    const tbody = document.getElementById("report_body");
+
+    const groupRow = `<tr>${config.groups.map((group) => `<th class="group-header" colspan="${group.count}">${group.name}</th>`).join("")}</tr>`;
+    const headerRow = `<tr>${config.headers.map((header) => `<th class="column-header">${header.label}</th>`).join("")}</tr>`;
+    thead.innerHTML = groupRow + headerRow;
+    tbody.innerHTML = "";
+
+    if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="${config.headers.length}" class="empty-state">No ${config.badge.toLowerCase()} records found.</td></tr>`;
+        return;
+    }
+
+    rows.forEach((row) => {
+        const tr = document.createElement("tr");
+        config.headers.forEach((header) => {
+            const td = document.createElement("td");
+            td.textContent = safeValue(row[header.key]);
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+}
+
+function updateReportStats(config, rows) {
+    const totalValue = rows.reduce((sum, row) => sum + numberValue(row[config.totalKey]), 0);
+    const locations = new Set(rows.map((row) => row[config.locationKey]).filter(Boolean));
+
+    document.getElementById("report_total_records").textContent = rows.length;
+    document.getElementById("report_total_value").textContent = `₹ ${totalValue.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+    document.getElementById("report_location_count").textContent = locations.size;
+}
+
+function downloadReport() {
+    const type = document.getElementById("report_type").value;
+    const config = reportConfigs[type];
+    const lines = [];
+
+    lines.push(config.headers.map((header) => `"${header.label.replace(/"/g, '""')}"`).join(","));
+
+    filteredReportRows.forEach((row) => {
+        lines.push(config.headers.map((header) => `"${String(safeValue(row[header.key])).replace(/"/g, '""')}"`).join(","));
+    });
+
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const stamp = new Date().toISOString().split("T")[0];
+
+    link.href = url;
+    link.download = `${config.badge}_Report_${stamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+loadReport();
+</script>
+{% endblock %}

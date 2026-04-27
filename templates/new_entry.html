@@ -1,0 +1,905 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .entry-shell {
+        display: grid;
+        gap: 20px;
+    }
+
+    .entry-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .entry-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+        border: 1px solid #d9e1f1;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 16px 28px rgba(43, 62, 98, 0.08);
+    }
+
+    .entry-card.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .entry-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 20px 16px;
+        border-bottom: 1px solid #e7ecf7;
+        background: linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
+    }
+
+    .entry-card-header h3 {
+        margin: 0;
+        color: #31456f;
+        font-size: 18px;
+    }
+
+    .entry-card-header span {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6880b7;
+        white-space: nowrap;
+    }
+
+    .entry-card-body {
+        padding: 20px;
+    }
+
+    .grid-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .field {
+        display: grid;
+        gap: 8px;
+    }
+
+    .field label {
+        font-size: 13px;
+        font-weight: 700;
+        color: #506180;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .grid-form input,
+    .grid-form select {
+        width: 100%;
+        min-height: 46px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid #d0d8ea;
+        background: #fff;
+        box-shadow: inset 0 1px 1px rgba(20, 32, 58, 0.03);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .grid-form input:focus,
+    .grid-form select:focus {
+        outline: none;
+        border-color: #5f84d8;
+        box-shadow: 0 0 0 4px rgba(95, 132, 216, 0.14);
+        transform: translateY(-1px);
+    }
+
+    .field.span-2 {
+        grid-column: span 2;
+    }
+
+    .submit-bar {
+        position: sticky;
+        bottom: 16px;
+        z-index: 5;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 18px 22px;
+        margin-top: 4px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #d9e1f1;
+        border-radius: 18px;
+        box-shadow: 0 20px 38px rgba(35, 52, 88, 0.12);
+        backdrop-filter: blur(10px);
+    }
+
+    .submit-copy strong {
+        display: block;
+        color: #31456f;
+        margin-bottom: 4px;
+    }
+
+    .submit-copy span {
+        color: #667089;
+        font-size: 14px;
+    }
+
+    .submit-btn {
+        border: none;
+        border-radius: 14px;
+        padding: 14px 26px;
+        background: linear-gradient(135deg, #31539d 0%, #4b77d2 100%);
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 14px 26px rgba(53, 85, 160, 0.22);
+    }
+
+    .records-card {
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        border: 1px solid #d9e1f1;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 18px 30px rgba(43, 62, 98, 0.08);
+    }
+
+    .records-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 22px 24px 18px;
+        border-bottom: 1px solid #e7ecf7;
+        background: linear-gradient(180deg, #f7faff 0%, #eef3ff 100%);
+    }
+
+    .records-header h3 {
+        margin: 0 0 6px;
+        color: #31456f;
+        font-size: 28px;
+        letter-spacing: -0.03em;
+    }
+
+    .records-header p {
+        margin: 0;
+        color: #667089;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .records-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: #e7efff;
+        color: #4766a4;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        padding: 0 8px 10px;
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    }
+
+    table {
+        width: 100%;
+        min-width: 4200px;
+        border-collapse: collapse;
+        background: #fff;
+    }
+
+    th,
+    td {
+        min-width: 120px;
+        padding: 14px 12px;
+        border-bottom: 1px solid #e7ecf7;
+        text-align: left;
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+    th {
+        position: sticky;
+        top: 0;
+        background: #eaf0ff;
+        color: #3f5689;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 11px;
+        white-space: nowrap;
+        z-index: 1;
+    }
+
+    td {
+        color: #263652;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #fbfcff;
+    }
+
+    @media (max-width: 1180px) {
+        .entry-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .grid-form {
+            grid-template-columns: 1fr;
+        }
+
+        .field.span-2 {
+            grid-column: auto;
+        }
+
+        .submit-bar {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .records-header h3 {
+            font-size: 24px;
+        }
+    }
+</style>
+
+<div class="entry-shell">
+    <div class="entry-grid">
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Basic Information</h3>
+                <span>Section 1</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="sr_no">Sr No</label>
+                        <input id="sr_no" placeholder="Enter serial number">
+                    </div>
+                    <div class="field">
+                        <label for="atn">ATN</label>
+                        <input id="atn" placeholder="Enter ATN">
+                    </div>
+                    <div class="field">
+                        <label for="shifting">Shifting</label>
+                        <select id="shifting">
+                            <option value="">Select shifting</option>
+                            <option>A</option>
+                            <option>B</option>
+                            <option>C</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="original_wh">Original Warehouse</label>
+                        <input id="original_wh" placeholder="Invoice/DC warehouse">
+                    </div>
+                    <div class="field">
+                        <label for="date">Date</label>
+                        <input id="date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="warehouse">Warehouse</label>
+                        <input id="warehouse" placeholder="Enter warehouse">
+                    </div>
+                    <div class="field">
+                        <label for="shipment_type">Shipment Type</label>
+                        <select id="shipment_type">
+                            <option value="">Select shipment type</option>
+                            <option>A</option>
+                            <option>C</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="dispatch_type">Dispatched Type</label>
+                        <input id="dispatch_type" placeholder="Enter dispatch type">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Order and Dispatch Details</h3>
+                <span>Section 2</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="in_doc_no">IN. DOC No</label>
+                        <input id="in_doc_no" placeholder="Enter document number">
+                    </div>
+                    <div class="field">
+                        <label for="order_no">Order No</label>
+                        <input id="order_no" placeholder="Enter order number">
+                    </div>
+                    <div class="field">
+                        <label for="dc_no">DC No</label>
+                        <input id="dc_no" placeholder="Enter DC number">
+                    </div>
+                    <div class="field">
+                        <label for="challan_date">Challan Date</label>
+                        <input id="challan_date" type="date">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Vendor and PO Details</h3>
+                <span>Section 3</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="oem">OEM</label>
+                        <input id="oem" placeholder="Enter OEM">
+                    </div>
+                    <div class="field">
+                        <label for="po_no">PO No</label>
+                        <input id="po_no" placeholder="Enter PO number">
+                    </div>
+                    <div class="field span-2">
+                        <label for="po_name">PO Issued Name</label>
+                        <input id="po_name" placeholder="Enter issued name">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Invoice Details</h3>
+                <span>Section 4</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="invoice_no">Invoice No</label>
+                        <input id="invoice_no" placeholder="Enter invoice number">
+                    </div>
+                    <div class="field">
+                        <label for="invoice_date">Invoice Date</label>
+                        <input id="invoice_date" type="date">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Material Details</h3>
+                <span>Section 5</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="item_code">Item Code</label>
+                        <input id="item_code" placeholder="Enter item code">
+                    </div>
+                    <div class="field">
+                        <label for="description">Description</label>
+                        <input id="description" placeholder="Enter material description">
+                    </div>
+                    <div class="field">
+                        <label for="qty">NO/Qty</label>
+                        <input id="qty" placeholder="Enter quantity" oninput="calculateTotal()">
+                    </div>
+                    <div class="field">
+                        <label for="physical_qty">Physical NO/Qty</label>
+                        <input id="physical_qty" placeholder="Enter physical quantity">
+                    </div>
+                    <div class="field span-2">
+                        <label for="unit">Unit</label>
+                        <input id="unit" placeholder="Enter unit">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Pricing Details</h3>
+                <span>Sections 6 to 8</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="rate">Rate per Unit</label>
+                        <input id="rate" placeholder="Enter rate" oninput="calculateTotal()">
+                    </div>
+                    <div class="field">
+                        <label for="freight">Freight Charges</label>
+                        <input id="freight" placeholder="Enter freight" oninput="calculateTotal()">
+                    </div>
+                    <div class="field">
+                        <label for="total_value">Total Value</label>
+                        <input id="total_value" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="taxable_value">Taxable Value</label>
+                        <input id="taxable_value" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="tsc">TSC 0.075%</label>
+                        <input id="tsc" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="discount">Discount 2.4%</label>
+                        <input id="discount" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="additional_total">Total</label>
+                        <input id="additional_total" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="cgst">CGST 9%</label>
+                        <input id="cgst" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="sgst">SGST 9%</label>
+                        <input id="sgst" placeholder="Auto calculated" readonly>
+                    </div>
+                    <div class="field">
+                        <label for="grand_total">Grand Total</label>
+                        <input id="grand_total" placeholder="Auto calculated" readonly>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Logistics Details</h3>
+                <span>Section 9</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="unloading">Chamber Unloading Charges</label>
+                        <input id="unloading" placeholder="Enter unloading charges">
+                    </div>
+                    <div class="field">
+                        <label for="transport">Transport Name</label>
+                        <input id="transport" placeholder="Enter transport name">
+                    </div>
+                    <div class="field">
+                        <label for="vehicle">Vehicle No</label>
+                        <input id="vehicle" placeholder="Enter vehicle number">
+                    </div>
+                    <div class="field">
+                        <label for="lr_no">LR/RR No</label>
+                        <input id="lr_no" placeholder="Enter LR/RR number">
+                    </div>
+                    <div class="field span-2">
+                        <label for="lr_date">LR Date</label>
+                        <input id="lr_date" type="date">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Delivery Details</h3>
+                <span>Sections 10 to 11</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="pkgs_qty">Pkgs Qty</label>
+                        <input id="pkgs_qty" placeholder="Enter package quantity">
+                    </div>
+                    <div class="field">
+                        <label for="delivery_date">Delivery Date</label>
+                        <input id="delivery_date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="mode">Mode of Delivery</label>
+                        <input id="mode" placeholder="Enter delivery mode">
+                    </div>
+                    <div class="field">
+                        <label for="reporting_time">Reporting Time</label>
+                        <input id="reporting_time" type="time">
+                    </div>
+                    <div class="field">
+                        <label for="unloading_time">Unloading Time</label>
+                        <input id="unloading_time" type="time">
+                    </div>
+                    <div class="field span-2">
+                        <label for="wh_remark">W/H Remark</label>
+                        <input id="wh_remark" placeholder="Enter warehouse remark">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Compliance</h3>
+                <span>Section 12</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="eway_bill">e-WAY Bill No</label>
+                        <input id="eway_bill" placeholder="Enter e-WAY bill number">
+                    </div>
+                    <div class="field">
+                        <label for="shipment_type2">Shipment Type</label>
+                        <input id="shipment_type2" placeholder="Enter shipment type">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Inspection Details</h3>
+                <span>Section 13</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="inspection_date">Inspection Date</label>
+                        <input id="inspection_date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="inspection_person">Material Inspection Person</label>
+                        <input id="inspection_person" placeholder="Enter person name">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card full-width">
+            <div class="entry-card-header">
+                <h3>PM Tool Tracking</h3>
+                <span>Section 14</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="pm_update_date">PM Update Date</label>
+                        <input id="pm_update_date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="doc_remark">Document Remark</label>
+                        <input id="doc_remark" placeholder="Enter document remark">
+                    </div>
+                    <div class="field">
+                        <label for="pm_update_by">PM Tools Update By</label>
+                        <input id="pm_update_by" placeholder="Enter updater name">
+                    </div>
+                    <div class="field">
+                        <label for="reupload">Re-Upload</label>
+                        <input id="reupload" placeholder="Enter re-upload status">
+                    </div>
+                    <div class="field">
+                        <label for="reupload_reason">Reason/Re-Upload</label>
+                        <input id="reupload_reason" placeholder="Enter reason">
+                    </div>
+                    <div class="field">
+                        <label for="pm_remark">Remark</label>
+                        <input id="pm_remark" placeholder="Enter PM remark">
+                    </div>
+                    <div class="field">
+                        <label for="inspection_status">Inspection Status on PM Tool</label>
+                        <input id="inspection_status" placeholder="Enter inspection status">
+                    </div>
+                    <div class="field">
+                        <label for="pm_submit_date">PM Submit Date</label>
+                        <input id="pm_submit_date" type="date">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Approvals</h3>
+                <span>Section 15</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="approved_dpm">Approved by DPM</label>
+                        <input id="approved_dpm" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="approved_tpa">Approved by TPA</label>
+                        <input id="approved_tpa" type="date">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card">
+            <div class="entry-card-header">
+                <h3>Task Tracking</h3>
+                <span>Section 16</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field span-2">
+                        <label for="task_id">Task ID</label>
+                        <input id="task_id" placeholder="Enter task ID">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="entry-card full-width">
+            <div class="entry-card-header">
+                <h3>Chamber Invoice Details</h3>
+                <span>Section 17</span>
+            </div>
+            <div class="entry-card-body">
+                <div class="grid-form">
+                    <div class="field">
+                        <label for="ch_invoice_no">Chamber Invoice No</label>
+                        <input id="ch_invoice_no" placeholder="Enter invoice number">
+                    </div>
+                    <div class="field">
+                        <label for="ch_invoice_date">Chamber Invoice Date</label>
+                        <input id="ch_invoice_date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="ch_submitted">Chamber Invoice Submitted</label>
+                        <input id="ch_submitted" placeholder="Enter submission status">
+                    </div>
+                    <div class="field">
+                        <label for="ch_remark">Remark</label>
+                        <input id="ch_remark" placeholder="Enter chamber remark">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="submit-bar">
+        <div class="submit-copy">
+            <strong>Ready to save this entry</strong>
+            <span>Review the key pricing and logistics fields, then submit the full record.</span>
+        </div>
+        <button class="submit-btn" onclick="submitForm()">Submit All</button>
+    </div>
+
+    <section class="records-card">
+        <div class="records-header">
+            <div>
+                <h3>Records</h3>
+                <p>Showing all inward data from the sample workbook together with new app submissions.</p>
+            </div>
+            <div class="records-badge">All Inward Entries</div>
+        </div>
+        <div class="table-wrap">
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th>Sr No</th>
+                        <th>ATN</th>
+                        <th>Shifting</th>
+                        <th>Original WH</th>
+                        <th>Date</th>
+                        <th>Warehouse</th>
+                        <th>Shipment</th>
+                        <th>Dispatch</th>
+                        <th>IN DOC</th>
+                        <th>Order</th>
+                        <th>DC</th>
+                        <th>Challan</th>
+                        <th>OEM</th>
+                        <th>PO</th>
+                        <th>PO Name</th>
+                        <th>Invoice</th>
+                        <th>Invoice Date</th>
+                        <th>Item Code</th>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th>Physical Qty</th>
+                        <th>Unit</th>
+                        <th>Rate</th>
+                        <th>Total Value</th>
+                        <th>Taxable</th>
+                        <th>TSC</th>
+                        <th>Discount</th>
+                        <th>Freight</th>
+                        <th>Total</th>
+                        <th>Unloading</th>
+                        <th>CGST</th>
+                        <th>SGST</th>
+                        <th>Grand Total</th>
+                        <th>Transport</th>
+                        <th>Vehicle</th>
+                        <th>LR/RR No</th>
+                        <th>LR Date</th>
+                        <th>Pkgs Qty</th>
+                        <th>Delivery Date</th>
+                        <th>Mode</th>
+                        <th>Reporting</th>
+                        <th>Unloading Time</th>
+                        <th>W/H Remark</th>
+                        <th>Eway</th>
+                        <th>Shipment Type 2</th>
+                        <th>Inspection</th>
+                        <th>Inspection Person</th>
+                        <th>Document Remark</th>
+                        <th>PM Update Date</th>
+                        <th>PM Update By</th>
+                        <th>Re-Upload</th>
+                        <th>Reason/Re-Upload</th>
+                        <th>PM Remark</th>
+                        <th>PM Status</th>
+                        <th>PM Submit Date</th>
+                        <th>DPM</th>
+                        <th>TPA</th>
+                        <th>Task ID</th>
+                        <th>Ch Invoice</th>
+                        <th>Ch Invoice Date</th>
+                        <th>Ch Submitted</th>
+                        <th>Ch Remark</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+const fieldIds = [
+    "sr_no", "atn", "shifting", "original_wh", "date", "warehouse", "shipment_type", "dispatch_type",
+    "in_doc_no", "order_no", "dc_no", "challan_date",
+    "oem", "po_no", "po_name",
+    "invoice_no", "invoice_date",
+    "item_code", "description", "qty", "physical_qty", "unit",
+    "rate", "total_value", "taxable_value", "tsc", "discount", "freight", "additional_total", "cgst", "sgst", "grand_total",
+    "unloading", "transport", "vehicle", "lr_no", "lr_date",
+    "pkgs_qty", "delivery_date", "mode",
+    "reporting_time", "unloading_time", "wh_remark",
+    "eway_bill", "shipment_type2",
+    "inspection_date", "inspection_person",
+    "doc_remark", "pm_update_date", "pm_update_by", "reupload", "reupload_reason", "pm_remark", "inspection_status", "pm_submit_date",
+    "approved_dpm", "approved_tpa",
+    "task_id",
+    "ch_invoice_no", "ch_invoice_date", "ch_submitted", "ch_remark"
+];
+
+function getFieldValue(id) {
+    const element = document.getElementById(id);
+    return element ? element.value : "";
+}
+
+function resetEntryForm() {
+    fieldIds.forEach((id) => {
+        const element = document.getElementById(id);
+        if (!element || element.readOnly) {
+            return;
+        }
+
+        element.value = "";
+    });
+}
+
+function calculateTotal() {
+    let qty = parseFloat(document.getElementById("qty").value) || 0;
+    let rate = parseFloat(document.getElementById("rate").value) || 0;
+    let freight = parseFloat(document.getElementById("freight").value) || 0;
+
+    let totalValue = qty * rate;
+    document.getElementById("total_value").value = totalValue.toFixed(2);
+    document.getElementById("taxable_value").value = totalValue.toFixed(2);
+
+    let tsc = totalValue * 0.00075;
+    let discount = totalValue * 0.024;
+
+    document.getElementById("tsc").value = tsc.toFixed(2);
+    document.getElementById("discount").value = discount.toFixed(2);
+
+    let additional = totalValue + tsc - discount + freight;
+    document.getElementById("additional_total").value = additional.toFixed(2);
+
+    let cgst = additional * 0.09;
+    let sgst = additional * 0.09;
+
+    document.getElementById("cgst").value = cgst.toFixed(2);
+    document.getElementById("sgst").value = sgst.toFixed(2);
+
+    let grand = additional + cgst + sgst;
+    document.getElementById("grand_total").value = grand.toFixed(2);
+}
+
+function submitForm() {
+    const data = Object.fromEntries(fieldIds.map((id) => [id, getFieldValue(id)]));
+
+    fetch("/add-basic-info", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    })
+    .then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Submit failed with status ${res.status}`);
+        }
+        return res.json();
+    })
+    .then(() => {
+        resetEntryForm();
+        calculateTotal();
+        loadData();
+        alert("Entry submitted successfully.");
+    })
+    .catch((error) => {
+        console.error(error);
+        alert("Entry could not be submitted. Please try again.");
+    });
+}
+
+function loadData() {
+    fetch("/basic-info")
+    .then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Load failed with status ${res.status}`);
+        }
+        return res.json();
+    })
+    .then(data => {
+        const tbody = document.querySelector("#table tbody");
+        tbody.innerHTML = "";
+
+        if (!Array.isArray(data)) {
+            return;
+        }
+
+        const orderedKeys = [
+            "sr_no", "atn", "shifting", "original_wh", "date", "warehouse", "shipment_type", "dispatch_type",
+            "in_doc_no", "order_no", "dc_no", "challan_date",
+            "oem", "po_no", "po_name",
+            "invoice_no", "invoice_date",
+            "item_code", "description", "qty", "physical_qty", "unit",
+            "rate", "total_value", "taxable_value", "tsc", "discount", "freight", "additional_total",
+            "cgst", "sgst", "grand_total",
+            "unloading", "transport", "vehicle", "lr_no", "lr_date",
+            "pkgs_qty", "delivery_date", "mode",
+            "reporting_time", "unloading_time", "wh_remark",
+            "eway_bill", "shipment_type2",
+            "inspection_date", "inspection_person",
+            "doc_remark", "pm_update_date", "pm_update_by", "reupload", "reupload_reason", "pm_remark",
+            "inspection_status", "pm_submit_date",
+            "approved_dpm", "approved_tpa",
+            "task_id",
+            "ch_invoice_no", "ch_invoice_date", "ch_submitted", "ch_remark"
+        ];
+
+        data.forEach(row => {
+            const tr = document.createElement("tr");
+
+            orderedKeys.forEach((key) => {
+                const td = document.createElement("td");
+                const value = row[key];
+                td.textContent = value === null || value === undefined ? "" : value;
+                tr.appendChild(td);
+            });
+
+            tbody.appendChild(tr);
+        });
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+loadData();
+</script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="simple-grid">
+    <div class="form-card">
+        <span class="eyebrow">Ground Team</span>
+        <h3>Add Material</h3>
+        <p>Use this panel for quick on-ground material entry and coordination updates.</p>
+
+        <form method="POST" action="/add-material">
+            <div class="field-row">
+                <div>
+                    <label for="ground_name">Material Name</label>
+                    <input id="ground_name" name="name" placeholder="Enter material name" required>
+                </div>
+                <div>
+                    <label for="ground_unit">Unit</label>
+                    <input id="ground_unit" name="unit" placeholder="Enter unit" required>
+                </div>
+                <div>
+                    <label for="ground_quantity">Quantity</label>
+                    <input id="ground_quantity" name="quantity" placeholder="Enter quantity" required>
+                </div>
+            </div>
+
+            <div class="page-actions">
+                <button class="action-btn" type="submit">Add Material</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="feature-card">
+        <span class="eyebrow">Field Summary</span>
+        <h3>Ground Dashboard</h3>
+        <div class="feature-list">
+            <div class="feature-row">
+                <strong>Material Entry</strong>
+                <span>Capture site-side material movement quickly.</span>
+            </div>
+            <div class="feature-row">
+                <strong>Operations Support</strong>
+                <span>Keep field data aligned with admin-side tracking.</span>
+            </div>
+            <div class="feature-row">
+                <strong>Status</strong>
+                <span>Ready for active site usage.</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

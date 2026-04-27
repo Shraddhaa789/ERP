@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .field-data-shell {
+        display: grid;
+        gap: 18px;
+    }
+
+    .field-data-intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 20px 22px;
+        border: 1px solid #d8e3f8;
+        border-radius: 22px;
+        background: linear-gradient(135deg, #ffffff 0%, #f7faff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .field-data-intro strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--primary-strong);
+        font-size: 20px;
+    }
+
+    .field-data-intro span {
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .field-data-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 9px 14px;
+        border-radius: 999px;
+        background: #edf3ff;
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .field-data-tabs {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        width: fit-content;
+        padding: 6px;
+        border: 1px solid #d8e3f8;
+        border-radius: 18px;
+        background: #f8fbff;
+    }
+
+    .field-data-tab {
+        min-width: 168px;
+        min-height: 44px;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 14px;
+        background: transparent;
+        color: #60769f;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .field-data-tab:hover {
+        transform: translateY(-1px);
+    }
+
+    .field-data-tab.active {
+        background: linear-gradient(135deg, #3559a6 0%, #5079d1 100%);
+        color: #fff;
+        box-shadow: 0 10px 22px rgba(54, 88, 163, 0.18);
+    }
+
+    .field-data-panel {
+        display: grid;
+        gap: 18px;
+        padding: 22px;
+        border: 1px solid #d8e3f8;
+        border-radius: 24px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .field-data-panel[hidden] {
+        display: none;
+    }
+
+    .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .section-head h3 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 24px;
+    }
+
+    .section-head p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .section-count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 46px;
+        height: 46px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid #d5e1f4;
+        background: #fff;
+        color: var(--primary);
+        font-weight: 800;
+        box-shadow: 0 8px 16px rgba(37, 52, 85, 0.06);
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+    }
+
+    .photo-card {
+        overflow: hidden;
+        padding: 0;
+        border: 1px solid #d8e3f8;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 14px 26px rgba(37, 52, 85, 0.08);
+    }
+
+    .photo-preview {
+        position: relative;
+        min-height: 190px;
+        overflow: hidden;
+        border-bottom: 1px solid #e5ecfa;
+    }
+
+    .photo-preview::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(9, 18, 40, 0.04), rgba(9, 18, 40, 0.16));
+    }
+
+    .photo-preview.a {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+            linear-gradient(135deg, #d0e5ff 0%, #b5d3ff 32%, #cdb397 33%, #b88d6c 70%, #8b6e5d 100%);
+    }
+
+    .photo-preview.b {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+            linear-gradient(135deg, #d9f1ff 0%, #a9d9ff 30%, #f0d4b1 31%, #d4aa7b 68%, #9b7859 100%);
+    }
+
+    .photo-preview.c {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+            linear-gradient(135deg, #e3efff 0%, #c1d9ff 28%, #c8bea9 29%, #9a8d75 66%, #71614f 100%);
+    }
+
+    .photo-preview.d {
+        background:
+            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
+            linear-gradient(135deg, #d4ebff 0%, #bcd7ff 32%, #d7c0a1 33%, #b48f69 70%, #86674f 100%);
+    }
+
+    .preview-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+        color: #2f4f95;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .photo-copy {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    .photo-copy strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--primary-strong);
+        font-size: 18px;
+    }
+
+    .photo-copy span {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .photo-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 999px;
+        background: #eef4ff;
+        color: #4b6593;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .document-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .document-card {
+        display: grid;
+        grid-template-columns: 62px minmax(0, 1fr) auto;
+        gap: 16px;
+        align-items: center;
+        padding: 16px 18px;
+        border: 1px solid #d8e3f8;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 12px 22px rgba(37, 52, 85, 0.06);
+    }
+
+    .document-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 62px;
+        height: 62px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #eef4ff 0%, #dce8ff 100%);
+        color: var(--primary);
+        font-size: 15px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+    }
+
+    .document-copy {
+        min-width: 0;
+    }
+
+    .document-copy strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--primary-strong);
+        font-size: 18px;
+    }
+
+    .document-copy p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+    }
+
+    .document-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .document-status {
+        display: grid;
+        gap: 8px;
+        justify-items: end;
+        text-align: right;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .status-pill.review {
+        background: #fff1c7;
+        color: #996b00;
+    }
+
+    .status-pill.ready {
+        background: #dff7e7;
+        color: #1f7a52;
+    }
+
+    .status-pill.pending {
+        background: #eef1f6;
+        color: #556784;
+    }
+
+    .document-status span {
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+        .field-data-intro,
+        .section-head {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .document-card {
+            grid-template-columns: 1fr;
+            justify-items: start;
+        }
+
+        .document-status {
+            justify-items: start;
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .field-data-tabs {
+            width: 100%;
+            display: grid;
+        }
+
+        .field-data-tab {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+</style>
+
+<div class="field-data-shell">
+    
+
+    <div class="field-data-tabs" role="tablist" aria-label="Field data types">
+        <button class="field-data-tab active" id="photos-tab" type="button" role="tab" aria-selected="true" aria-controls="photos-panel" onclick="showFieldDataPanel('photos')">Uploaded Photos</button>
+        <button class="field-data-tab" id="documents-tab" type="button" role="tab" aria-selected="false" aria-controls="documents-panel" onclick="showFieldDataPanel('documents')">Uploaded Documents</button>
+    </div>
+
+    <section class="field-data-panel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Photos</span>
+                <h3>Photos uploaded by users</h3>
+            </div>
+            <div class="section-count">4</div>
+        </div>
+
+        <div class="photo-grid">
+            <article class="photo-card">
+                <div class="photo-preview a">
+                    <span class="preview-badge">Site Photo</span>
+                </div>
+                <div class="photo-copy">
+                    <div>
+                        <strong>Foundation Progress</strong>
+                        <span>Uploaded by Amit Kumar</span>
+                    </div>
+                    <div class="photo-meta">
+                        <span class="meta-pill">Pune Yard</span>
+                        <span class="meta-pill">Today 10:15 AM</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="photo-card">
+                <div class="photo-preview b">
+                    <span class="preview-badge">Site Photo</span>
+                </div>
+                <div class="photo-copy">
+                    <div>
+                        <strong>Material Staging Area</strong>
+                        <span>Uploaded by Riya Shah</span>
+                    </div>
+                    <div class="photo-meta">
+                        <span class="meta-pill">Block B2</span>
+                        <span class="meta-pill">Today 9:42 AM</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="photo-card">
+                <div class="photo-preview c">
+                    <span class="preview-badge">Site Photo</span>
+                </div>
+                <div class="photo-copy">
+                    <div>
+                        <strong>Cable Trench Check</strong>
+                        <span>Uploaded by Neha Patil</span>
+                    </div>
+                    <div class="photo-meta">
+                        <span class="meta-pill">East Corridor</span>
+                        <span class="meta-pill">Yesterday 5:20 PM</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="photo-card">
+                <div class="photo-preview d">
+                    <span class="preview-badge">Site Photo</span>
+                </div>
+                <div class="photo-copy">
+                    <div>
+                        <strong>Finished Bay Snapshot</strong>
+                        <span>Uploaded by Rajvir</span>
+                    </div>
+                    <div class="photo-meta">
+                        <span class="meta-pill">Warehouse 3</span>
+                        <span class="meta-pill">Yesterday 2:05 PM</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="field-data-panel" id="documents-panel" role="tabpanel" aria-labelledby="documents-tab" hidden>
+        <div class="section-head">
+            <div>
+                <span class="eyebrow">Documents</span>
+                <h3>Documents uploaded by users</h3>
+            </div>
+            <div class="section-count">4</div>
+        </div>
+
+        <div class="document-list">
+            <article class="document-card">
+                <div class="document-icon">PDF</div>
+                <div class="document-copy">
+                    <strong>Daily Progress Report.pdf</strong>
+                    <p>Uploaded by Amit Kumar for the civil team progress review.</p>
+                    <div class="document-meta">
+                        <span class="meta-pill">Pune Yard</span>
+                        <span class="meta-pill">2.4 MB</span>
+                        <span class="meta-pill">Today 10:28 AM</span>
+                    </div>
+                </div>
+                <div class="document-status">
+                    <span class="status-pill review">Needs Review</span>
+                    <span>Reference ID: DOC-1042</span>
+                </div>
+            </article>
+
+            <article class="document-card">
+                <div class="document-icon">XLS</div>
+                <div class="document-copy">
+                    <strong>Material Consumption Sheet.xlsx</strong>
+                    <p>Uploaded by Riya Shah with the latest quantity update from site.</p>
+                    <div class="document-meta">
+                        <span class="meta-pill">Block B2</span>
+                        <span class="meta-pill">860 KB</span>
+                        <span class="meta-pill">Today 9:54 AM</span>
+                    </div>
+                </div>
+                <div class="document-status">
+                    <span class="status-pill ready">Verified</span>
+                    <span>Reference ID: DOC-1041</span>
+                </div>
+            </article>
+
+            <article class="document-card">
+                <div class="document-icon">IMG</div>
+                <div class="document-copy">
+                    <strong>Inspection Markup.jpg</strong>
+                    <p>Uploaded by Neha Patil with notes for trench correction points.</p>
+                    <div class="document-meta">
+                        <span class="meta-pill">East Corridor</span>
+                        <span class="meta-pill">1.1 MB</span>
+                        <span class="meta-pill">Yesterday 5:33 PM</span>
+                    </div>
+                </div>
+                <div class="document-status">
+                    <span class="status-pill pending">Pending</span>
+                    <span>Reference ID: DOC-1038</span>
+                </div>
+            </article>
+
+            <article class="document-card">
+                <div class="document-icon">DOC</div>
+                <div class="document-copy">
+                    <strong>Site Handover Note.docx</strong>
+                    <p>Uploaded by Rajvir with end-of-shift remarks and signoff summary.</p>
+                    <div class="document-meta">
+                        <span class="meta-pill">Warehouse 3</span>
+                        <span class="meta-pill">540 KB</span>
+                        <span class="meta-pill">Yesterday 2:18 PM</span>
+                    </div>
+                </div>
+                <div class="document-status">
+                    <span class="status-pill review">Needs Review</span>
+                    <span>Reference ID: DOC-1034</span>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>
+
+<script>
+function showFieldDataPanel(type) {
+    const isPhotos = type === "photos";
+    const photosPanel = document.getElementById("photos-panel");
+    const documentsPanel = document.getElementById("documents-panel");
+    const photosTab = document.getElementById("photos-tab");
+    const documentsTab = document.getElementById("documents-tab");
+
+    if (isPhotos) {
+        photosPanel.removeAttribute("hidden");
+        documentsPanel.setAttribute("hidden", "");
+        photosTab.classList.add("active");
+        documentsTab.classList.remove("active");
+        photosTab.setAttribute("aria-selected", "true");
+        documentsTab.setAttribute("aria-selected", "false");
+        return;
+    }
+
+    documentsPanel.removeAttribute("hidden");
+    photosPanel.setAttribute("hidden", "");
+    documentsTab.classList.add("active");
+    photosTab.classList.remove("active");
+    documentsTab.setAttribute("aria-selected", "true");
+    photosTab.setAttribute("aria-selected", "false");
+}
+</script>
+{% endblock %}

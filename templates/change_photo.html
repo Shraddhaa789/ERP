@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card" style="max-width: 720px; margin: 0 auto;">
+    <span class="eyebrow">Profile</span>
+    <h3>Change Photo</h3>
+    <p>Current selection: {{ profile.photo_name }}</p>
+
+    <form method="POST" action="/change-photo" enctype="multipart/form-data">
+        <div class="single-field">
+            <label for="profile_photo">Choose Photo</label>
+            <input id="profile_photo" name="photo" type="file" accept="image/*">
+        </div>
+
+        <div class="page-actions">
+            <button class="action-btn" type="submit">Save Photo</button>
+            <a class="secondary-btn" href="/my-account">Back</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

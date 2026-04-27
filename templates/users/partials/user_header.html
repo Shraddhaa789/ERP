@@ -1,0 +1,78 @@
+<div class="header">
+    <div><strong>erpwork</strong></div>
+
+    <div>
+        Welcome, {{ user }} |
+        <a href="/logout">Logout</a>
+    </div>
+</div>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #eef1f7;
+}
+
+/* FIXED NAVBAR */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #3b4f7c;
+    color: white;
+    padding: 28px 35px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+/* MAIN WRAPPER */
+.wrapper {
+    margin-top: 100px;
+    padding: 20px;
+}
+
+/* DASHBOARD BOX */
+.dashboard-box {
+    background: #fff;
+    border: 1px solid #b5c3dc;
+    border-radius: 5px;
+}
+
+/* TITLE BAR */
+.dashboard-title {
+    background: #cfd8ea;
+    padding: 12px 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #b5c3dc;
+}
+
+/* CONTENT AREA */
+.dashboard-content {
+    padding: 20px;
+}
+
+/* CARDS */
+.card {
+    background: #f8f9fc;
+    border: 1px solid #d6dff0;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px;
+    width: 30%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* BUTTON */
+button {
+    background: #5b74b8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+</style>

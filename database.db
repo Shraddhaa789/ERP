@@ -1,0 +1,81 @@
+CREATE TABLE basic_info (
+    id SERIAL PRIMARY KEY,
+
+    sr_no TEXT,
+    atn TEXT,
+    shifting TEXT,
+    original_wh TEXT,
+    date DATE,
+    warehouse TEXT,
+    shipment_type TEXT,
+    dispatch_type TEXT,
+
+    in_doc_no TEXT,
+    order_no TEXT,
+    dc_no TEXT,
+    challan_date DATE,
+
+    oem TEXT,
+    po_no TEXT,
+    po_name TEXT,
+
+    invoice_no TEXT,
+    invoice_date DATE,
+
+    item_code TEXT,
+    description TEXT,
+    qty TEXT,
+    physical_qty TEXT,
+    unit TEXT,
+
+    rate TEXT,
+    total_value TEXT,
+    taxable_value TEXT,
+
+    tsc TEXT,
+    discount TEXT,
+    freight TEXT,
+
+    cgst TEXT,
+    sgst TEXT,
+    grand_total TEXT,
+
+    unloading TEXT,
+    transport TEXT,
+    vehicle TEXT,
+    lr_no TEXT,
+    lr_date DATE,
+
+    pkgs_qty TEXT,
+    delivery_date DATE,
+    mode TEXT,
+
+    reporting_time TEXT,
+    unloading_time TEXT,
+    wh_remark TEXT,
+
+    eway_bill TEXT,
+    shipment_type2 TEXT,
+
+    inspection_date DATE,
+    inspection_person TEXT,
+
+    pm_update_date DATE,
+    doc_remark TEXT,
+    pm_update_by TEXT,
+    reupload TEXT,
+    reupload_reason TEXT,
+    pm_remark TEXT,
+    inspection_status TEXT,
+    pm_submit_date DATE,
+
+    approved_dpm DATE,
+    approved_tpa DATE,
+
+    task_id TEXT,
+
+    ch_invoice_no TEXT,
+    ch_invoice_date DATE,
+    ch_submitted TEXT,
+    ch_remark TEXT
+);

@@ -1,0 +1,610 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .dashboard-shell {
+        display: grid;
+        gap: 20px;
+    }
+
+    .dashboard-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 24px 26px;
+        border: 1px solid #d6e0f1;
+        border-radius: 24px;
+        background:
+            radial-gradient(circle at top right, rgba(110, 150, 228, 0.22), transparent 28%),
+            linear-gradient(135deg, #31456f 0%, #4868a7 100%);
+        color: #fff;
+        box-shadow: 0 20px 38px rgba(40, 58, 96, 0.14);
+    }
+
+    .dashboard-hero::after {
+        content: "";
+        position: absolute;
+        right: -30px;
+        bottom: -46px;
+        width: 210px;
+        height: 210px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .dashboard-hero h2 {
+        margin: 0 0 10px;
+        font-size: 30px;
+        letter-spacing: -0.04em;
+    }
+
+    .dashboard-hero p {
+        max-width: 720px;
+        margin: 0;
+        color: rgba(255, 255, 255, 0.84);
+        line-height: 1.7;
+    }
+
+    .hero-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #f7faff;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+    }
+
+    .kpi-card {
+        position: relative;
+        overflow: hidden;
+        padding: 18px 18px 16px;
+        border: 1px solid #d8e3f4;
+        border-radius: 22px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: 0 16px 30px rgba(36, 52, 83, 0.08);
+    }
+
+    .kpi-card::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto auto 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #4d72ca 0%, #79a8ff 100%);
+    }
+
+    .kpi-label {
+        color: #60708c;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .kpi-value {
+        margin-top: 10px;
+        color: #243453;
+        font-size: 34px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+    }
+
+    .kpi-meta {
+        margin-top: 8px;
+        color: #5f6e88;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .dashboard-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .viz-card,
+    .side-card {
+        border: 1px solid #d9e4f5;
+        border-radius: 24px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: 0 16px 32px rgba(36, 52, 83, 0.08);
+        overflow: hidden;
+    }
+
+    .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #e1eaf8;
+        background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+    }
+
+    .card-head h3 {
+        margin: 0;
+        color: #2b4677;
+        font-size: 19px;
+    }
+
+    .card-head span {
+        color: #6d7f9d;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .bar-chart {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px;
+        align-items: end;
+        min-height: 270px;
+        padding-top: 10px;
+    }
+
+    .bar-group {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+    }
+
+    .bar-stack {
+        width: 100%;
+        max-width: 76px;
+        height: 220px;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        padding: 0 10px;
+        border-radius: 20px 20px 14px 14px;
+        background:
+            linear-gradient(180deg, rgba(234, 241, 255, 0.2) 0%, rgba(234, 241, 255, 0.9) 100%);
+    }
+
+    .bar {
+        width: 100%;
+        border-radius: 18px 18px 8px 8px;
+        background: linear-gradient(180deg, #7eabff 0%, #4f75cf 100%);
+        box-shadow: 0 12px 20px rgba(79, 117, 207, 0.18);
+        position: relative;
+    }
+
+    .bar::after {
+        content: attr(data-value);
+        position: absolute;
+        top: -28px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #3e5b93;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .bar-label {
+        color: #5a6f93;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .chart-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        margin-top: 18px;
+    }
+
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #5d708e;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .ring-wrap {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 18px;
+        align-items: center;
+    }
+
+    .ring-chart {
+        width: 190px;
+        height: 190px;
+        margin: 0 auto;
+        border-radius: 50%;
+        background: conic-gradient(
+            #4d72ca 0 42%,
+            #6ea3ff 42% 68%,
+            #7dc8d8 68% 86%,
+            #dbe6fb 86% 100%
+        );
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+    }
+
+    .ring-chart::after {
+        content: "86%\A On Track";
+        white-space: pre;
+        position: absolute;
+        inset: 26px;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        border-radius: 50%;
+        background: #fff;
+        color: #2d4675;
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.15;
+        box-shadow: 0 12px 24px rgba(39, 56, 92, 0.08);
+    }
+
+    .distribution-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .distribution-row {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid #e2eaf8;
+        border-radius: 16px;
+        background: #fff;
+    }
+
+    .distribution-name {
+        color: #314970;
+        font-weight: 700;
+    }
+
+    .distribution-track {
+        height: 8px;
+        border-radius: 999px;
+        background: #e8effb;
+        overflow: hidden;
+    }
+
+    .distribution-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #4f75cf 0%, #7ca8ff 100%);
+    }
+
+    .distribution-value {
+        color: #6a7d9b;
+        font-weight: 700;
+    }
+
+    .mini-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+    }
+
+    .progress-list,
+    .activity-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .progress-row,
+    .activity-row {
+        padding: 14px 15px;
+        border: 1px solid #e2eaf8;
+        border-radius: 18px;
+        background: #fff;
+    }
+
+    .progress-top,
+    .activity-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+        color: #30466f;
+        font-weight: 700;
+    }
+
+    .progress-track {
+        height: 10px;
+        border-radius: 999px;
+        background: #e8effb;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #4f75cf 0%, #78a9ff 100%);
+    }
+
+    .activity-meta {
+        color: #6b7d99;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .status-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-chip.live {
+        background: #e7fff2;
+        color: #1f8a5b;
+    }
+
+    .status-chip.review {
+        background: #eef3ff;
+        color: #4367bf;
+    }
+
+    @media (max-width: 1080px) {
+        .dashboard-main,
+        .ring-wrap {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .dashboard-hero {
+            padding: 20px 18px;
+        }
+
+        .dashboard-hero h2 {
+            font-size: 25px;
+        }
+
+        .bar-chart {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+</style>
+
+<div class="dashboard-shell">
+    <section class="dashboard-hero">
+        <h2>Operations Dashboard</h2>
+        <p>
+            Track project momentum, material movement, workforce activity, and pending execution points from one
+            visual control room.
+        </p>
+        <div class="hero-badges">
+            <div class="hero-badge">12 Active Projects</div>
+            <div class="hero-badge">38 Team Members Live</div>
+            <div class="hero-badge">7 Pending Approvals</div>
+        </div>
+    </section>
+
+    <section class="kpi-grid">
+        <article class="kpi-card">
+            <div class="kpi-label">Material Dispatch</div>
+            <div class="kpi-value">148</div>
+            <div class="kpi-meta">Dispatches recorded this month with 12% growth from the previous cycle.</div>
+        </article>
+        <article class="kpi-card">
+            <div class="kpi-label">Documents Verified</div>
+            <div class="kpi-value">94%</div>
+            <div class="kpi-meta">Invoices, uploads, and support files are staying on track across teams.</div>
+        </article>
+        <article class="kpi-card">
+            <div class="kpi-label">Work Completion</div>
+            <div class="kpi-value">81%</div>
+            <div class="kpi-meta">Execution progress is strongest in civil and procurement-driven projects.</div>
+        </article>
+        <article class="kpi-card">
+            <div class="kpi-label">Issues Escalated</div>
+            <div class="kpi-value">09</div>
+            <div class="kpi-meta">Most blockers are related to approvals, transport timing, and stock visibility.</div>
+        </article>
+    </section>
+
+    <section class="dashboard-main">
+        <article class="viz-card">
+            <div class="card-head">
+                <h3>Weekly Dispatch Trend</h3>
+                <span>Last 6 Weeks</span>
+            </div>
+            <div class="card-body">
+                <div class="bar-chart">
+                    <div class="bar-group">
+                        <div class="bar-stack">
+                            <div class="bar" data-value="42" style="height: 42%;"></div>
+                        </div>
+                        <div class="bar-label">Week 1</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-stack">
+                            <div class="bar" data-value="56" style="height: 56%;"></div>
+                        </div>
+                        <div class="bar-label">Week 2</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-stack">
+                            <div class="bar" data-value="64" style="height: 64%;"></div>
+                        </div>
+                        <div class="bar-label">Week 3</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-stack">
+                            <div class="bar" data-value="58" style="height: 58%;"></div>
+                        </div>
+                        <div class="bar-label">Week 4</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-stack">
+                            <div class="bar" data-value="73" style="height: 73%;"></div>
+                        </div>
+                        <div class="bar-label">Week 5</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-stack">
+                            <div class="bar" data-value="81" style="height: 81%;"></div>
+                        </div>
+                        <div class="bar-label">Week 6</div>
+                    </div>
+                </div>
+
+                <div class="chart-legend">
+                    <div class="legend-item"><span class="legend-dot" style="background:#4f75cf;"></span> Material movement</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#7ca8ff;"></span> Higher bar means stronger dispatch volume</div>
+                </div>
+            </div>
+        </article>
+
+        <article class="side-card">
+            <div class="card-head">
+                <h3>Project Split</h3>
+                <span>By Stage</span>
+            </div>
+            <div class="card-body ring-wrap">
+                <div class="ring-chart"></div>
+
+                <div class="distribution-list">
+                    <div class="distribution-row">
+                        <div class="legend-dot" style="background:#4d72ca;"></div>
+                        <div>
+                            <div class="distribution-name">Execution</div>
+                            <div class="distribution-track"><div class="distribution-fill" style="width:42%;"></div></div>
+                        </div>
+                        <div class="distribution-value">42%</div>
+                    </div>
+                    <div class="distribution-row">
+                        <div class="legend-dot" style="background:#6ea3ff;"></div>
+                        <div>
+                            <div class="distribution-name">Approvals</div>
+                            <div class="distribution-track"><div class="distribution-fill" style="width:26%;"></div></div>
+                        </div>
+                        <div class="distribution-value">26%</div>
+                    </div>
+                    <div class="distribution-row">
+                        <div class="legend-dot" style="background:#7dc8d8;"></div>
+                        <div>
+                            <div class="distribution-name">Procurement</div>
+                            <div class="distribution-track"><div class="distribution-fill" style="width:18%;"></div></div>
+                        </div>
+                        <div class="distribution-value">18%</div>
+                    </div>
+                    <div class="distribution-row">
+                        <div class="legend-dot" style="background:#dbe6fb;"></div>
+                        <div>
+                            <div class="distribution-name">Closed</div>
+                            <div class="distribution-track"><div class="distribution-fill" style="width:14%;"></div></div>
+                        </div>
+                        <div class="distribution-value">14%</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <section class="mini-grid">
+        <article class="side-card">
+            <div class="card-head">
+                <h3>Department Progress</h3>
+                <span>Live View</span>
+            </div>
+            <div class="card-body">
+                <div class="progress-list">
+                    <div class="progress-row">
+                        <div class="progress-top">
+                            <span>Civil Work</span>
+                            <span>88%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:88%;"></div></div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="progress-top">
+                            <span>Electrical</span>
+                            <span>74%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:74%;"></div></div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="progress-top">
+                            <span>Procurement</span>
+                            <span>69%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:69%;"></div></div>
+                    </div>
+                    <div class="progress-row">
+                        <div class="progress-top">
+                            <span>Documentation</span>
+                            <span>91%</span>
+                        </div>
+                        <div class="progress-track"><div class="progress-fill" style="width:91%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="side-card">
+            <div class="card-head">
+                <h3>Recent Activity</h3>
+                <span>Today</span>
+            </div>
+            <div class="card-body">
+                <div class="activity-list">
+                    <div class="activity-row">
+                        <div class="activity-top">
+                            <span>Warehouse Dispatch Updated</span>
+                            <span class="status-chip live">Live</span>
+                        </div>
+                        <div class="activity-meta">Steel and cement movement posted for Pune site at 10:45 AM.</div>
+                    </div>
+                    <div class="activity-row">
+                        <div class="activity-top">
+                            <span>Invoice Review Queue</span>
+                            <span class="status-chip review">Review</span>
+                        </div>
+                        <div class="activity-meta">3 documents are waiting for finance and verification clearance.</div>
+                    </div>
+                    <div class="activity-row">
+                        <div class="activity-top">
+                            <span>Field Upload Completed</span>
+                            <span class="status-chip live">Live</span>
+                        </div>
+                        <div class="activity-meta">Ground team added today’s photo evidence and work status logs.</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+</div>
+{% endblock %}

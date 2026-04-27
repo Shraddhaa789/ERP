@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .account-shell {
+        display: grid;
+        gap: 18px;
+    }
+
+    .account-message {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        max-width: min(100%, 320px);
+        padding: 10px 14px;
+        border: 1px solid #9fd9bb;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #f1fff6 0%, #e0f7ea 100%);
+        color: #176b45;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+        box-shadow: 0 10px 24px rgba(33, 131, 95, 0.14);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .account-message.is-hiding {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    .profile-panel {
+        border: 1px solid #c8d8ef;
+        border-radius: 24px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .profile-panel-header {
+        padding: 16px 22px;
+        border-bottom: 1px solid #d8e4f4;
+        background: linear-gradient(180deg, #edf3ff 0%, #dfe9ff 100%);
+        color: var(--primary);
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .profile-panel-body {
+        padding: 26px;
+    }
+
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr);
+        gap: 28px;
+        align-items: start;
+    }
+
+    .photo-column {
+        display: grid;
+        gap: 14px;
+        justify-items: center;
+    }
+
+    .photo-frame {
+        width: 200px;
+        height: 236px;
+        overflow: hidden;
+        border: 1px solid #d7e2f2;
+        border-radius: 8px;
+        background:
+            linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.16)),
+            linear-gradient(135deg, #d2e7ff 0%, #bdd8ff 34%, #cdb598 35%, #b68f6f 72%, #8a6d57 100%);
+        box-shadow: 0 12px 24px rgba(37, 52, 85, 0.08);
+    }
+
+    .photo-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .photo-actions {
+        display: grid;
+        gap: 10px;
+        width: 100%;
+        justify-items: center;
+    }
+
+    .photo-upload-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 8px 14px;
+        border: 1px solid #7fc3dd;
+        border-radius: 8px;
+        background: #8ed6f1;
+        color: #114660;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .photo-upload-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(82, 143, 170, 0.18);
+    }
+
+    .photo-file-name {
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .profile-card {
+        width: min(100%, 820px);
+        border: 1px solid #d4def1;
+        border-radius: 14px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+        box-shadow: 0 14px 28px rgba(37, 52, 85, 0.08);
+    }
+
+    .profile-card-header {
+        padding: 14px 18px 12px;
+        background: linear-gradient(135deg, #31456f 0%, #3d5a91 100%);
+        color: #ffffff;
+    }
+
+    .profile-card-header h3 {
+        margin: 0 0 6px;
+        font-size: 18px;
+    }
+
+    .designation-line {
+        color: #cfe0ff;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .designation-line span {
+        color: #ffef6b;
+    }
+
+    .details-table {
+        display: grid;
+    }
+
+    .detail-line {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        border-top: 1px solid #dde7f6;
+    }
+
+    .detail-label,
+    .detail-value {
+        padding: 11px 16px;
+        font-size: 14px;
+    }
+
+    .detail-label {
+        color: #415474;
+        background: #f4f8ff;
+    }
+
+    .detail-value {
+        color: #11213c;
+        font-weight: 700;
+        background: #ffffff;
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+        flex-wrap: wrap;
+    }
+
+    .edit-toggle-btn,
+    .save-profile-btn,
+    .cancel-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 11px 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .edit-toggle-btn,
+    .save-profile-btn {
+        border: none;
+        background: linear-gradient(135deg, #31539d 0%, #4b77d2 100%);
+        color: #fff;
+        box-shadow: 0 14px 26px rgba(53, 85, 160, 0.18);
+    }
+
+    .cancel-edit-btn {
+        border: 1px solid #d5e1f4;
+        background: #f5f8ff;
+        color: var(--primary);
+    }
+
+    .edit-form-panel {
+        margin-top: 22px;
+        padding: 22px;
+        border: 1px solid #d8e3f8;
+        border-radius: 20px;
+        background: linear-gradient(180deg, #fbfdff 0%, #f3f7ff 100%);
+    }
+
+    .edit-form-panel[hidden] {
+        display: none;
+    }
+
+    .edit-form-panel h4 {
+        margin: 0 0 6px;
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+    .edit-form-panel p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .hidden-file-input {
+        display: none;
+    }
+
+    @media (max-width: 980px) {
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .photo-column {
+            justify-items: start;
+        }
+
+        .detail-line {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="account-shell">
+    {% if account_saved %}
+    <div class="account-message" id="accountMessage">Profile updated successfully.</div>
+    {% endif %}
+
+    <form method="POST" action="/my-account" enctype="multipart/form-data">
+        <section class="profile-panel">
+            <div class="profile-panel-header">Personal Details</div>
+
+            <div class="profile-panel-body">
+                <div class="profile-layout">
+                    <div class="photo-column">
+                        <div class="photo-frame">
+                            {% if profile.photo_path %}
+                            <img src="/uploads/{{ profile.photo_path }}" alt="Profile photo">
+                            {% endif %}
+                        </div>
+
+                        <div class="photo-actions">
+                            <label class="photo-upload-btn" for="account_photo">Change Photo</label>
+                            <input class="hidden-file-input" id="account_photo" name="photo" type="file" accept="image/*" onchange="showSelectedFileName(this)">
+                            <div class="photo-file-name" id="selectedPhotoName">{{ profile.photo_name or "No file selected" }}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="profile-card">
+                            <div class="profile-card-header">
+                                <h3>{{ profile.name }}</h3>
+                                <div class="designation-line">Designation: <span>{{ profile.designation }}</span></div>
+                            </div>
+
+                            <div class="details-table">
+                                <div class="detail-line">
+                                    <div class="detail-label">Employee Code :</div>
+                                    <div class="detail-value">{{ profile.employee_code }}</div>
+                                </div>
+                                <div class="detail-line">
+                                    <div class="detail-label">Location :</div>
+                                    <div class="detail-value">{{ profile.location }}</div>
+                                </div>
+                                <div class="detail-line">
+                                    <div class="detail-label">Mobile :</div>
+                                    <div class="detail-value">{{ profile.mobile }}</div>
+                                </div>
+                                <div class="detail-line">
+                                    <div class="detail-label">Email :</div>
+                                    <div class="detail-value">{{ profile.email }}</div>
+                                </div>
+                                <div class="detail-line">
+                                    <div class="detail-label">Gender :</div>
+                                    <div class="detail-value">{{ profile.gender }}</div>
+                                </div>
+                                <div class="detail-line">
+                                    <div class="detail-label">Blood Group :</div>
+                                    <div class="detail-value">{{ profile.blood_group }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="edit-actions">
+                            <button class="edit-toggle-btn" id="editProfileBtn" type="button" onclick="toggleProfileEdit(true)">Edit Profile</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="edit-form-panel" id="editProfilePanel" hidden>
+                    <h4>Edit Profile</h4>
+                    <p>Update your displayed personal information and save the changes here.</p>
+
+                    <div class="field-row">
+                        <div>
+                            <label for="account_name">Name</label>
+                            <input id="account_name" name="name" value="{{ profile.name }}" required>
+                        </div>
+                        <div>
+                            <label for="account_designation">Designation</label>
+                            <input id="account_designation" name="designation" value="{{ profile.designation }}" required>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div>
+                            <label for="account_employee_code">Employee Code</label>
+                            <input id="account_employee_code" name="employee_code" value="{{ profile.employee_code }}" required>
+                        </div>
+                        <div>
+                            <label for="account_location">Location</label>
+                            <input id="account_location" name="location" value="{{ profile.location }}" required>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div>
+                            <label for="account_mobile">Mobile</label>
+                            <input id="account_mobile" name="mobile" value="{{ profile.mobile }}" required>
+                        </div>
+                        <div>
+                            <label for="account_email">Email</label>
+                            <input id="account_email" name="email" value="{{ profile.email }}" required>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div>
+                            <label for="account_gender">Gender</label>
+                            <input id="account_gender" name="gender" value="{{ profile.gender }}" required>
+                        </div>
+                        <div>
+                            <label for="account_blood_group">Blood Group</label>
+                            <input id="account_blood_group" name="blood_group" value="{{ profile.blood_group }}" required>
+                        </div>
+                    </div>
+
+                    <div class="edit-actions">
+                        <button class="save-profile-btn" type="submit">Save Changes</button>
+                        <button class="cancel-edit-btn" type="button" onclick="toggleProfileEdit(false)">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
+</div>
+
+<script>
+function toggleProfileEdit(showEdit) {
+    const panel = document.getElementById("editProfilePanel");
+    const button = document.getElementById("editProfileBtn");
+
+    if (!panel || !button) {
+        return;
+    }
+
+    if (showEdit) {
+        panel.removeAttribute("hidden");
+        button.style.display = "none";
+        const firstInput = panel.querySelector("input");
+        if (firstInput) {
+            firstInput.focus();
+        }
+        return;
+    }
+
+    panel.setAttribute("hidden", "");
+    button.style.display = "inline-flex";
+}
+
+function showSelectedFileName(input) {
+    const label = document.getElementById("selectedPhotoName");
+    if (!label) {
+        return;
+    }
+
+    label.textContent = input.files && input.files[0] ? input.files[0].name : "No file selected";
+}
+
+const accountMessage = document.getElementById("accountMessage");
+if (accountMessage) {
+    window.setTimeout(() => {
+        accountMessage.classList.add("is-hiding");
+        window.setTimeout(() => {
+            accountMessage.remove();
+        }, 350);
+    }, 4000);
+}
+</script>
+{% endblock %}

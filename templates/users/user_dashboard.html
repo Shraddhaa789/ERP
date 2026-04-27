@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="simple-grid">
+    <div class="feature-card">
+        <span class="eyebrow">Work</span>
+        <h3>Upload Work</h3>
+        <p>Add site work details with captured photos and supporting notes.</p>
+        <div class="page-actions">
+            <a class="action-btn" href="/upload-work">Open</a>
+        </div>
+    </div>
+
+    <div class="feature-card">
+        <span class="eyebrow">Documents</span>
+        <h3>Upload Documents</h3>
+        <p>Upload invoices, supporting files, and project-related documents.</p>
+        <div class="page-actions">
+            <a class="action-btn" href="/upload-documents">Open</a>
+        </div>
+    </div>
+
+    <div class="feature-card">
+        <span class="eyebrow">Profile</span>
+        <h3>My Profile</h3>
+        <p>Review and update your contact details and personal information.</p>
+        <div class="page-actions">
+            <a class="action-btn" href="/user-profile">Open</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

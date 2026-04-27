@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-grid">
+    <div class="photo-card">
+        <div class="photo-box"></div>
+        <a class="small-btn" href="/change-photo">Change Photo</a>
+        <p style="margin-top: 10px; color: #667089; font-size: 13px;">{{ profile.photo_name }}</p>
+    </div>
+
+    <div>
+        <div class="details-card">
+            <div class="details-header">
+                <h2>{{ profile.name }}</h2>
+                <p class="designation">Designation: <span>{{ profile.designation }}</span></p>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Employee Code :</div>
+                <div class="detail-value">{{ profile.employee_code }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Location :</div>
+                <div class="detail-value">{{ profile.location }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Mobile :</div>
+                <div class="detail-value">{{ profile.mobile }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Email :</div>
+                <div class="detail-value">{{ profile.email }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Gender :</div>
+                <div class="detail-value">{{ profile.gender }}</div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Blood Group :</div>
+                <div class="detail-value">{{ profile.blood_group }}</div>
+            </div>
+        </div>
+        <a class="action-btn" href="/edit-profile">Edit profile</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .settings-shell {
+        display: grid;
+        gap: 20px;
+        max-width: 980px;
+    }
+
+    .settings-message {
+        padding: 14px 16px;
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: #f9fbff;
+    }
+
+    .settings-message strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--primary-strong);
+    }
+
+    .settings-message span {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+    .settings-card {
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: var(--shadow);
+    }
+
+    .settings-card + .settings-card {
+        margin-top: 2px;
+    }
+
+    .settings-card h3 {
+        margin: 0 0 8px;
+        color: var(--primary);
+        font-size: 22px;
+    }
+
+    .settings-card p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .settings-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .settings-stack {
+        display: grid;
+        gap: 12px;
+    }
+
+    .setting-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 14px 16px;
+        border: 1px solid #e1e8f4;
+        border-radius: 16px;
+        background: #fcfdff;
+    }
+
+    .setting-item strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--primary-strong);
+        font-size: 15px;
+    }
+
+    .setting-item span {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .switch {
+        position: relative;
+        width: 52px;
+        height: 30px;
+        flex: 0 0 auto;
+    }
+
+    .switch input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        margin: 0;
+        cursor: pointer;
+        min-height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: #d7e0f0;
+        transition: background 0.18s ease;
+    }
+
+    .slider::after {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 4px 10px rgba(42, 61, 101, 0.15);
+        transition: transform 0.18s ease;
+    }
+
+    .switch input:checked + .slider {
+        background: #5c7fcb;
+    }
+
+    .switch input:checked + .slider::after {
+        transform: translateX(22px);
+    }
+
+    .settings-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .settings-actions form {
+        margin: 0;
+    }
+
+    .settings-note {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+</style>
+
+{% set app_settings = app_settings or {} %}
+
+<div class="settings-shell">
+    {% if settings_saved %}
+    <div class="settings-message">
+        <strong>Settings updated</strong>
+        <span>Your important preferences were saved successfully.</span>
+    </div>
+    {% elif request.args.get("reset") == "1" %}
+    <div class="settings-message">
+        <strong>Defaults restored</strong>
+        <span>The settings panel is back to the recommended defaults.</span>
+    </div>
+    {% endif %}
+
+    <form method="post" action="/setting">
+        <div class="settings-card">
+            <h3>Report Preferences</h3>
+            <p>Keep only the basic report options here so the section stays simple and useful.</p>
+
+            <div class="settings-row">
+                <div>
+                    <label for="default_report_type">Default Report Type</label>
+                    <select id="default_report_type" name="default_report_type">
+                        <option value="inward" {% if app_settings.default_report_type == "inward" %}selected{% endif %}>Inward Report</option>
+                        <option value="outward" {% if app_settings.default_report_type == "outward" %}selected{% endif %}>Outward Report</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="report_rows">Rows Per Report</label>
+                    <select id="report_rows" name="report_rows">
+                        {% for option in ["25", "50", "100", "250"] %}
+                        <option value="{{ option }}" {% if app_settings.report_rows == option %}selected{% endif %}>{{ option }} rows</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="export_format">Export Format</label>
+                    <select id="export_format" name="export_format">
+                        <option value="csv" {% if app_settings.export_format == "csv" %}selected{% endif %}>CSV</option>
+                        <option value="excel" {% if app_settings.export_format == "excel" %}selected{% endif %}>Excel Style</option>
+                        <option value="pdf" {% if app_settings.export_format == "pdf" %}selected{% endif %}>PDF Ready</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h3>Important Controls</h3>
+            <p>These switches keep the main workflow reliable without filling the page with extra options.</p>
+
+            <div class="settings-stack">
+                <div class="setting-item">
+                    <div>
+                        <strong>Email notifications</strong>
+                        <span>Keep admin reminders available when needed.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="notify_email" {% if app_settings.notify_email %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Dashboard highlights</strong>
+                        <span>Show important alerts and quick updates on the dashboard.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="notify_dashboard" {% if app_settings.notify_dashboard %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Compact tables</strong>
+                        <span>Use a tighter table layout when you need more rows visible.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="compact_tables" {% if app_settings.compact_tables %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Approval lock</strong>
+                        <span>Protect approval-related values from accidental changes.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="approval_lock" {% if app_settings.approval_lock %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Show totals</strong>
+                        <span>Keep totals visible in important report and entry views.</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="show_totals" {% if app_settings.show_totals %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button class="action-btn" type="submit">Save Settings</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="settings-card">
+        <h3>Reset</h3>
+        <p>Use this only if you want to go back to the default settings.</p>
+
+        <div class="settings-actions">
+            <form method="post" action="/setting/reset">
+                <button class="secondary-btn" type="submit">Restore Defaults</button>
+            </form>
+        </div>
+
+        <div class="settings-note">
+            This reset only changes the settings panel values. It does not remove users, entries, or report data.
+        </div>
+    </div>
+</div>
+{% endblock %}

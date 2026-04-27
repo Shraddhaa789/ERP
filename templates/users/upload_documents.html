@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card" style="max-width: 760px; margin: 0 auto;">
+    <span class="eyebrow">Documents</span>
+    <h3>Upload Documents</h3>
+    <p>Upload invoices and supporting files up to 5MB in size.</p>
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="single-field">
+            <label for="user_document">Select Document</label>
+            <input id="user_document" type="file" name="document">
+        </div>
+
+        <div class="page-actions">
+            <button class="action-btn" type="submit">Upload</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card" style="max-width: 760px; margin: 0 auto;">
+    <span class="eyebrow">Profile</span>
+    <h3>My Profile</h3>
+    <p>Update the contact details attached to your user account.</p>
+
+    <form method="POST">
+        <div class="field-row">
+            <div>
+                <label for="user_name">Name</label>
+                <input id="user_name" value="{{ profile.name }}" disabled>
+            </div>
+            <div>
+                <label for="user_designation">Designation</label>
+                <input id="user_designation" value="{{ profile.designation }}" disabled>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div>
+                <label for="user_mobile">Mobile</label>
+                <input id="user_mobile" name="mobile" value="{{ profile.mobile }}">
+            </div>
+            <div>
+                <label for="user_email">Email</label>
+                <input id="user_email" name="email" value="{{ profile.email }}">
+            </div>
+        </div>
+
+        <div class="single-field">
+            <label for="user_location">Location</label>
+            <input id="user_location" name="location" value="{{ profile.location }}">
+        </div>
+
+        <div class="page-actions">
+            <button class="action-btn" type="submit">Update Profile</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

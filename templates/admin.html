@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .admin-home {
+        display: grid;
+        gap: 18px;
+    }
+
+    .home-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
+        gap: 18px;
+        align-items: start;
+    }
+
+    .section-card {
+        display: grid;
+        gap: 18px;
+        padding: 22px;
+        border: 1px solid #d8e3f8;
+        border-radius: 24px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+        box-shadow: var(--shadow);
+    }
+
+    .section-head {
+        display: grid;
+        gap: 8px;
+    }
+
+    .section-head h3 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 22px;
+        letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .action-tile {
+        display: grid;
+        gap: 12px;
+        padding: 18px;
+        border: 1px solid #dce5f5;
+        border-radius: 22px;
+        background: #fff;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .action-tile:hover {
+        transform: translateY(-2px);
+        border-color: #c7d7f5;
+        background: #fcfdff;
+        box-shadow: 0 16px 28px rgba(37, 52, 85, 0.08);
+    }
+
+    .action-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+    }
+
+    .action-icon.users {
+        background: #e8efff;
+        color: #4368b3;
+    }
+
+    .action-icon.entry {
+        background: #e8f9ef;
+        color: #24815c;
+    }
+
+    .action-icon.report {
+        background: #fff3d8;
+        color: #a36c00;
+    }
+
+    .action-icon.field {
+        background: #efeaff;
+        color: #6952cb;
+    }
+
+    .action-copy strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--primary-strong);
+        font-size: 18px;
+    }
+
+    .action-copy span {
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .watchlist {
+        display: grid;
+        gap: 12px;
+    }
+
+    .watch-item {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 16px;
+        border: 1px solid #e1e9f7;
+        border-radius: 18px;
+        background: #fff;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .watch-item:hover {
+        transform: translateY(-1px);
+        border-color: #c7d7f5;
+        box-shadow: 0 14px 24px rgba(37, 52, 85, 0.07);
+    }
+
+    .watch-item strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--primary-strong);
+        font-size: 15px;
+    }
+
+    .watch-item span {
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 14px;
+    }
+
+    .ops-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 74px;
+        padding: 8px 11px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .ops-pill.alert {
+        background: #fff0cf;
+        color: #9e6c00;
+    }
+
+    .ops-pill.live {
+        background: #e7efff;
+        color: #4368b3;
+    }
+
+    .ops-pill.ready {
+        background: #dff7e7;
+        color: #1e7c52;
+    }
+
+    @media (max-width: 1100px) {
+        .home-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .quick-actions {
+            grid-template-columns: 1fr;
+        }
+
+        .watch-item {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="admin-home">
+    <div class="home-grid">
+        <section class="section-card">
+            <div class="section-head">
+                <span class="eyebrow">Quick Routes</span>
+                <h3>Jump into the right workflow</h3>
+            </div>
+
+            <div class="quick-actions">
+                <a class="action-tile" href="/view-users">
+                    <span class="action-icon users">U</span>
+                    <div class="action-copy">
+                        <strong>Manage Users</strong>
+                        <span>Open the user list, reset passwords, and review access.</span>
+                    </div>
+                </a>
+
+                <a class="action-tile" href="/new_entry">
+                    <span class="action-icon entry">IN</span>
+                    <div class="action-copy">
+                        <strong>Create Inward Entry</strong>
+                        <span>Capture incoming material movement and logistics details.</span>
+                    </div>
+                </a>
+
+                <a class="action-tile" href="/report">
+                    <span class="action-icon report">R</span>
+                    <div class="action-copy">
+                        <strong>Open Reports</strong>
+                        <span>Search records, compare data, and export results.</span>
+                    </div>
+                </a>
+
+                <a class="action-tile" href="/master">
+                    <span class="action-icon field">FD</span>
+                    <div class="action-copy">
+                        <strong>Review Field Data</strong>
+                        <span>Check uploaded site photos and supporting documents.</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <aside class="section-card">
+            <div class="section-head">
+                <span class="eyebrow">Watchlist</span>
+                <h3>What needs attention</h3>
+            </div>
+
+            <div class="watchlist">
+                <a class="watch-item" href="/master">
+                    <div>
+                        <strong>Unreviewed upload batch</strong>
+                        <span>6 new files are waiting in Field Data.</span>
+                    </div>
+                    <span class="ops-pill alert">Alert</span>
+                </a>
+
+                <a class="watch-item" href="/outward-entry">
+                    <div>
+                        <strong>Outward dispatches logged</strong>
+                        <span>4 outward entries were added in the last working cycle.</span>
+                    </div>
+                    <span class="ops-pill live">Live</span>
+                </a>
+
+                <a class="watch-item" href="/view-users">
+                    <div>
+                        <strong>Password reset requests cleared</strong>
+                        <span>All pending access updates are up to date.</span>
+                    </div>
+                    <span class="ops-pill ready">Ready</span>
+                </a>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

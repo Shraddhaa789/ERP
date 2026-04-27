@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-card" style="max-width: 900px; margin: 0 auto;">
+    <span class="eyebrow">Profile</span>
+    <h3>Edit Profile</h3>
+    <p>Update the core profile details shown across your dashboard and account pages.</p>
+
+    <form method="POST" action="/edit-profile">
+        <div class="field-row">
+            <div>
+                <label for="edit_name">Name</label>
+                <input id="edit_name" name="name" value="{{ profile.name }}" required>
+            </div>
+            <div>
+                <label for="edit_designation">Designation</label>
+                <input id="edit_designation" name="designation" value="{{ profile.designation }}" required>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div>
+                <label for="edit_employee_code">Employee Code</label>
+                <input id="edit_employee_code" name="employee_code" value="{{ profile.employee_code }}" required>
+            </div>
+            <div>
+                <label for="edit_location">Location</label>
+                <input id="edit_location" name="location" value="{{ profile.location }}" required>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div>
+                <label for="edit_mobile">Mobile</label>
+                <input id="edit_mobile" name="mobile" value="{{ profile.mobile }}" required>
+            </div>
+            <div>
+                <label for="edit_email">Email</label>
+                <input id="edit_email" name="email" value="{{ profile.email }}" required>
+            </div>
+        </div>
+
+        <div class="field-row">
+            <div>
+                <label for="edit_gender">Gender</label>
+                <input id="edit_gender" name="gender" value="{{ profile.gender }}" required>
+            </div>
+            <div>
+                <label for="edit_blood_group">Blood Group</label>
+                <input id="edit_blood_group" name="blood_group" value="{{ profile.blood_group }}" required>
+            </div>
+        </div>
+
+        <div class="page-actions">
+            <button class="action-btn" type="submit">Save Profile</button>
+            <a class="secondary-btn" href="/my-account">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

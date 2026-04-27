@@ -1,0 +1,44 @@
+<nav class="navbar">
+    <a class="brand" href="/dashboard">erp<span>work</span></a>
+    <div class="nav-links">
+        {% if role == "admin" %}
+            <a class="nav-link {% if active_page == 'admin_dashboard' %}active{% endif %}" href="/admin-dashboard">Home</a>
+            <a class="nav-link {% if active_page == 'account' %}active{% endif %}" href="/my-account">My Account</a>
+            <a class="nav-link {% if active_page == 'master' %}active{% endif %}" href="/master">Field Data</a>
+            <details class="nav-group">
+                <summary class="nav-link nav-toggle {% if active_page in ['new_entry', 'outward_entry'] %}active{% endif %}">
+                    <span>Entry</span>
+                    <span class="nav-caret">▼</span>
+                </summary>
+                <div class="nav-dropdown">
+                    <a class="nav-link {% if active_page == 'new_entry' %}active{% endif %}" href="/new_entry">Inward</a>
+                    <a class="nav-link {% if active_page == 'outward_entry' %}active{% endif %}" href="/outward-entry">Outward</a>
+                </div>
+            </details>
+            <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="/dashboard-summary">Dashboard</a>
+            <a class="nav-link {% if active_page == 'report' %}active{% endif %}" href="/report">Report</a>
+            <details class="nav-group">
+                <summary class="nav-link nav-toggle {% if active_page in ['admin_create', 'admin_view'] %}active{% endif %}">
+                    <span>Admin</span>
+                    <span class="nav-caret">▼</span>
+                </summary>
+                <div class="nav-dropdown">
+                    <a class="nav-link {% if active_page == 'admin_create' %}active{% endif %}" href="/admin">Create User</a>
+                    <a class="nav-link {% if active_page == 'admin_view' %}active{% endif %}" href="/view-users">View Users</a>
+                </div>
+            </details>
+            <a class="nav-link {% if active_page == 'setting' %}active{% endif %}" href="/setting">Setting</a>
+            <a class="nav-link nav-logout" href="/logout">Logout</a>
+        {% elif role == "ground" %}
+            <a class="nav-link {% if active_page == 'ground_dashboard' %}active{% endif %}" href="/ground-dashboard">Ground Home</a>
+            <a class="nav-link {% if active_page == 'account' %}active{% endif %}" href="/my-account">My Account</a>
+            <a class="nav-link nav-logout" href="/logout">Logout</a>
+        {% elif role == "user" %}
+            <a class="nav-link {% if active_page == 'user_dashboard' %}active{% endif %}" href="/user-dashboard">User Home</a>
+            <a class="nav-link {% if active_page == 'upload_work' %}active{% endif %}" href="/upload-work">Upload Work</a>
+            <a class="nav-link {% if active_page == 'upload_documents' %}active{% endif %}" href="/upload-documents">Documents</a>
+            <a class="nav-link {% if active_page == 'user_profile' %}active{% endif %}" href="/user-profile">Profile</a>
+            <a class="nav-link nav-logout" href="/logout">Logout</a>
+        {% endif %}
+    </div>
+</nav>
