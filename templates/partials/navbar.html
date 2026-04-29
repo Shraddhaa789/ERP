@@ -16,6 +16,8 @@
                 </div>
             </details>
             <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="/dashboard-summary">Dashboard</a>
+            <a class="nav-link {% if active_page == 'inventory' %}active{% endif %}" href="/warehouse-inventory">Inventory</a>
+            <a class="nav-link {% if active_page == 'tracking' %}active{% endif %}" href="/tracking">Tracking</a>
             <a class="nav-link {% if active_page == 'report' %}active{% endif %}" href="/report">Report</a>
             <details class="nav-group">
                 <summary class="nav-link nav-toggle {% if active_page in ['admin_create', 'admin_view'] %}active{% endif %}">

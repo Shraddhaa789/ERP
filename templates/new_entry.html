@@ -624,47 +624,6 @@
             </div>
         </section>
 
-        <section class="entry-card">
-            <div class="entry-card-header">
-                <h3>Task Tracking</h3>
-                <span>Section 16</span>
-            </div>
-            <div class="entry-card-body">
-                <div class="grid-form">
-                    <div class="field span-2">
-                        <label for="task_id">Task ID</label>
-                        <input id="task_id" placeholder="Enter task ID">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="entry-card full-width">
-            <div class="entry-card-header">
-                <h3>Chamber Invoice Details</h3>
-                <span>Section 17</span>
-            </div>
-            <div class="entry-card-body">
-                <div class="grid-form">
-                    <div class="field">
-                        <label for="ch_invoice_no">Chamber Invoice No</label>
-                        <input id="ch_invoice_no" placeholder="Enter invoice number">
-                    </div>
-                    <div class="field">
-                        <label for="ch_invoice_date">Chamber Invoice Date</label>
-                        <input id="ch_invoice_date" type="date">
-                    </div>
-                    <div class="field">
-                        <label for="ch_submitted">Chamber Invoice Submitted</label>
-                        <input id="ch_submitted" placeholder="Enter submission status">
-                    </div>
-                    <div class="field">
-                        <label for="ch_remark">Remark</label>
-                        <input id="ch_remark" placeholder="Enter chamber remark">
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
 
     <div class="submit-bar">
@@ -679,7 +638,7 @@
         <div class="records-header">
             <div>
                 <h3>Records</h3>
-                <p>Showing all inward data from the sample workbook together with new app submissions.</p>
+                <p>Showing inward data from the real workbook together with new app submissions.</p>
             </div>
             <div class="records-badge">All Inward Entries</div>
         </div>
@@ -744,11 +703,6 @@
                         <th>PM Submit Date</th>
                         <th>DPM</th>
                         <th>TPA</th>
-                        <th>Task ID</th>
-                        <th>Ch Invoice</th>
-                        <th>Ch Invoice Date</th>
-                        <th>Ch Submitted</th>
-                        <th>Ch Remark</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -771,9 +725,7 @@ const fieldIds = [
     "eway_bill", "shipment_type2",
     "inspection_date", "inspection_person",
     "doc_remark", "pm_update_date", "pm_update_by", "reupload", "reupload_reason", "pm_remark", "inspection_status", "pm_submit_date",
-    "approved_dpm", "approved_tpa",
-    "task_id",
-    "ch_invoice_no", "ch_invoice_date", "ch_submitted", "ch_remark"
+    "approved_dpm", "approved_tpa"
 ];
 
 function getFieldValue(id) {
@@ -877,12 +829,12 @@ function loadData() {
             "inspection_date", "inspection_person",
             "doc_remark", "pm_update_date", "pm_update_by", "reupload", "reupload_reason", "pm_remark",
             "inspection_status", "pm_submit_date",
-            "approved_dpm", "approved_tpa",
-            "task_id",
-            "ch_invoice_no", "ch_invoice_date", "ch_submitted", "ch_remark"
+            "approved_dpm", "approved_tpa"
         ];
 
-        data.forEach(row => {
+        const recentRows = data.slice(-2).reverse();
+
+        recentRows.forEach(row => {
             const tr = document.createElement("tr");
 
             orderedKeys.forEach((key) => {

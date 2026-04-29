@@ -2,66 +2,69 @@
 
 {% block content %}
 <style>
-    .dashboard-shell {
+    .ops-shell {
         display: grid;
         gap: 20px;
     }
 
-    .dashboard-hero {
+    .ops-hero {
         position: relative;
         overflow: hidden;
-        padding: 24px 26px;
-        border: 1px solid #d6e0f1;
-        border-radius: 24px;
+        padding: 28px 30px;
+        border-radius: 28px;
+        border: 1px solid #dce7f8;
         background:
-            radial-gradient(circle at top right, rgba(110, 150, 228, 0.22), transparent 28%),
-            linear-gradient(135deg, #31456f 0%, #4868a7 100%);
-        color: #fff;
-        box-shadow: 0 20px 38px rgba(40, 58, 96, 0.14);
+            radial-gradient(circle at top right, rgba(110, 164, 255, 0.16), transparent 30%),
+            linear-gradient(135deg, #ffffff 0%, #f2f7ff 45%, #eef7f1 100%);
+        box-shadow: 0 20px 40px rgba(38, 58, 96, 0.08);
     }
 
-    .dashboard-hero::after {
+    .ops-hero::after {
         content: "";
         position: absolute;
-        right: -30px;
-        bottom: -46px;
-        width: 210px;
-        height: 210px;
+        right: -50px;
+        bottom: -58px;
+        width: 220px;
+        height: 220px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(95, 132, 216, 0.08);
     }
 
-    .dashboard-hero h2 {
+    .ops-hero h2 {
         margin: 0 0 10px;
-        font-size: 30px;
-        letter-spacing: -0.04em;
+        color: #1f2f4d;
+        font-size: 34px;
+        letter-spacing: -0.05em;
     }
 
-    .dashboard-hero p {
-        max-width: 720px;
+    .ops-hero p {
+        max-width: 840px;
         margin: 0;
-        color: rgba(255, 255, 255, 0.84);
+        color: #5f718f;
         line-height: 1.7;
+        font-size: 14px;
     }
 
-    .hero-badges {
+    .hero-chip-row {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
         margin-top: 18px;
     }
 
-    .hero-badge {
+    .hero-chip {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border: 1px solid rgba(255, 255, 255, 0.16);
+        min-height: 36px;
+        padding: 0 13px;
         border-radius: 999px;
-        background: rgba(255, 255, 255, 0.1);
-        color: #f7faff;
-        font-size: 13px;
-        font-weight: 700;
+        border: 1px solid #dce7fa;
+        background: rgba(255, 255, 255, 0.92);
+        color: #4262a7;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
     }
 
     .kpi-grid {
@@ -72,154 +75,178 @@
 
     .kpi-card {
         position: relative;
-        overflow: hidden;
-        padding: 18px 18px 16px;
-        border: 1px solid #d8e3f4;
+        padding: 18px;
         border-radius: 22px;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-        box-shadow: 0 16px 30px rgba(36, 52, 83, 0.08);
+        border: 1px solid #dce7f8;
+        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+        box-shadow: 0 16px 30px rgba(36, 52, 83, 0.07);
     }
 
     .kpi-card::before {
         content: "";
         position: absolute;
-        inset: 0 auto auto 0;
-        width: 100%;
+        top: 0;
+        left: 18px;
+        right: 18px;
         height: 4px;
-        background: linear-gradient(90deg, #4d72ca 0%, #79a8ff 100%);
+        border-radius: 0 0 10px 10px;
+        background: linear-gradient(90deg, #4f78d1 0%, #7fb0ff 100%);
+    }
+
+    .kpi-card.accent-green::before {
+        background: linear-gradient(90deg, #4daa69 0%, #8ad89a 100%);
+    }
+
+    .kpi-card.accent-sky::before {
+        background: linear-gradient(90deg, #6ea4ff 0%, #a1c8ff 100%);
+    }
+
+    .kpi-card.accent-deep::before {
+        background: linear-gradient(90deg, #304f97 0%, #5078d0 100%);
     }
 
     .kpi-label {
-        color: #60708c;
-        font-size: 13px;
-        font-weight: 700;
+        color: #60729a;
+        font-size: 12px;
+        font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.08em;
     }
 
     .kpi-value {
         margin-top: 10px;
-        color: #243453;
-        font-size: 34px;
+        color: #223452;
+        font-size: 32px;
         font-weight: 800;
-        letter-spacing: -0.04em;
+        letter-spacing: -0.05em;
     }
 
     .kpi-meta {
         margin-top: 8px;
-        color: #5f6e88;
-        font-size: 14px;
-        line-height: 1.5;
+        color: #6b7d99;
+        font-size: 13px;
+        line-height: 1.55;
     }
 
-    .dashboard-main {
+    .ops-layout {
         display: grid;
-        grid-template-columns: minmax(0, 1.7fr) minmax(300px, 0.95fr);
+        grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr);
         gap: 18px;
         align-items: start;
     }
 
-    .viz-card,
-    .side-card {
-        border: 1px solid #d9e4f5;
+    .panel-card {
+        border: 1px solid #dce7f8;
         border-radius: 24px;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-        box-shadow: 0 16px 32px rgba(36, 52, 83, 0.08);
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+        box-shadow: 0 16px 32px rgba(37, 54, 87, 0.07);
         overflow: hidden;
     }
 
-    .card-head {
+    .panel-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 14px;
+        gap: 12px;
+        flex-wrap: wrap;
         padding: 18px 20px;
-        border-bottom: 1px solid #e1eaf8;
+        border-bottom: 1px solid #e6edf9;
         background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
     }
 
-    .card-head h3 {
-        margin: 0;
-        color: #2b4677;
-        font-size: 19px;
+    .panel-head h3 {
+        margin: 0 0 4px;
+        color: #28416d;
+        font-size: 20px;
     }
 
-    .card-head span {
-        color: #6d7f9d;
+    .panel-head p,
+    .panel-head span {
+        margin: 0;
+        color: #6d7f9b;
         font-size: 13px;
         font-weight: 700;
     }
 
-    .card-body {
+    .panel-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #edf3ff;
+        color: #4669b4;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .panel-body {
         padding: 20px;
     }
 
-    .bar-chart {
+    .trend-chart {
         display: grid;
         grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 14px;
         align-items: end;
-        min-height: 270px;
-        padding-top: 10px;
+        min-height: 300px;
     }
 
-    .bar-group {
+    .trend-group {
         display: grid;
         gap: 10px;
         justify-items: center;
     }
 
-    .bar-stack {
+    .trend-bars {
         width: 100%;
-        max-width: 76px;
-        height: 220px;
+        max-width: 78px;
+        min-height: 230px;
         display: flex;
         align-items: end;
         justify-content: center;
-        padding: 0 10px;
+        gap: 8px;
+        padding: 14px 10px 0;
         border-radius: 20px 20px 14px 14px;
-        background:
-            linear-gradient(180deg, rgba(234, 241, 255, 0.2) 0%, rgba(234, 241, 255, 0.9) 100%);
+        background: linear-gradient(180deg, #f7faff 0%, #edf3ff 100%);
     }
 
-    .bar {
-        width: 100%;
-        border-radius: 18px 18px 8px 8px;
-        background: linear-gradient(180deg, #7eabff 0%, #4f75cf 100%);
-        box-shadow: 0 12px 20px rgba(79, 117, 207, 0.18);
+    .trend-bar {
+        width: 22px;
+        border-radius: 14px 14px 8px 8px;
         position: relative;
     }
 
-    .bar::after {
-        content: attr(data-value);
-        position: absolute;
-        top: -28px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #3e5b93;
-        font-size: 12px;
-        font-weight: 700;
-        white-space: nowrap;
+    .trend-bar.inward {
+        background: linear-gradient(180deg, #4f78d1 0%, #3255a7 100%);
+        box-shadow: 0 10px 18px rgba(52, 86, 166, 0.18);
     }
 
-    .bar-label {
-        color: #5a6f93;
+    .trend-bar.outward {
+        background: linear-gradient(180deg, #8bdc98 0%, #4da769 100%);
+        box-shadow: 0 10px 18px rgba(75, 151, 100, 0.16);
+    }
+
+    .trend-label {
+        color: #546986;
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 800;
     }
 
-    .chart-legend {
+    .legend-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px 14px;
-        margin-top: 18px;
+        gap: 12px 14px;
+        margin-top: 16px;
     }
 
     .legend-item {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: #5d708e;
+        color: #5f7293;
         font-size: 13px;
         font-weight: 700;
     }
@@ -230,7 +257,7 @@
         border-radius: 50%;
     }
 
-    .ring-wrap {
+    .ring-block {
         display: grid;
         grid-template-columns: 220px minmax(0, 1fr);
         gap: 18px;
@@ -242,369 +269,487 @@
         height: 190px;
         margin: 0 auto;
         border-radius: 50%;
-        background: conic-gradient(
-            #4d72ca 0 42%,
-            #6ea3ff 42% 68%,
-            #7dc8d8 68% 86%,
-            #dbe6fb 86% 100%
-        );
         position: relative;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+        background: conic-gradient(#4f78d1 0deg 180deg, #79b6ff 180deg 250deg, #8bdc98 250deg 310deg, #dce9ff 310deg 360deg);
     }
 
     .ring-chart::after {
-        content: "86%\A On Track";
-        white-space: pre;
+        content: attr(data-total);
         position: absolute;
         inset: 26px;
         display: grid;
         place-items: center;
-        text-align: center;
+        white-space: pre;
         border-radius: 50%;
         background: #fff;
-        color: #2d4675;
+        color: #28416d;
+        text-align: center;
         font-size: 26px;
         font-weight: 800;
         line-height: 1.15;
-        box-shadow: 0 12px 24px rgba(39, 56, 92, 0.08);
+        box-shadow: 0 10px 20px rgba(38, 56, 92, 0.08);
     }
 
-    .distribution-list {
+    .dist-list,
+    .activity-list,
+    .material-list,
+    .alert-list {
         display: grid;
         gap: 12px;
     }
 
-    .distribution-row {
-        display: grid;
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 14px;
-        border: 1px solid #e2eaf8;
-        border-radius: 16px;
-        background: #fff;
-    }
-
-    .distribution-name {
-        color: #314970;
-        font-weight: 700;
-    }
-
-    .distribution-track {
-        height: 8px;
-        border-radius: 999px;
-        background: #e8effb;
-        overflow: hidden;
-    }
-
-    .distribution-fill {
-        height: 100%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #4f75cf 0%, #7ca8ff 100%);
-    }
-
-    .distribution-value {
-        color: #6a7d9b;
-        font-weight: 700;
-    }
-
-    .mini-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 18px;
-    }
-
-    .progress-list,
-    .activity-list {
-        display: grid;
-        gap: 14px;
-    }
-
-    .progress-row,
-    .activity-row {
+    .dist-item,
+    .activity-item,
+    .material-item,
+    .alert-item {
         padding: 14px 15px;
-        border: 1px solid #e2eaf8;
+        border: 1px solid #e1eaf8;
         border-radius: 18px;
         background: #fff;
     }
 
-    .progress-top,
-    .activity-top {
+    .dist-top,
+    .activity-top,
+    .material-top,
+    .alert-top {
         display: flex;
         justify-content: space-between;
         gap: 12px;
         margin-bottom: 10px;
-        color: #30466f;
-        font-weight: 700;
+        color: #29416d;
+        font-weight: 800;
     }
 
-    .progress-track {
-        height: 10px;
+    .dist-track,
+    .material-track,
+    .alert-track {
+        height: 8px;
         border-radius: 999px;
-        background: #e8effb;
+        background: #eaf0fb;
         overflow: hidden;
     }
 
-    .progress-fill {
+    .dist-fill,
+    .material-fill,
+    .alert-fill {
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, #4f75cf 0%, #78a9ff 100%);
     }
 
-    .activity-meta {
+    .dist-fill {
+        background: linear-gradient(90deg, #4f78d1 0%, #84b7ff 100%);
+    }
+
+    .material-fill {
+        background: linear-gradient(90deg, #79b6ff 0%, #4f78d1 100%);
+    }
+
+    .alert-fill {
+        background: linear-gradient(90deg, #8bdc98 0%, #4da769 100%);
+    }
+
+    .meta-line {
         color: #6b7d99;
         font-size: 13px;
-        line-height: 1.6;
+        line-height: 1.55;
+    }
+
+    .sub-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
     }
 
     .status-chip {
         display: inline-flex;
         align-items: center;
-        padding: 6px 10px;
+        min-height: 28px;
+        padding: 0 10px;
         border-radius: 999px;
-        font-size: 12px;
-        font-weight: 700;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
     }
 
-    .status-chip.live {
-        background: #e7fff2;
-        color: #1f8a5b;
+    .status-chip.inward {
+        background: #ecf3ff;
+        color: #3d61b3;
     }
 
-    .status-chip.review {
-        background: #eef3ff;
-        color: #4367bf;
+    .status-chip.outward {
+        background: #ebfaee;
+        color: #2e8d56;
     }
 
-    @media (max-width: 1080px) {
-        .dashboard-main,
-        .ring-wrap {
+    .loading-state {
+        padding: 32px 20px;
+        text-align: center;
+        color: #6b7d99;
+    }
+
+    @media (max-width: 1120px) {
+        .ops-layout,
+        .ring-block,
+        .sub-grid {
             grid-template-columns: 1fr;
         }
     }
 
     @media (max-width: 760px) {
-        .dashboard-hero {
-            padding: 20px 18px;
+        .ops-hero {
+            padding: 22px 20px;
         }
 
-        .dashboard-hero h2 {
-            font-size: 25px;
+        .ops-hero h2 {
+            font-size: 28px;
         }
 
-        .bar-chart {
+        .trend-chart {
             grid-template-columns: repeat(3, minmax(0, 1fr));
         }
     }
 </style>
 
-<div class="dashboard-shell">
-    <section class="dashboard-hero">
-        <h2>Operations Dashboard</h2>
+<div class="ops-shell">
+    <section class="ops-hero">
+        <span class="eyebrow">Operations Control</span>
+        <h2>Warehouse movement, stock balance, and live field visibility in one dashboard</h2>
         <p>
-            Track project momentum, material movement, workforce activity, and pending execution points from one
-            visual control room.
+            This dashboard uses your inward entries, outward entries, and live warehouse inventory logic to show the
+            most important operational numbers in one place. The stock view respects the workbook-aligned summary
+            baseline and any new app-created movement deltas.
         </p>
-        <div class="hero-badges">
-            <div class="hero-badge">12 Active Projects</div>
-            <div class="hero-badge">38 Team Members Live</div>
-            <div class="hero-badge">7 Pending Approvals</div>
+        <div class="hero-chip-row" id="heroChips">
+            <div class="hero-chip">Loading live metrics...</div>
         </div>
     </section>
 
-    <section class="kpi-grid">
-        <article class="kpi-card">
-            <div class="kpi-label">Material Dispatch</div>
-            <div class="kpi-value">148</div>
-            <div class="kpi-meta">Dispatches recorded this month with 12% growth from the previous cycle.</div>
-        </article>
-        <article class="kpi-card">
-            <div class="kpi-label">Documents Verified</div>
-            <div class="kpi-value">94%</div>
-            <div class="kpi-meta">Invoices, uploads, and support files are staying on track across teams.</div>
-        </article>
-        <article class="kpi-card">
-            <div class="kpi-label">Work Completion</div>
-            <div class="kpi-value">81%</div>
-            <div class="kpi-meta">Execution progress is strongest in civil and procurement-driven projects.</div>
-        </article>
-        <article class="kpi-card">
-            <div class="kpi-label">Issues Escalated</div>
-            <div class="kpi-value">09</div>
-            <div class="kpi-meta">Most blockers are related to approvals, transport timing, and stock visibility.</div>
-        </article>
+    <section class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card"><div class="kpi-label">Loading</div><div class="kpi-value">...</div><div class="kpi-meta">Fetching dashboard metrics.</div></div>
     </section>
 
-    <section class="dashboard-main">
-        <article class="viz-card">
-            <div class="card-head">
-                <h3>Weekly Dispatch Trend</h3>
-                <span>Last 6 Weeks</span>
-            </div>
-            <div class="card-body">
-                <div class="bar-chart">
-                    <div class="bar-group">
-                        <div class="bar-stack">
-                            <div class="bar" data-value="42" style="height: 42%;"></div>
-                        </div>
-                        <div class="bar-label">Week 1</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar-stack">
-                            <div class="bar" data-value="56" style="height: 56%;"></div>
-                        </div>
-                        <div class="bar-label">Week 2</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar-stack">
-                            <div class="bar" data-value="64" style="height: 64%;"></div>
-                        </div>
-                        <div class="bar-label">Week 3</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar-stack">
-                            <div class="bar" data-value="58" style="height: 58%;"></div>
-                        </div>
-                        <div class="bar-label">Week 4</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar-stack">
-                            <div class="bar" data-value="73" style="height: 73%;"></div>
-                        </div>
-                        <div class="bar-label">Week 5</div>
-                    </div>
-                    <div class="bar-group">
-                        <div class="bar-stack">
-                            <div class="bar" data-value="81" style="height: 81%;"></div>
-                        </div>
-                        <div class="bar-label">Week 6</div>
-                    </div>
+    <section class="ops-layout">
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <h3>Yearly Movement Trend</h3>
+                    <p>Inward and outward entry count by year</p>
                 </div>
-
-                <div class="chart-legend">
-                    <div class="legend-item"><span class="legend-dot" style="background:#4f75cf;"></span> Material movement</div>
-                    <div class="legend-item"><span class="legend-dot" style="background:#7ca8ff;"></span> Higher bar means stronger dispatch volume</div>
+                <span class="panel-badge">Live Records</span>
+            </div>
+            <div class="panel-body">
+                <div class="trend-chart" id="trendChart"></div>
+                <div class="legend-row">
+                    <div class="legend-item"><span class="legend-dot" style="background:#4f78d1;"></span> Inward entries</div>
+                    <div class="legend-item"><span class="legend-dot" style="background:#6bc17f;"></span> Outward entries</div>
                 </div>
             </div>
         </article>
 
-        <article class="side-card">
-            <div class="card-head">
-                <h3>Project Split</h3>
-                <span>By Stage</span>
-            </div>
-            <div class="card-body ring-wrap">
-                <div class="ring-chart"></div>
-
-                <div class="distribution-list">
-                    <div class="distribution-row">
-                        <div class="legend-dot" style="background:#4d72ca;"></div>
-                        <div>
-                            <div class="distribution-name">Execution</div>
-                            <div class="distribution-track"><div class="distribution-fill" style="width:42%;"></div></div>
-                        </div>
-                        <div class="distribution-value">42%</div>
-                    </div>
-                    <div class="distribution-row">
-                        <div class="legend-dot" style="background:#6ea3ff;"></div>
-                        <div>
-                            <div class="distribution-name">Approvals</div>
-                            <div class="distribution-track"><div class="distribution-fill" style="width:26%;"></div></div>
-                        </div>
-                        <div class="distribution-value">26%</div>
-                    </div>
-                    <div class="distribution-row">
-                        <div class="legend-dot" style="background:#7dc8d8;"></div>
-                        <div>
-                            <div class="distribution-name">Procurement</div>
-                            <div class="distribution-track"><div class="distribution-fill" style="width:18%;"></div></div>
-                        </div>
-                        <div class="distribution-value">18%</div>
-                    </div>
-                    <div class="distribution-row">
-                        <div class="legend-dot" style="background:#dbe6fb;"></div>
-                        <div>
-                            <div class="distribution-name">Closed</div>
-                            <div class="distribution-track"><div class="distribution-fill" style="width:14%;"></div></div>
-                        </div>
-                        <div class="distribution-value">14%</div>
-                    </div>
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <h3>Warehouse Stock Share</h3>
+                    <p>Top warehouses by current physical stock</p>
                 </div>
+                <span class="panel-badge">Live Inventory</span>
+            </div>
+            <div class="panel-body ring-block">
+                <div class="ring-chart" id="warehouseRing" data-total="0&#10;Total Stock"></div>
+                <div class="dist-list" id="warehouseDistribution"></div>
             </div>
         </article>
     </section>
 
-    <section class="mini-grid">
-        <article class="side-card">
-            <div class="card-head">
-                <h3>Department Progress</h3>
-                <span>Live View</span>
-            </div>
-            <div class="card-body">
-                <div class="progress-list">
-                    <div class="progress-row">
-                        <div class="progress-top">
-                            <span>Civil Work</span>
-                            <span>88%</span>
-                        </div>
-                        <div class="progress-track"><div class="progress-fill" style="width:88%;"></div></div>
-                    </div>
-                    <div class="progress-row">
-                        <div class="progress-top">
-                            <span>Electrical</span>
-                            <span>74%</span>
-                        </div>
-                        <div class="progress-track"><div class="progress-fill" style="width:74%;"></div></div>
-                    </div>
-                    <div class="progress-row">
-                        <div class="progress-top">
-                            <span>Procurement</span>
-                            <span>69%</span>
-                        </div>
-                        <div class="progress-track"><div class="progress-fill" style="width:69%;"></div></div>
-                    </div>
-                    <div class="progress-row">
-                        <div class="progress-top">
-                            <span>Documentation</span>
-                            <span>91%</span>
-                        </div>
-                        <div class="progress-track"><div class="progress-fill" style="width:91%;"></div></div>
-                    </div>
+    <section class="sub-grid">
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <h3>Top Material Stock</h3>
+                    <p>Highest remaining items in warehouses</p>
                 </div>
+                <span class="panel-badge">Inventory Depth</span>
+            </div>
+            <div class="panel-body">
+                <div class="material-list" id="topMaterials"></div>
             </div>
         </article>
 
-        <article class="side-card">
-            <div class="card-head">
-                <h3>Recent Activity</h3>
-                <span>Today</span>
-            </div>
-            <div class="card-body">
-                <div class="activity-list">
-                    <div class="activity-row">
-                        <div class="activity-top">
-                            <span>Warehouse Dispatch Updated</span>
-                            <span class="status-chip live">Live</span>
-                        </div>
-                        <div class="activity-meta">Steel and cement movement posted for Pune site at 10:45 AM.</div>
-                    </div>
-                    <div class="activity-row">
-                        <div class="activity-top">
-                            <span>Invoice Review Queue</span>
-                            <span class="status-chip review">Review</span>
-                        </div>
-                        <div class="activity-meta">3 documents are waiting for finance and verification clearance.</div>
-                    </div>
-                    <div class="activity-row">
-                        <div class="activity-top">
-                            <span>Field Upload Completed</span>
-                            <span class="status-chip live">Live</span>
-                        </div>
-                        <div class="activity-meta">Ground team added today’s photo evidence and work status logs.</div>
-                    </div>
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <h3>Low Stock Attention</h3>
+                    <p>Items with low but still available physical stock</p>
                 </div>
+                <span class="panel-badge">Planner Input</span>
+            </div>
+            <div class="panel-body">
+                <div class="alert-list" id="lowStockList"></div>
+            </div>
+        </article>
+
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <h3>Recent Warehouse Activity</h3>
+                    <p>Latest inward and outward movement records</p>
+                </div>
+                <span class="panel-badge">Latest 8</span>
+            </div>
+            <div class="panel-body">
+                <div class="activity-list" id="recentActivity"></div>
+            </div>
+        </article>
+
+        <article class="panel-card">
+            <div class="panel-head">
+                <div>
+                    <h3>Movement Overview</h3>
+                    <p>Quick quantity view across warehouse operations</p>
+                </div>
+                <span class="panel-badge">Operational Summary</span>
+            </div>
+            <div class="panel-body">
+                <div class="dist-list" id="movementOverview"></div>
             </div>
         </article>
     </section>
 </div>
+
+<script>
+function formatNumber(value, digits = 0) {
+    const number = Number(value || 0);
+    return number.toLocaleString("en-IN", { maximumFractionDigits: digits });
+}
+
+function buildKpiCards(kpis) {
+    const cards = [
+        {
+            label: "Inward Entries",
+            value: formatNumber(kpis.inward_count),
+            meta: "Real inward workbook and app records now visible in one flow.",
+            accent: "accent-deep"
+        },
+        {
+            label: "Outward Entries",
+            value: formatNumber(kpis.outward_count),
+            meta: "Outbound material movement captured from the live outward register.",
+            accent: "accent-green"
+        },
+        {
+            label: "Total Inward Qty",
+            value: formatNumber(kpis.total_inward_qty, 1),
+            meta: "Overall inward quantity accumulated across warehouse receipt movements.",
+            accent: "accent-sky"
+        },
+        {
+            label: "Total Outward Qty",
+            value: formatNumber(kpis.total_outward_qty, 1),
+            meta: "Overall outward quantity consumed or dispatched from active stock.",
+            accent: "accent-deep"
+        },
+        {
+            label: "Live Physical Stock",
+            value: formatNumber(kpis.total_physical_qty, 1),
+            meta: "Remaining stock currently available across all mapped warehouses.",
+            accent: "accent-green"
+        },
+        {
+            label: "Warehouses",
+            value: formatNumber(kpis.warehouse_count),
+            meta: "Warehouse groups represented in the active inventory balance.",
+            accent: "accent-sky"
+        },
+        {
+            label: "Materials",
+            value: formatNumber(kpis.material_count),
+            meta: "Distinct material descriptions currently present in stock analytics.",
+            accent: "accent-deep"
+        },
+        {
+            label: "Inventory Rows",
+            value: formatNumber(kpis.inventory_rows),
+            meta: "Live stock records built from the summary baseline plus movement delta.",
+            accent: "accent-green"
+        }
+    ];
+
+    document.getElementById("kpiGrid").innerHTML = cards.map((card) => `
+        <article class="kpi-card ${card.accent || ""}">
+            <div class="kpi-label">${card.label}</div>
+            <div class="kpi-value">${card.value}</div>
+            <div class="kpi-meta">${card.meta}</div>
+        </article>
+    `).join("");
+}
+
+function buildHero(payload) {
+    const hero = payload.hero || {};
+    const inventorySource = String(hero.inventory_source || "live").split("_").join(" ");
+    document.getElementById("heroChips").innerHTML = `
+        <div class="hero-chip">Source: ${inventorySource}</div>
+        <div class="hero-chip">${formatNumber(hero.warehouse_count)} Warehouses Tracked</div>
+        <div class="hero-chip">${formatNumber(hero.material_count)} Material Types</div>
+    `;
+}
+
+function buildTrendChart(yearlyTrend) {
+    const target = document.getElementById("trendChart");
+    if (!yearlyTrend.length) {
+        target.innerHTML = `<div class="loading-state">No yearly trend data available.</div>`;
+        return;
+    }
+
+    const maxValue = Math.max(...yearlyTrend.flatMap((row) => [row.inward, row.outward]), 1);
+    target.innerHTML = yearlyTrend.map((row) => `
+        <div class="trend-group">
+            <div class="trend-bars">
+                <div class="trend-bar inward" style="height:${Math.max(12, (row.inward / maxValue) * 100)}%;"></div>
+                <div class="trend-bar outward" style="height:${Math.max(12, (row.outward / maxValue) * 100)}%;"></div>
+            </div>
+            <div class="trend-label">${row.year}</div>
+        </div>
+    `).join("");
+}
+
+function buildWarehouseShare(topWarehouses, totalPhysicalQty) {
+    const ring = document.getElementById("warehouseRing");
+    const list = document.getElementById("warehouseDistribution");
+
+    if (!topWarehouses.length || !totalPhysicalQty) {
+        ring.setAttribute("data-total", "0\\nTotal Stock");
+        list.innerHTML = `<div class="loading-state">No warehouse stock data available.</div>`;
+        return;
+    }
+
+    const palette = ["#4f78d1", "#7bb2ff", "#8bdc98", "#d3e4ff", "#9dc4b3"];
+    let currentDeg = 0;
+    const segments = topWarehouses.map((item, index) => {
+        const share = (item.stock_qty / totalPhysicalQty) * 100;
+        const start = currentDeg;
+        const sweep = (share / 100) * 360;
+        currentDeg += sweep;
+        return { ...item, share, color: palette[index % palette.length], start, end: currentDeg };
+    });
+
+    ring.style.background = `conic-gradient(${segments.map((segment) => `${segment.color} ${segment.start}deg ${segment.end}deg`).join(", ")}, #e6eefc ${currentDeg}deg 360deg)`;
+    ring.setAttribute("data-total", `${formatNumber(totalPhysicalQty, 1)}\\nQty In Stock`);
+
+    list.innerHTML = segments.map((segment) => `
+        <div class="dist-item">
+            <div class="dist-top">
+                <span>${segment.warehouse}</span>
+                <span>${segment.share.toFixed(1)}%</span>
+            </div>
+            <div class="dist-track"><div class="dist-fill" style="width:${segment.share.toFixed(1)}%; background:${segment.color};"></div></div>
+            <div class="meta-line" style="margin-top:8px;">Current stock: ${formatNumber(segment.stock_qty, 1)}</div>
+        </div>
+    `).join("");
+}
+
+function buildTopMaterials(items) {
+    const target = document.getElementById("topMaterials");
+    if (!items.length) {
+        target.innerHTML = `<div class="loading-state">No material stock data available.</div>`;
+        return;
+    }
+
+    const maxValue = Math.max(...items.map((item) => item.stock_qty), 1);
+    target.innerHTML = items.map((item) => `
+        <div class="material-item">
+            <div class="material-top">
+                <span>${item.description}</span>
+                <span>${formatNumber(item.stock_qty, 1)}</span>
+            </div>
+            <div class="material-track"><div class="material-fill" style="width:${(item.stock_qty / maxValue) * 100}%;"></div></div>
+        </div>
+    `).join("");
+}
+
+function buildLowStock(items) {
+    const target = document.getElementById("lowStockList");
+    if (!items.length) {
+        target.innerHTML = `<div class="loading-state">No low stock items currently available.</div>`;
+        return;
+    }
+
+    const maxValue = Math.max(...items.map((item) => item.phy_stock_qty), 1);
+    target.innerHTML = items.map((item) => `
+        <div class="alert-item">
+            <div class="alert-top">
+                <span>${item.description}</span>
+                <span>${formatNumber(item.phy_stock_qty, 1)}</span>
+            </div>
+            <div class="meta-line">${item.warehouse}</div>
+            <div class="alert-track" style="margin-top:10px;"><div class="alert-fill" style="width:${(item.phy_stock_qty / maxValue) * 100}%;"></div></div>
+        </div>
+    `).join("");
+}
+
+function buildRecentActivity(items) {
+    const target = document.getElementById("recentActivity");
+    if (!items.length) {
+        target.innerHTML = `<div class="loading-state">No recent movement activity found.</div>`;
+        return;
+    }
+
+    target.innerHTML = items.map((item) => `
+        <div class="activity-item">
+            <div class="activity-top">
+                <span>${item.warehouse}</span>
+                <span class="status-chip ${item.type.toLowerCase()}">${item.type}</span>
+            </div>
+            <div class="meta-line">
+                <strong>${item.description}</strong><br>
+                Qty: ${item.qty} | Doc: ${item.document_no}<br>
+                Date: ${item.date || "-"}
+            </div>
+        </div>
+    `).join("");
+}
+
+function buildMovementOverview(kpis) {
+    const totalMovement = Math.max(kpis.total_inward_qty, kpis.total_outward_qty, kpis.total_physical_qty, 1);
+    const items = [
+        { label: "Total Inward Qty", value: kpis.total_inward_qty, cls: "dist-fill" },
+        { label: "Total Outward Qty", value: kpis.total_outward_qty, cls: "material-fill" },
+        { label: "Remaining Physical Qty", value: kpis.total_physical_qty, cls: "alert-fill" }
+    ];
+
+    document.getElementById("movementOverview").innerHTML = items.map((item) => `
+        <div class="dist-item">
+            <div class="dist-top">
+                <span>${item.label}</span>
+                <span>${formatNumber(item.value, 1)}</span>
+            </div>
+            <div class="dist-track"><div class="${item.cls}" style="width:${(item.value / totalMovement) * 100}%;"></div></div>
+        </div>
+    `).join("");
+}
+
+fetch("/dashboard-data")
+    .then((res) => res.json())
+    .then((payload) => {
+        buildHero(payload);
+        buildKpiCards(payload.kpis || {});
+        buildTrendChart(payload.yearly_trend || []);
+        buildWarehouseShare(payload.top_warehouses || [], Number(((payload.kpis || {}).total_physical_qty) || 0));
+        buildTopMaterials(payload.top_materials || []);
+        buildLowStock(payload.low_stock_items || []);
+        buildRecentActivity(payload.recent_activity || []);
+        buildMovementOverview(payload.kpis || {});
+    })
+    .catch((error) => {
+        console.error(error);
+        document.getElementById("kpiGrid").innerHTML = `<div class="loading-state">Dashboard data could not be loaded.</div>`;
+        document.getElementById("trendChart").innerHTML = `<div class="loading-state">Dashboard trend could not be loaded.</div>`;
+        document.getElementById("warehouseDistribution").innerHTML = `<div class="loading-state">Warehouse stock split could not be loaded.</div>`;
+        document.getElementById("topMaterials").innerHTML = `<div class="loading-state">Material stock data could not be loaded.</div>`;
+        document.getElementById("lowStockList").innerHTML = `<div class="loading-state">Low stock data could not be loaded.</div>`;
+        document.getElementById("recentActivity").innerHTML = `<div class="loading-state">Recent activity could not be loaded.</div>`;
+        document.getElementById("movementOverview").innerHTML = `<div class="loading-state">Movement overview could not be loaded.</div>`;
+    });
+</script>
 {% endblock %}

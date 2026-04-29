@@ -348,7 +348,7 @@
         <div class="records-header">
             <div>
                 <h3>Records</h3>
-                <p>Showing all outward data from the sample workbook together with new app submissions.</p>
+                <p>Showing outward data from the real workbook together with new app submissions.</p>
             </div>
             <div class="records-badge">All Outward Entries</div>
         </div>
@@ -502,7 +502,9 @@ function loadOutwardData() {
             "out_dispatched_date", "out_mode_of_delivery", "out_reporting_time", "out_loading_time", "out_remark", "out_ug_aerial", "out_frt"
         ];
 
-        data.forEach((row) => {
+        const recentRows = data.slice(-2).reverse();
+
+        recentRows.forEach((row) => {
             const tr = document.createElement("tr");
 
             orderedKeys.forEach((key) => {
