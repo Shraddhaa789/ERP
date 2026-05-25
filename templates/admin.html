@@ -2,273 +2,509 @@
 
 {% block content %}
 <style>
-    .admin-home {
-        display: grid;
-        gap: 18px;
+    .ah { padding-bottom: 40px; }
+
+    /* ── Greeting ── */
+    .ah-greet {
+        padding: 28px 32px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+        color: #fff;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    .ah-greet::before {
+        content: "";
+        position: absolute;
+        top: -60%; right: -10%;
+        width: 320px; height: 320px;
+        background: radial-gradient(circle, rgba(99,102,241,.2) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    .ah-greet::after {
+        content: "";
+        position: absolute;
+        bottom: -40%; left: 20%;
+        width: 200px; height: 200px;
+        background: radial-gradient(circle, rgba(59,130,246,.15) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    .ah-greet-inner { position: relative; z-index: 1; }
+    .ah-greet h2 {
+        margin: 0 0 6px;
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: -.02em;
+    }
+    .ah-greet p {
+        margin: 0;
+        color: #94a3b8;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .ah-greet-time {
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 4px;
     }
 
-    .home-grid {
+    /* ── Stat Cards ── */
+    .ah-stats {
         display: grid;
-        grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
-        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+    .ah-stat {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        transition: all .25s;
+        position: relative;
+        overflow: hidden;
+    }
+    .ah-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+    .ah-stat-icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .ah-stat-icon svg { width: 22px; height: 22px; }
+    .ah-stat-icon.blue { background: #eff6ff; color: #3b82f6; }
+    .ah-stat-icon.emerald { background: #ecfdf5; color: #10b981; }
+    .ah-stat-icon.amber { background: #fffbeb; color: #f59e0b; }
+    .ah-stat-icon.violet { background: #f5f3ff; color: #8b5cf6; }
+    .ah-stat-icon.rose { background: #fff1f2; color: #f43f5e; }
+    .ah-stat-val {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        letter-spacing: -.02em;
+    }
+    .ah-stat-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        margin-top: 4px;
+    }
+    .ah-stat-sub {
+        font-size: 11px;
+        font-weight: 700;
+        color: #10b981;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+    }
+    .ah-stat-sub svg { width: 12px; height: 12px; }
+
+    /* ── Main Grid ── */
+    .ah-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 20px;
         align-items: start;
     }
 
-    .section-card {
-        display: grid;
-        gap: 18px;
-        padding: 22px;
-        border: 1px solid #d8e3f8;
-        border-radius: 24px;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-        box-shadow: var(--shadow);
-    }
-
-    .section-head {
-        display: grid;
-        gap: 8px;
-    }
-
-    .section-head h3 {
-        margin: 0;
-        color: var(--primary);
-        font-size: 22px;
-        letter-spacing: -0.03em;
-    }
-
-    .section-head p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
-    }
-
-    .quick-actions {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    .action-tile {
-        display: grid;
-        gap: 12px;
-        padding: 18px;
-        border: 1px solid #dce5f5;
-        border-radius: 22px;
+    /* ── Card Shell ── */
+    .ah-card {
         background: #fff;
-        text-decoration: none;
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,.03);
     }
-
-    .action-tile:hover {
-        transform: translateY(-2px);
-        border-color: #c7d7f5;
-        background: #fcfdff;
-        box-shadow: 0 16px 28px rgba(37, 52, 85, 0.08);
-    }
-
-    .action-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 16px;
-        font-size: 18px;
-        font-weight: 900;
-        letter-spacing: 0.06em;
-    }
-
-    .action-icon.users {
-        background: #e8efff;
-        color: #4368b3;
-    }
-
-    .action-icon.entry {
-        background: #e8f9ef;
-        color: #24815c;
-    }
-
-    .action-icon.report {
-        background: #fff3d8;
-        color: #a36c00;
-    }
-
-    .action-icon.field {
-        background: #efeaff;
-        color: #6952cb;
-    }
-
-    .action-copy strong {
-        display: block;
-        margin-bottom: 6px;
-        color: var(--primary-strong);
-        font-size: 18px;
-    }
-
-    .action-copy span {
-        color: var(--muted);
-        line-height: 1.6;
-    }
-
-    .watchlist {
-        display: grid;
-        gap: 12px;
-    }
-
-    .watch-item {
+    .ah-card-head {
         display: flex;
         justify-content: space-between;
-        gap: 14px;
         align-items: center;
-        padding: 14px 16px;
-        border: 1px solid #e1e9f7;
-        border-radius: 18px;
-        background: #fff;
-        text-decoration: none;
-        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+        padding: 18px 22px;
+        border-bottom: 1px solid #f1f5f9;
     }
-
-    .watch-item:hover {
-        transform: translateY(-1px);
-        border-color: #c7d7f5;
-        box-shadow: 0 14px 24px rgba(37, 52, 85, 0.07);
-    }
-
-    .watch-item strong {
-        display: block;
-        margin-bottom: 4px;
-        color: var(--primary-strong);
+    .ah-card-head h3 {
+        margin: 0;
         font-size: 15px;
-    }
-
-    .watch-item span {
-        color: var(--muted);
-        line-height: 1.5;
-        font-size: 14px;
-    }
-
-    .ops-pill {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 74px;
-        padding: 8px 11px;
-        border-radius: 999px;
-        font-size: 11px;
         font-weight: 800;
-        letter-spacing: 0.08em;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .ah-card-head h3 svg { width: 18px; height: 18px; color: #94a3b8; }
+    .ah-card-body { padding: 16px 22px 22px; }
+
+    /* ── Quick Actions Grid ── */
+    .ah-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    .ah-action {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 18px;
+        border: 1.5px solid #f1f5f9;
+        border-radius: 14px;
+        background: #fafbfc;
+        text-decoration: none;
+        transition: all .2s;
+    }
+    .ah-action:hover {
+        border-color: #c7d2fe;
+        background: #eef2ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(79,70,229,.08);
+    }
+    .ah-action-icon {
+        width: 42px; height: 42px;
+        border-radius: 11px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .ah-action-icon svg { width: 20px; height: 20px; }
+    .ah-action-icon.i1 { background: linear-gradient(135deg, #818cf8, #6366f1); color: #fff; }
+    .ah-action-icon.i2 { background: linear-gradient(135deg, #34d399, #10b981); color: #fff; }
+    .ah-action-icon.i3 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #fff; }
+    .ah-action-icon.i4 { background: linear-gradient(135deg, #f472b6, #ec4899); color: #fff; }
+    .ah-action-icon.i5 { background: linear-gradient(135deg, #60a5fa, #3b82f6); color: #fff; }
+    .ah-action-icon.i6 { background: linear-gradient(135deg, #a78bfa, #8b5cf6); color: #fff; }
+    .ah-action-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: #1e293b;
+        line-height: 1.3;
+    }
+    .ah-action-desc {
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* ── Activity List ── */
+    .ah-activity-list { display: flex; flex-direction: column; gap: 0; }
+    .ah-activity {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .ah-activity:last-child { border-bottom: none; }
+    .ah-act-dot {
+        width: 36px; height: 36px;
+        border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        font-size: 11px; font-weight: 800; color: #fff;
+    }
+    .ah-act-dot.doc { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .ah-act-dot.survey { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+    .ah-act-info { flex: 1; min-width: 0; }
+    .ah-act-name {
+        font-size: 13px; font-weight: 700; color: #1e293b;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        display: block;
+    }
+    .ah-act-meta { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .ah-act-badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 800;
         text-transform: uppercase;
-        white-space: nowrap;
+        letter-spacing: .04em;
+        flex-shrink: 0;
     }
+    .ah-act-badge.doc { background: #fffbeb; color: #b45309; }
+    .ah-act-badge.survey { background: #f5f3ff; color: #7c3aed; }
 
-    .ops-pill.alert {
-        background: #fff0cf;
-        color: #9e6c00;
+    /* ── Status Tiles ── */
+    .ah-status-list { display: flex; flex-direction: column; gap: 10px; }
+    .ah-status {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+        text-decoration: none;
+        transition: all .2s;
     }
-
-    .ops-pill.live {
-        background: #e7efff;
-        color: #4368b3;
+    .ah-status:hover {
+        background: #f8fafc;
+        transform: translateX(2px);
     }
-
-    .ops-pill.ready {
-        background: #dff7e7;
-        color: #1e7c52;
+    .ah-status-icon {
+        width: 34px; height: 34px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
     }
-
-    @media (max-width: 1100px) {
-        .home-grid {
-            grid-template-columns: 1fr;
-        }
+    .ah-status-icon svg { width: 16px; height: 16px; }
+    .ah-status-icon.green { background: #ecfdf5; color: #10b981; }
+    .ah-status-icon.yellow { background: #fffbeb; color: #f59e0b; }
+    .ah-status-icon.blue { background: #eff6ff; color: #3b82f6; }
+    .ah-status-text { flex: 1; }
+    .ah-status-title { font-size: 13px; font-weight: 700; color: #1e293b; display: block; }
+    .ah-status-desc { font-size: 11px; color: #94a3b8; font-weight: 500; }
+    .ah-status-pill {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
     }
+    .ah-status-pill.ok { background: #ecfdf5; color: #059669; }
+    .ah-status-pill.warn { background: #fffbeb; color: #d97706; }
+    .ah-status-pill.info { background: #eff6ff; color: #2563eb; }
 
-    @media (max-width: 760px) {
-        .quick-actions {
-            grid-template-columns: 1fr;
-        }
-
-        .watch-item {
-            align-items: flex-start;
-            flex-direction: column;
-        }
+    @media (max-width: 1000px) {
+        .ah-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+        .ah-actions { grid-template-columns: 1fr; }
+        .ah-stats { grid-template-columns: 1fr 1fr; }
     }
 </style>
 
-<div class="admin-home">
-    <div class="home-grid">
-        <section class="section-card">
-            <div class="section-head">
-                <span class="eyebrow">Quick Routes</span>
-                <h3>Jump into the right workflow</h3>
+<div class="ah">
+    <!-- Greeting Banner -->
+    <div class="ah-greet">
+        <div class="ah-greet-inner">
+            <h2>Welcome back, {{ session.get('name', 'Admin') }} </h2>
+            <p>Here's a quick overview of your ERP workspace.</p>
+            <div class="ah-greet-time" id="ahClock"></div>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="ah-stats">
+        <div class="ah-stat">
+            <div class="ah-stat-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            </div>
+            <div>
+                <div class="ah-stat-val">{{ inward_count }}</div>
+                <div class="ah-stat-label">Inward Entries</div>
+                {% if today_inward > 0 %}<div class="ah-stat-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> +{{ today_inward }} today</div>{% endif %}
+            </div>
+        </div>
+        <div class="ah-stat">
+            <div class="ah-stat-icon emerald">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+            </div>
+            <div>
+                <div class="ah-stat-val">{{ outward_count }}</div>
+                <div class="ah-stat-label">Outward Entries</div>
+                {% if today_outward > 0 %}<div class="ah-stat-sub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> +{{ today_outward }} today</div>{% endif %}
+            </div>
+        </div>
+        <div class="ah-stat">
+            <div class="ah-stat-icon violet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div>
+                <div class="ah-stat-val">{{ user_count }}</div>
+                <div class="ah-stat-label">Active Users</div>
+            </div>
+        </div>
+        <div class="ah-stat">
+            <div class="ah-stat-icon amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+            </div>
+            <div>
+                <div class="ah-stat-val">{{ doc_count }}</div>
+                <div class="ah-stat-label">Documents</div>
+            </div>
+        </div>
+        <div class="ah-stat">
+            <div class="ah-stat-icon rose">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            </div>
+            <div>
+                <div class="ah-stat-val">{{ survey_count }}</div>
+                <div class="ah-stat-label">Survey Photos</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="ah-grid">
+        <!-- Left: Quick Actions + Activity -->
+        <div style="display:grid; gap:20px;">
+            <div class="ah-card">
+                <div class="ah-card-head">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        Quick Actions
+                    </h3>
+                </div>
+                <div class="ah-card-body">
+                    <div class="ah-actions">
+                        <a class="ah-action" href="/new_entry">
+                            <div class="ah-action-icon i2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+                            <div><div class="ah-action-name">New Inward</div><div class="ah-action-desc">Log incoming material</div></div>
+                        </a>
+                        <a class="ah-action" href="/outward-entry">
+                            <div class="ah-action-icon i5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+                            <div><div class="ah-action-name">New Outward</div><div class="ah-action-desc">Log dispatch entry</div></div>
+                        </a>
+                        <a class="ah-action" href="/report">
+                            <div class="ah-action-icon i3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
+                            <div><div class="ah-action-name">Reports</div><div class="ah-action-desc">View & export data</div></div>
+                        </a>
+                        <a class="ah-action" href="/view-users">
+                            <div class="ah-action-icon i1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+                            <div><div class="ah-action-name">Manage Users</div><div class="ah-action-desc">Access & passwords</div></div>
+                        </a>
+                        <a class="ah-action" href="/tracking">
+                            <div class="ah-action-icon i4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></div>
+                            <div><div class="ah-action-name">Tracking</div><div class="ah-action-desc">Vehicle & shipment</div></div>
+                        </a>
+                        <a class="ah-action" href="/master">
+                            <div class="ah-action-icon i6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                            <div><div class="ah-action-name">Field Data</div><div class="ah-action-desc">Photos & surveys</div></div>
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="quick-actions">
-                <a class="action-tile" href="/view-users">
-                    <span class="action-icon users">U</span>
-                    <div class="action-copy">
-                        <strong>Manage Users</strong>
-                        <span>Open the user list, reset passwords, and review access.</span>
+            {% if recent_activity %}
+            <div class="ah-card">
+                <div class="ah-card-head">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        Recent Activity
+                    </h3>
+                    <a href="/master" style="font-size:12px; font-weight:700; color:#6366f1; text-decoration:none;">View All →</a>
+                </div>
+                <div class="ah-card-body">
+                    <div class="ah-activity-list">
+                        {% for item in recent_activity %}
+                        <div class="ah-activity">
+                            <div class="ah-act-dot {{ 'doc' if item[0] == 'Document' else 'survey' }}">
+                                {% if item[0] == 'Document' %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                {% else %}
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:15px;height:15px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                {% endif %}
+                            </div>
+                            <div class="ah-act-info">
+                                <span class="ah-act-name">{{ item[1] or 'Unnamed' }}</span>
+                                <span class="ah-act-meta">{{ item[3] }}</span>
+                            </div>
+                            <span class="ah-act-badge {{ 'doc' if item[0] == 'Document' else 'survey' }}">{{ item[0] }}</span>
+                        </div>
+                        {% endfor %}
                     </div>
-                </a>
-
-                <a class="action-tile" href="/new_entry">
-                    <span class="action-icon entry">IN</span>
-                    <div class="action-copy">
-                        <strong>Create Inward Entry</strong>
-                        <span>Capture incoming material movement and logistics details.</span>
-                    </div>
-                </a>
-
-                <a class="action-tile" href="/report">
-                    <span class="action-icon report">R</span>
-                    <div class="action-copy">
-                        <strong>Open Reports</strong>
-                        <span>Search records, compare data, and export results.</span>
-                    </div>
-                </a>
-
-                <a class="action-tile" href="/master">
-                    <span class="action-icon field">FD</span>
-                    <div class="action-copy">
-                        <strong>Review Field Data</strong>
-                        <span>Check uploaded site photos and supporting documents.</span>
-                    </div>
-                </a>
+                </div>
             </div>
-        </section>
+            {% endif %}
+        </div>
 
-        <aside class="section-card">
-            <div class="section-head">
-                <span class="eyebrow">Watchlist</span>
-                <h3>What needs attention</h3>
+        <!-- Right: Status Panel -->
+        <div style="display:grid; gap:20px;">
+            <div class="ah-card">
+                <div class="ah-card-head">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        System Status
+                    </h3>
+                </div>
+                <div class="ah-card-body">
+                    <div class="ah-status-list">
+                        <a class="ah-status" href="/master">
+                            <div class="ah-status-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg></div>
+                            <div class="ah-status-text">
+                                <span class="ah-status-title">Unreviewed Uploads</span>
+                                <span class="ah-status-desc">{{ new_uploads_count }} files in Field Data</span>
+                            </div>
+                            <span class="ah-status-pill {{ 'warn' if new_uploads_count > 0 else 'ok' }}">{{ 'Review' if new_uploads_count > 0 else 'Clear' }}</span>
+                        </a>
+                        <a class="ah-status" href="/report?type=inward">
+                            <div class="ah-status-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></div>
+                            <div class="ah-status-text">
+                                <span class="ah-status-title">Inward Report</span>
+                                <span class="ah-status-desc">{{ inward_count }} total entries</span>
+                            </div>
+                            <span class="ah-status-pill info">Open</span>
+                        </a>
+                        <a class="ah-status" href="/report?type=outward">
+                            <div class="ah-status-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
+                            <div class="ah-status-text">
+                                <span class="ah-status-title">Outward Report</span>
+                                <span class="ah-status-desc">{{ outward_count }} total dispatches</span>
+                            </div>
+                            <span class="ah-status-pill info">Open</span>
+                        </a>
+                        <a class="ah-status" href="/view-users">
+                            <div class="ah-status-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+                            <div class="ah-status-text">
+                                <span class="ah-status-title">User Accounts</span>
+                                <span class="ah-status-desc">{{ user_count }} active users</span>
+                            </div>
+                            <span class="ah-status-pill ok">Active</span>
+                        </a>
+                        <a class="ah-status" href="/report-documents">
+                            <div class="ah-status-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg></div>
+                            <div class="ah-status-text">
+                                <span class="ah-status-title">Upload Documents</span>
+                                <span class="ah-status-desc">{{ doc_count }} uploaded docs</span>
+                            </div>
+                            <span class="ah-status-pill {{ 'warn' if doc_count > 0 else 'ok' }}">{{ 'View' if doc_count > 0 else 'Empty' }}</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="watchlist">
-                <a class="watch-item" href="/master">
-                    <div>
-                        <strong>Unreviewed upload batch</strong>
-                        <span>6 new files are waiting in Field Data.</span>
+            <div class="ah-card">
+                <div class="ah-card-head">
+                    <h3>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        Today's Summary
+                    </h3>
+                </div>
+                <div class="ah-card-body" style="text-align:center; padding: 28px 22px;">
+                    <div style="display:flex; justify-content:center; gap:40px;">
+                        <div>
+                            <div style="font-size:36px; font-weight:800; color:#10b981; line-height:1;">{{ today_inward }}</div>
+                            <div style="font-size:12px; font-weight:600; color:#64748b; margin-top:6px;">Inward Today</div>
+                        </div>
+                        <div style="width:1px; background:#e2e8f0;"></div>
+                        <div>
+                            <div style="font-size:36px; font-weight:800; color:#3b82f6; line-height:1;">{{ today_outward }}</div>
+                            <div style="font-size:12px; font-weight:600; color:#64748b; margin-top:6px;">Outward Today</div>
+                        </div>
                     </div>
-                    <span class="ops-pill alert">Alert</span>
-                </a>
-
-                <a class="watch-item" href="/outward-entry">
-                    <div>
-                        <strong>Outward dispatches logged</strong>
-                        <span>4 outward entries were added in the last working cycle.</span>
-                    </div>
-                    <span class="ops-pill live">Live</span>
-                </a>
-
-                <a class="watch-item" href="/view-users">
-                    <div>
-                        <strong>Password reset requests cleared</strong>
-                        <span>All pending access updates are up to date.</span>
-                    </div>
-                    <span class="ops-pill ready">Ready</span>
-                </a>
+                </div>
             </div>
-        </aside>
+        </div>
     </div>
 </div>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const date = now.toLocaleDateString('en-IN', opts);
+        const time = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        const el = document.getElementById('ahClock');
+        if (el) el.textContent = date + ' • ' + time;
+    }
+    updateClock();
+    setInterval(updateClock, 30000);
+</script>
 {% endblock %}

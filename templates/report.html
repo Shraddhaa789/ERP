@@ -1,8 +1,12 @@
 {% extends "base.html" %}
 
+{% block panel_actions %}
+<a class="secondary-btn" href="/report-documents">New Doc</a>
+{% endblock %}
+
 {% block content %}
 <style>
-    .report-shell { 
+    .report-shell {
         display: grid;
         gap: 18px;
     }
@@ -32,7 +36,8 @@
         border-radius: 18px;
         border: 1px solid #d8e3f8;
         background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-        box-shadow: var(--shadow);
+        box-shadow: 0 8px 16px rgba(33, 49, 85, 0.03);
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
     }
 
     .stat-icon {
@@ -90,7 +95,10 @@
         border: 1px solid #d8e3f8;
         border-radius: 18px;
         background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-        box-shadow: var(--shadow);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(244, 248, 254, 0.9) 50%, rgba(230, 240, 255, 0.9) 100%);
+        background-size: 200% 200%;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 16px 40px rgba(34, 56, 97, 0.05), inset 0 1px 0 #ffffff;
     }
 
     .report-control-row {
@@ -103,6 +111,7 @@
 
     .report-control-row .field {
         min-width: 240px;
+        max-width: 100%;
     }
 
     .report-filter-group {
@@ -281,6 +290,13 @@
         font-size: 20px;
     }
 
+    .report-title-line {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
     .report-card-header p {
         margin: 0;
         color: var(--muted);
@@ -302,6 +318,8 @@
 
     .table-wrap {
         overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
         max-height: 650px;
         padding-bottom: 10px;
         background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
@@ -339,14 +357,17 @@
     .column-header {
         position: sticky;
         top: 0;
-        background: #ffffff;
-        color: #5d78a6;
-        font-size: 11px;
+        background: #f0f4fc;
+        color: #1e3668;
+        font-size: 12px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.05em;
         white-space: nowrap;
         z-index: 1;
+        border-bottom: 2px solid #b7cbff;
+        padding-top: 14px;
+        padding-bottom: 14px;
     }
 
     td {
@@ -366,13 +387,104 @@
     }
 
     @media (max-width: 860px) {
+        .stats-grid-report {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-card-report {
+            padding: 16px;
+        }
+
+        .stat-card-report .value {
+            font-size: 24px;
+        }
+
         .report-filter-group {
             width: 100%;
+            gap: 12px;
         }
 
         .report-control-row .field {
+            min-width: 0;
             width: 100%;
         }
+
+        .report-select,
+        .download-btn,
+        .page-chip {
+            width: 100%;
+        }
+
+        .report-status-row,
+        .report-pagination {
+            align-items: stretch;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .year-chip {
+            flex: 1 1 96px;
+        }
+    }
+
+    .btn-delete-report {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #fee2e2;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-report:hover {
+        background: #fecaca;
+        color: #dc2626;
+        transform: scale(1.1);
+    }
+
+    .report-action-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+    }
+
+    .btn-docs-report {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 7px 10px;
+        border-radius: 8px;
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .btn-docs-report:hover {
+        background: #dbeafe;
+    }
+
+    .btn-docs-report.disabled {
+        border-color: #e5e7eb;
+        background: #f8fafc;
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    .report-doc-message {
+        margin-top: 10px;
+        color: #4766a4;
+        font-size: 13px;
+        font-weight: 700;
     }
 </style>
 
@@ -421,6 +533,13 @@
                 <div class="value" id="report_location_count">0</div>
             </div>
         </div>
+        <div class="stat-card-report">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%); color: #d97706;">&#x1F4B0;</div>
+            <div class="stat-copy">
+                <span class="label">mahaIT Cost</span>
+                <div class="value" id="mahait_cost">0</div>
+            </div>
+        </div>
     </div>
 
     <div class="report-control-card">
@@ -434,12 +553,41 @@
                     </select>
                 </div>
                 <div class="field">
+                    <label for="report_year_select">Year Filter</label>
+                    <select id="report_year_select" class="report-select" onchange="changeYear(this.value)">
+                        <option value="all">All</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="report_category">Category</label>
+                    <select id="report_category" class="report-select" onchange="filterReportSubCategories()">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="report_sub_category">Sub Category</label>
+                    <select id="report_sub_category" class="report-select" onchange="filterReportMaterials()">
+                        <option value="">All Sub-Categories</option>
+                    </select>
+                </div>
+                <div class="field">
                     <label for="report_search_field">Search In Field</label>
-                    <select id="report_search_field" class="report-select" onchange="currentPage = 1; loadReport();"></select>
+                    <select id="report_search_field" class="report-select"
+                        onchange="currentPage = 1; renderCurrentReport();"></select>
                 </div>
                 <div class="field">
                     <label for="report_search">Search Fields</label>
-                    <input id="report_search" class="report-select" type="text" placeholder="Search any table value" oninput="triggerReportSearch()">
+                    <input id="report_search" class="report-select" type="text" placeholder="Search any table value"
+                        oninput="triggerReportSearch()">
+                </div>
+                <div class="field">
+                    <label for="filter_type">Filter Type</label>
+                    <select id="filter_type" class="report-select">
+                        <option value="10%">10%</option>
+                        <option value="60%">60%</option>
+                        <option value="25%">25%</option>
+                        <option value="5%">5%</option>
+                    </select>
                 </div>
             </div>
             <button class="action-btn download-btn" type="button" onclick="downloadReport()">
@@ -450,14 +598,6 @@
                 </svg>
                 <span>Download Excel</span>
             </button>
-        </div>
-
-        <div class="year-filter-wrap">
-            <div class="year-filter-head">
-                <span>Year Filter</span>
-                <div class="year-filter-note" id="report_year_note">Showing records year-wise for smoother loading.</div>
-            </div>
-            <div class="year-filter-buttons" id="report_year_buttons"></div>
         </div>
 
         <div class="report-status-row">
@@ -473,7 +613,9 @@
     <section class="report-card">
         <div class="report-card-header">
             <div>
-                <h3 id="report_title">Inward Report</h3>
+                <div class="report-title-line">
+                    <h3 id="report_title">Inward Report</h3>
+                </div>
                 <p id="report_subtitle">Showing all inward entries created in the system.</p>
             </div>
             <div class="report-badge" id="report_badge">Inward</div>
@@ -489,407 +631,630 @@
 </div>
 
 <script>
-const reportConfigs = {
-    inward: {
-        title: "Inward Report",
-        subtitle: "Showing real inward workbook entries created in the system.",
-        badge: "Inward",
-        locationKey: "warehouse",
-        totalKey: "grand_total",
-        groups: [
-            { name: "Basic Information", count: 8 },
-            { name: "Order & Dispatch", count: 4 },
-            { name: "Vendor / PO", count: 3 },
-            { name: "Invoice", count: 2 },
-            { name: "Material Details", count: 5 },
-            { name: "Pricing & Taxes", count: 10 },
-            { name: "Logistics", count: 5 },
-            { name: "Delivery", count: 3 },
-            { name: "Time Tracking", count: 3 },
-            { name: "Compliance", count: 2 },
-            { name: "Inspection", count: 2 },
-            { name: "PM Tool Tracking", count: 8 },
-            { name: "Approvals", count: 2 }
-        ],
-        headers: [
-            { key: "sr_no", label: "Sr No" },
-            { key: "atn", label: "ATN" },
-            { key: "shifting", label: "Shifting" },
-            { key: "original_wh", label: "Original WH" },
-            { key: "date", label: "Month" },
-            { key: "warehouse", label: "Warehouse" },
-            { key: "shipment_type", label: "Shipment Type" },
-            { key: "dispatch_type", label: "Dispatched Type" },
-            { key: "in_doc_no", label: "IN. DOC No" },
-            { key: "order_no", label: "Order No" },
-            { key: "dc_no", label: "DC No" },
-            { key: "challan_date", label: "Challan Date" },
-            { key: "oem", label: "OEM" },
-            { key: "po_no", label: "PO No" },
-            { key: "po_name", label: "PO Issued Name" },
-            { key: "invoice_no", label: "Invoice No" },
-            { key: "invoice_date", label: "Invoice Date" },
-            { key: "item_code", label: "Item Code" },
-            { key: "description", label: "Description" },
-            { key: "qty", label: "NO/Qty" },
-            { key: "physical_qty", label: "Physical NO/Qty" },
-            { key: "unit", label: "Unit" },
-            { key: "rate", label: "Rate per Unit" },
-            { key: "total_value", label: "Total Value" },
-            { key: "taxable_value", label: "Taxable Value" },
-            { key: "tsc", label: "TSC0.075%" },
-            { key: "discount", label: "Discount" },
-            { key: "freight", label: "Freight Charges" },
-            { key: "additional_total", label: "Total" },
-            { key: "cgst", label: "CGST (9%)" },
-            { key: "sgst", label: "SGST (9%)" },
-            { key: "grand_total", label: "Grand Total" },
-            { key: "unloading", label: "Chamber Unloading" },
-            { key: "transport", label: "Transport Name" },
-            { key: "vehicle", label: "Vehicle No" },
-            { key: "lr_no", label: "LR/RR No" },
-            { key: "lr_date", label: "LR Date" },
-            { key: "pkgs_qty", label: "Pkgs Qty" },
-            { key: "delivery_date", label: "Delivery Date" },
-            { key: "mode", label: "Mode of Delivery" },
-            { key: "reporting_time", label: "Reporting Time" },
-            { key: "unloading_time", label: "Unloading Time" },
-            { key: "wh_remark", label: "W/H Remark" },
-            { key: "eway_bill", label: "e-WAY Bill No" },
-            { key: "shipment_type2", label: "Shipment Type" },
-            { key: "inspection_date", label: "Inspection Date" },
-            { key: "inspection_person", label: "Inspection Person" },
-            { key: "doc_remark", label: "Document Remark" },
-            { key: "pm_update_date", label: "PM Update Date" },
-            { key: "pm_update_by", label: "PM Update By" },
-            { key: "reupload", label: "Re-Upload" },
-            { key: "reupload_reason", label: "Re-Upload Reason" },
-            { key: "pm_remark", label: "Remark" },
-            { key: "inspection_status", label: "Inspection Status" },
-            { key: "pm_submit_date", label: "PM Submission Date" },
-            { key: "approved_dpm", label: "Approved by DPM" },
-            { key: "approved_tpa", label: "Approved by TPA" }
-        ]
-    },
-    outward: {
-        title: "Outward Report",
-        subtitle: "Showing real outward workbook entries created in the system.",
-        badge: "Outward",
-        locationKey: "out_warehouse",
-        totalKey: "out_grand_total",
-        groups: [
-            { name: "Basic Information", count: 4 },
-            { name: "Dispatch Details", count: 5 },
-            { name: "Location Details", count: 4 },
-            { name: "Material Info", count: 5 },
-            { name: "Pricing & Taxes", count: 10 },
-            { name: "Logistics", count: 3 },
-            { name: "Time Tracking", count: 4 },
-            { name: "Other", count: 2 }
-        ],
-        headers: [
-            { key: "out_sr_no", label: "Sr No" },
-            { key: "out_atn", label: "ATN" },
-            { key: "out_month", label: "Month" },
-            { key: "out_warehouse", label: "Warehouse" },
-            { key: "out_shipment_type", label: "Shipment Type" },
-            { key: "out_dispatch_type", label: "Dispatched Type" },
-            { key: "out_in_doc_no", label: "IN. DOC No" },
-            { key: "out_dc_no", label: "DC No" },
-            { key: "out_dc_date", label: "DC Date" },
-            { key: "out_vendor_name", label: "Vendor Name" },
-            { key: "out_gp_location", label: "GP Location" },
-            { key: "out_block", label: "Block" },
-            { key: "out_dist", label: "Dist" },
-            { key: "out_item_code", label: "Item Code" },
-            { key: "out_description", label: "Description" },
-            { key: "out_qty", label: "NO/Qty" },
-            { key: "out_physical_qty", label: "Physical NO/Qty" },
-            { key: "out_unit", label: "Unit" },
-            { key: "out_rate_per_unit", label: "Rate per Unit" },
-            { key: "out_total_value", label: "Total Value" },
-            { key: "out_taxable_value", label: "Taxable Value" },
-            { key: "out_tsc", label: "TSC0.075%" },
-            { key: "out_discount", label: "Discount" },
-            { key: "out_freight_charge", label: "Freight Charge" },
-            { key: "out_total", label: "Total" },
-            { key: "out_cgst", label: "CGST" },
-            { key: "out_sgst", label: "SGST" },
-            { key: "out_grand_total", label: "Grand Total" },
-            { key: "out_transport_name", label: "Transport Name" },
-            { key: "out_vehicle_no", label: "Vehicle No" },
-            { key: "out_pkgs_qty", label: "Pkgs Qty" },
-            { key: "out_dispatched_date", label: "Dispatched Date" },
-            { key: "out_mode_of_delivery", label: "Mode of Delivery" },
-            { key: "out_reporting_time", label: "Reporting Time" },
-            { key: "out_loading_time", label: "Loading Time" },
-            { key: "out_remark", label: "Remark" },
-            { key: "out_ug_aerial", label: "UG/Aerial" },
-            { key: "out_frt", label: "FRT" }
-        ]
-    }
-};
-
-let currentReportRows = [];
-let filteredReportRows = [];
-let selectedReportYear = null;
-let currentPage = 1;
-let totalReportRows = 0;
-const reportPageSize = 100;
-let reportSearchDebounce = null;
-
-function numberValue(value) {
-    const parsed = parseFloat(value);
-    return Number.isFinite(parsed) ? parsed : 0;
-}
-
-function safeValue(value) {
-    return value === null || value === undefined || value === "" ? "-" : value;
-}
-
-function changeReportType() {
-    document.getElementById("report_search").value = "";
-    document.getElementById("report_search_field").innerHTML = "";
-    currentPage = 1;
-    loadYearFilters();
-}
-
-function loadYearFilters() {
-    const type = document.getElementById("report_type").value;
-
-    fetch(`/report-years?type=${type}`)
-        .then(async (res) => {
-            if (!res.ok) {
-                throw new Error(`Year load failed with status ${res.status}`);
-            }
-            return res.json();
-        })
-        .then((years) => {
-            const list = Array.isArray(years) ? years : [];
-            selectedReportYear = "all";
-            renderYearButtons(list);
-            loadReport();
-        })
-        .catch((error) => {
-            console.error(error);
-            selectedReportYear = "all";
-            renderYearButtons([]);
-            loadReport();
-        });
-}
-
-function renderYearButtons(years) {
-    const wrap = document.getElementById("report_year_buttons");
-    const note = document.getElementById("report_year_note");
-    wrap.innerHTML = "";
-
-    note.textContent = years.length
-        ? "Use All to browse the complete dataset, or switch to a year for a smaller faster slice."
-        : "No dated records were found for year-based grouping. Showing all records instead.";
-
-    const allBtn = document.createElement("button");
-    allBtn.type = "button";
-    allBtn.className = `year-chip${selectedReportYear === "all" ? " active" : ""}`;
-    allBtn.textContent = "All";
-    allBtn.onclick = () => {
-        selectedReportYear = "all";
-        currentPage = 1;
-        renderYearButtons(years);
-        loadReport();
+    const reportConfigs = {
+        inward: {
+            title: "Inward Report",
+            badge: "Inward",
+            locationKey: "warehouse",
+            totalKey: "grand_total",
+            groups: [
+                { name: "Basic Information", count: 8 },
+                { name: "Order & Dispatch", count: 4 },
+                { name: "Vendor / PO", count: 3 },
+                { name: "Invoice", count: 2 },
+                { name: "Material Details", count: 5 },
+                { name: "Pricing & Taxes", count: 10 },
+                { name: "Logistics", count: 5 },
+                { name: "Delivery", count: 3 },
+                { name: "Time Tracking", count: 3 },
+                { name: "Compliance", count: 2 },
+                { name: "Inspection", count: 2 },
+                { name: "PM Tool Tracking", count: 8 },
+                { name: "Approvals", count: 2 },
+                { name: "Actions", count: 1 }
+            ],
+            headers: [
+                { key: "sr_no", label: "Sr No" },
+                { key: "atn", label: "ATN" },
+                { key: "shifting", label: "Shifting" },
+                { key: "original_wh", label: "Original WH" },
+                { key: "date", label: "Month" },
+                { key: "warehouse", label: "Warehouse" },
+                { key: "shipment_type", label: "Shipment Type" },
+                { key: "dispatch_type", label: "Dispatched Type" },
+                { key: "in_doc_no", label: "IN. DOC No" },
+                { key: "order_no", label: "Order No" },
+                { key: "dc_no", label: "DC No" },
+                { key: "challan_date", label: "Challan Date" },
+                { key: "oem", label: "OEM" },
+                { key: "po_no", label: "PO No" },
+                { key: "po_name", label: "PO Issued Name" },
+                { key: "invoice_no", label: "Invoice No" },
+                { key: "invoice_date", label: "Invoice Date" },
+                { key: "item_code", label: "Item Code" },
+                { key: "description", label: "Description" },
+                { key: "qty", label: "NO/Qty" },
+                { key: "physical_qty", label: "Physical NO/Qty" },
+                { key: "unit", label: "Unit" },
+                { key: "rate", label: "Rate per Unit" },
+                { key: "total_value", label: "Total Value" },
+                { key: "taxable_value", label: "Taxable Value" },
+                { key: "tsc", label: "TSC0.075%" },
+                { key: "discount", label: "Discount" },
+                { key: "freight", label: "Freight Charges" },
+                { key: "additional_total", label: "Total" },
+                { key: "cgst", label: "CGST (9%)" },
+                { key: "sgst", label: "SGST (9%)" },
+                { key: "grand_total", label: "Grand Total" },
+                { key: "unloading", label: "Chamber Unloading" },
+                { key: "transport", label: "Transport Name" },
+                { key: "vehicle", label: "Vehicle No" },
+                { key: "lr_no", label: "LR/RR No" },
+                { key: "lr_date", label: "LR Date" },
+                { key: "pkgs_qty", label: "Pkgs Qty" },
+                { key: "delivery_date", label: "Delivery Date" },
+                { key: "mode", label: "Mode of Delivery" },
+                { key: "reporting_time", label: "Reporting Time" },
+                { key: "unloading_time", label: "Unloading Time" },
+                { key: "wh_remark", label: "W/H Remark" },
+                { key: "eway_bill", label: "e-WAY Bill No" },
+                { key: "shipment_type2", label: "Shipment Type" },
+                { key: "inspection_date", label: "Inspection Date" },
+                { key: "inspection_person", label: "Inspection Person" },
+                { key: "doc_remark", label: "Document Remark" },
+                { key: "pm_update_date", label: "PM Update Date" },
+                { key: "pm_update_by", label: "PM Update By" },
+                { key: "reupload", label: "Re-Upload" },
+                { key: "reupload_reason", label: "Re-Upload Reason" },
+                { key: "pm_remark", label: "Remark" },
+                { key: "inspection_status", label: "Inspection Status" },
+                { key: "pm_submit_date", label: "PM Submission Date" },
+                { key: "approved_dpm", label: "Approved by DPM" },
+                { key: "approved_tpa", label: "Approved by TPA" },
+                { key: "actions", label: "Action" }
+            ]
+        },
+        outward: {
+            title: "Outward Report",
+            badge: "Outward",
+            locationKey: "out_warehouse",
+            totalKey: "out_grand_total",
+            groups: [
+                { name: "Basic Information", count: 4 },
+                { name: "Dispatch Details", count: 5 },
+                { name: "Location Details", count: 4 },
+                { name: "Material Info", count: 5 },
+                { name: "Pricing & Taxes", count: 10 },
+                { name: "Logistics", count: 3 },
+                { name: "Time Tracking", count: 4 },
+                { name: "Other", count: 2 },
+                { name: "Actions", count: 1 }
+            ],
+            headers: [
+                { key: "out_sr_no", label: "Sr No" },
+                { key: "out_atn", label: "ATN" },
+                { key: "out_month", label: "Month" },
+                { key: "out_warehouse", label: "Warehouse" },
+                { key: "out_shipment_type", label: "Shipment Type" },
+                { key: "out_dispatch_type", label: "Dispatched Type" },
+                { key: "out_in_doc_no", label: "IN. DOC No" },
+                { key: "out_dc_no", label: "DC No" },
+                { key: "out_dc_date", label: "DC Date" },
+                { key: "out_vendor_name", label: "Vendor Name" },
+                { key: "out_gp_location", label: "GP Location" },
+                { key: "out_block", label: "Block" },
+                { key: "out_dist", label: "Dist" },
+                { key: "out_item_code", label: "Item Code" },
+                { key: "out_description", label: "Description" },
+                { key: "out_qty", label: "NO/Qty" },
+                { key: "out_physical_qty", label: "Physical NO/Qty" },
+                { key: "out_unit", label: "Unit" },
+                { key: "out_rate_per_unit", label: "Rate per Unit" },
+                { key: "out_total_value", label: "Total Value" },
+                { key: "out_taxable_value", label: "Taxable Value" },
+                { key: "out_tsc", label: "TSC0.075%" },
+                { key: "out_discount", label: "Discount" },
+                { key: "out_freight_charge", label: "Freight Charge" },
+                { key: "out_total", label: "Total" },
+                { key: "out_cgst", label: "CGST" },
+                { key: "out_sgst", label: "SGST" },
+                { key: "out_grand_total", label: "Grand Total" },
+                { key: "out_transport_name", label: "Transport Name" },
+                { key: "out_vehicle_no", label: "Vehicle No" },
+                { key: "out_pkgs_qty", label: "Pkgs Qty" },
+                { key: "out_dispatched_date", label: "Dispatched Date" },
+                { key: "out_mode_of_delivery", label: "Mode of Delivery" },
+                { key: "out_reporting_time", label: "Reporting Time" },
+                { key: "out_loading_time", label: "Loading Time" },
+                { key: "out_remark", label: "Remark" },
+                { key: "out_ug_aerial", label: "UG/Aerial" },
+                { key: "out_frt", label: "FRT" },
+                { key: "actions", label: "Action" }
+            ]
+        }
     };
-    wrap.appendChild(allBtn);
 
-    years.forEach((year) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = `year-chip${String(year) === selectedReportYear ? " active" : ""}`;
-        btn.textContent = year;
-        btn.onclick = () => {
-            selectedReportYear = String(year);
-            currentPage = 1;
-            renderYearButtons(years);
-            loadReport();
-        };
-        wrap.appendChild(btn);
-    });
-}
+    let currentReportRows = [];
+    let filteredReportRows = [];
+    let selectedReportYear = null;
+    let currentPage = 1;
+    let totalReportRows = 0;
+    const reportPageSize = 100;
+    let reportSearchDebounce = null;
+    let materialCategories = {};
+    let materialCategoriesByCode = {};
 
-function loadReport() {
-    const type = document.getElementById("report_type").value;
-    const config = reportConfigs[type];
-    const searchTerm = document.getElementById("report_search").value.trim();
-    const searchField = document.getElementById("report_search_field").value || "all";
-    const offset = (currentPage - 1) * reportPageSize;
+    function normalizeMaterialKey(value) {
+        return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+    }
 
-    document.getElementById("report_title").textContent = config.title;
-    document.getElementById("report_subtitle").textContent = config.subtitle;
-    document.getElementById("report_badge").textContent = config.badge;
-    populateSearchFields(config);
-    document.getElementById("report_status_text").textContent = "Loading report records...";
+    function getMaterialInfo(description, itemCode = "") {
+        const codeMatch = itemCode ? materialCategoriesByCode[normalizeMaterialKey(itemCode)] : null;
+        if (codeMatch) return codeMatch;
 
-    const yearQuery = selectedReportYear && selectedReportYear !== "all" ? `&year=${selectedReportYear}` : "";
-    const searchQuery = searchTerm ? `&search=${encodeURIComponent(searchTerm)}&field=${encodeURIComponent(searchField)}` : "";
-    fetch(`/report-data?type=${type}${yearQuery}&limit=${reportPageSize}&offset=${offset}${searchQuery}`)
-        .then(async (res) => {
-            if (!res.ok) {
-                if (res.status === 401) {
-                    const data = await res.json();
-                    if (data.redirect) {
-                        window.location.href = data.redirect;
-                        return;
-                    }
+        const direct = materialCategories[description];
+        if (direct) return direct;
+
+        const target = normalizeMaterialKey(description);
+        const match = Object.entries(materialCategories).find(([key]) => normalizeMaterialKey(key) === target);
+        return match ? match[1] : { category: "Uncategorized", sub_category: "" };
+    }
+
+    function currentReportDescriptions() {
+        return currentReportRows
+            .map((row) => String(row.description || row.out_description || "").trim())
+            .filter(Boolean);
+    }
+
+    function syncReportCategoryFilter(resetSelection = false) {
+        const categorySelect = document.getElementById("report_category");
+        if (!categorySelect) return;
+
+        const currentValue = resetSelection ? "" : categorySelect.value;
+        const categories = [...new Set(Object.values(materialCategories)
+            .map((info) => info.category)
+            .filter((category) => category && category !== "Uncategorized"))].sort();
+
+        categorySelect.innerHTML = '<option value="">All Categories</option>' +
+            categories.map(c => `<option value="${c}">${c}</option>`).join("");
+        categorySelect.value = categories.includes(currentValue) ? currentValue : "";
+        if (!categorySelect.value) {
+            resetReportMaterialFilters();
+        } else {
+            filterReportSubCategories(false);
+        }
+    }
+
+    async function fetchMaterialCategories() {
+        try {
+            const res = await fetch('/material-categories');
+            materialCategories = await res.json();
+            materialCategoriesByCode = {};
+            Object.values(materialCategories).forEach((info) => {
+                if (info.item_code) {
+                    materialCategoriesByCode[normalizeMaterialKey(info.item_code)] = info;
                 }
-                throw new Error(`Load failed with status ${res.status}`);
+            });
+            syncReportCategoryFilter(true);
+        } catch (e) {
+            console.error("Failed to load categories", e);
+        }
+    }
+
+    function resetReportMaterialFilters() {
+        const subCategorySelect = document.getElementById("report_sub_category");
+        const materialSelect = document.getElementById("report_material");
+        if (subCategorySelect) {
+            subCategorySelect.innerHTML = '<option value="">All Sub-Categories</option>';
+            const subCategoryField = subCategorySelect.closest(".field");
+            if (subCategoryField) {
+                subCategoryField.style.display = "";
             }
-            return res.json();
-        })
-        .then((payload) => {
-            currentReportRows = Array.isArray(payload.data) ? payload.data : [];
-            totalReportRows = Number(payload.total_count || 0);
-            renderCurrentReport();
-            updatePaginationState();
-        })
-        .catch((error) => {
-            console.error(error);
-            currentReportRows = [];
-            totalReportRows = 0;
-            renderCurrentReport();
-            updatePaginationState();
-        });
-}
-
-function renderCurrentReport() {
-    const type = document.getElementById("report_type").value;
-    const config = reportConfigs[type];
-    const searchTerm = document.getElementById("report_search").value.trim().toLowerCase();
-    const fieldSelect = document.getElementById("report_search_field");
-    const searchField = fieldSelect.value;
-
-    filteredReportRows = currentReportRows.filter((row) => {
-        if (!searchTerm) {
-            return true;
         }
-
-        if (searchField === "all") {
-            return config.headers.some((header) => String(safeValue(row[header.key])).toLowerCase().includes(searchTerm));
+        if (materialSelect) {
+            materialSelect.innerHTML = '<option value="">All Materials</option>';
         }
+    }
 
-        return String(safeValue(row[searchField])).toLowerCase().includes(searchTerm);
-    });
+    function filterReportSubCategories(shouldRender = true) {
+        const category = document.getElementById("report_category").value;
+        const subCategorySelect = document.getElementById("report_sub_category");
 
-    renderReportTable(config, filteredReportRows);
-    updateReportStats(config, filteredReportRows);
-}
+        if (!category) {
+            subCategorySelect.innerHTML = '<option value="">All Sub-Categories</option>';
+            const subCategoryField = subCategorySelect.closest(".field");
+            if (subCategoryField) {
+                subCategoryField.style.display = "";
+            }
+            const materialSelect = document.getElementById("report_material");
+            if (materialSelect) {
+                materialSelect.innerHTML = '<option value="">All Materials</option>';
+            }
+        } else {
+            const subCategories = [...new Set(Object.values(materialCategories)
+                .filter(m => m.category === category)
+                .map(m => m.sub_category)
+                .filter(Boolean))].sort();
+            const subCategoryField = subCategorySelect.closest(".field");
+            if (subCategoryField) {
+                subCategoryField.style.display = subCategories.length ? "" : "none";
+            }
+            subCategorySelect.innerHTML = '<option value="">All Sub-Categories</option>' +
+                subCategories.map(sc => `<option value="${sc}">${sc}</option>`).join("");
 
-function triggerReportSearch() {
-    clearTimeout(reportSearchDebounce);
-    reportSearchDebounce = setTimeout(() => {
+            filterReportMaterials(false);
+        }
         currentPage = 1;
+        if (shouldRender) {
+            loadReport();
+        }
+    }
+
+    function filterReportMaterials(shouldRender = true) {
+        const category = document.getElementById("report_category").value;
+        const subCategory = document.getElementById("report_sub_category").value;
+        const materialSelect = document.getElementById("report_material");
+
+        const categorySubCategories = [...new Set(Object.values(materialCategories)
+            .filter(m => m.category === category)
+            .map(m => m.sub_category)
+            .filter(Boolean))];
+        const materials = Object.entries(materialCategories)
+            .filter(([desc, m]) => (
+                (!category || m.category === category) &&
+                (!categorySubCategories.length || !subCategory || m.sub_category === subCategory)
+            ))
+            .map(([desc]) => desc)
+            .sort();
+
+        if (materialSelect) {
+            materialSelect.innerHTML = '<option value="">All Materials</option>' + 
+                materials.map(m => `<option value="${m}">${m}</option>`).join("");
+        }
+        currentPage = 1;
+        if (shouldRender) {
+            loadReport();
+        }
+    }
+
+    function numberValue(value) {
+        const parsed = parseFloat(value);
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    function safeValue(value) {
+        return value === null || value === undefined || value === "" ? "-" : value;
+    }
+
+    function changeReportType() {
+        document.getElementById("report_search").value = "";
+        document.getElementById("report_search_field").innerHTML = "";
+        const categorySelect = document.getElementById("report_category");
+        if (categorySelect) {
+            categorySelect.value = "";
+        }
+        resetReportMaterialFilters();
+        currentPage = 1;
+        loadYearFilters();
+    }
+
+    function loadYearFilters() {
+        const type = document.getElementById("report_type").value;
+
+        fetch(`/report-years?type=${type}`)
+            .then(async (res) => {
+                if (!res.ok) {
+                    throw new Error(`Year load failed with status ${res.status}`);
+                }
+                return res.json();
+            })
+            .then((years) => {
+                const list = Array.isArray(years) ? years : [];
+                selectedReportYear = "all";
+                renderYearDropdown(list);
+                loadReport();
+            })
+            .catch((error) => {
+                console.error(error);
+                selectedReportYear = "all";
+                renderYearDropdown([]);
+                loadReport();
+            });
+    }
+
+    function changeYear(val) {
+        selectedReportYear = val;
+        currentPage = 1;
+        const categorySelect = document.getElementById("report_category");
+        if (categorySelect) {
+            categorySelect.value = "";
+        }
+        resetReportMaterialFilters();
         loadReport();
-    }, 300);
-}
-
-function changePage(direction) {
-    const nextPage = currentPage + direction;
-    const totalPages = Math.max(1, Math.ceil(totalReportRows / reportPageSize));
-
-    if (nextPage < 1 || nextPage > totalPages) {
-        return;
     }
 
-    currentPage = nextPage;
-    loadReport();
-}
+    function renderYearDropdown(years) {
+        const select = document.getElementById("report_year_select");
+        if (!select) return;
+        select.innerHTML = `<option value="all">All</option>`;
 
-function updatePaginationState() {
-    const totalPages = Math.max(1, Math.ceil(totalReportRows / reportPageSize));
-    const startRow = totalReportRows ? ((currentPage - 1) * reportPageSize) + 1 : 0;
-    const endRow = Math.min(currentPage * reportPageSize, totalReportRows);
-
-    document.getElementById("report_prev_btn").disabled = currentPage <= 1;
-    document.getElementById("report_next_btn").disabled = currentPage >= totalPages;
-    document.getElementById("report_page_info").textContent = `Page ${currentPage} of ${totalPages}`;
-    document.getElementById("report_status_text").textContent = totalReportRows
-        ? `Showing ${startRow}-${endRow} of ${totalReportRows} records`
-        : "No records found for the selected filters.";
-}
-
-function populateSearchFields(config) {
-    const select = document.getElementById("report_search_field");
-    const current = select.value || "all";
-
-    select.innerHTML = `<option value="all">All Fields</option>` +
-        config.headers.map((header) => `<option value="${header.key}">${header.label}</option>`).join("");
-
-    if ([...select.options].some((option) => option.value === current)) {
-        select.value = current;
-    } else {
-        select.value = "all";
-    }
-}
-
-function renderReportTable(config, rows) {
-    const thead = document.getElementById("report_head");
-    const tbody = document.getElementById("report_body");
-
-    const groupRow = `<tr>${config.groups.map((group) => `<th class="group-header" colspan="${group.count}">${group.name}</th>`).join("")}</tr>`;
-    const headerRow = `<tr>${config.headers.map((header) => `<th class="column-header">${header.label}</th>`).join("")}</tr>`;
-    thead.innerHTML = groupRow + headerRow;
-    tbody.innerHTML = "";
-
-    if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="${config.headers.length}" class="empty-state">No ${config.badge.toLowerCase()} records found.</td></tr>`;
-        return;
-    }
-
-    const fragment = document.createDocumentFragment();
-    
-    rows.forEach((row) => {
-        const tr = document.createElement("tr");
-        config.headers.forEach((header) => {
-            const td = document.createElement("td");
-            td.textContent = safeValue(row[header.key]);
-            tr.appendChild(td);
+        years.forEach((year) => {
+            const opt = document.createElement("option");
+            opt.value = year;
+            opt.textContent = year;
+            if (String(year) === selectedReportYear) {
+                opt.selected = true;
+            }
+            select.appendChild(opt);
         });
-        fragment.appendChild(tr);
-    });
-    
-    tbody.appendChild(fragment);
-}
+        select.value = selectedReportYear || "all";
+    }
 
-function updateReportStats(config, rows) {
-    const totalValue = rows.reduce((sum, row) => sum + numberValue(row[config.totalKey]), 0);
-    const locations = new Set(rows.map((row) => row[config.locationKey]).filter(Boolean));
+    function loadReport() {
+        const type = document.getElementById("report_type").value;
+        const config = reportConfigs[type];
+        const searchTerm = document.getElementById("report_search").value.trim();
+        const searchField = document.getElementById("report_search_field").value || "all";
+        const category = document.getElementById("report_category").value || "";
+        const subCategory = document.getElementById("report_sub_category").value || "";
+        const material = document.getElementById("report_material")?.value || "";
+        const offset = (currentPage - 1) * reportPageSize;
 
-    document.getElementById("report_total_records").textContent = totalReportRows;
-    document.getElementById("report_total_value").textContent = `Rs. ${totalValue.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
-    document.getElementById("report_location_count").textContent = locations.size;
-}
+        document.getElementById("report_title").textContent = config.title;
+        document.getElementById("report_subtitle").textContent = config.subtitle;
+        document.getElementById("report_badge").textContent = config.badge;
+        populateSearchFields(config);
+        document.getElementById("report_status_text").textContent = "Loading report records...";
 
-function downloadReport() {
-    const type = document.getElementById("report_type").value;
-    const config = reportConfigs[type];
-    const lines = [];
+        const yearQuery = selectedReportYear && selectedReportYear !== "all" ? `&year=${selectedReportYear}` : "";
+        const searchQuery = searchTerm ? `&search=${encodeURIComponent(searchTerm)}&field=${encodeURIComponent(searchField)}` : "";
+        const categoryQuery = category ? `&category=${encodeURIComponent(category)}` : "";
+        const subCategoryQuery = subCategory ? `&sub_category=${encodeURIComponent(subCategory)}` : "";
+        const materialQuery = material ? `&material=${encodeURIComponent(material)}` : "";
+        fetch(`/report-data?type=${type}${yearQuery}&limit=${reportPageSize}&offset=${offset}${searchQuery}${categoryQuery}${subCategoryQuery}${materialQuery}`)
+            .then(async (res) => {
+                if (!res.ok) {
+                    if (res.status === 401) {
+                        const data = await res.json();
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                            return;
+                        }
+                    }
+                    throw new Error(`Load failed with status ${res.status}`);
+                }
+                return res.json();
+            })
+            .then((payload) => {
+                currentReportRows = Array.isArray(payload.data) ? payload.data : [];
+                totalReportRows = Number(payload.total_count || 0);
+                renderCurrentReport();
+            })
+            .catch((error) => {
+                console.error(error);
+                currentReportRows = [];
+                totalReportRows = 0;
+                renderCurrentReport();
+            });
+    }
 
-    lines.push(config.headers.map((header) => `"${header.label.replace(/"/g, '""')}"`).join(","));
+    function renderCurrentReport() {
+        const type = document.getElementById("report_type").value;
+        const config = reportConfigs[type];
+        const searchTerm = document.getElementById("report_search").value.trim().toLowerCase();
+        const fieldSelect = document.getElementById("report_search_field");
+        const searchField = fieldSelect.value;
 
-    filteredReportRows.forEach((row) => {
-        lines.push(config.headers.map((header) => `"${String(safeValue(row[header.key])).replace(/"/g, '""')}"`).join(","));
-    });
+        filteredReportRows = currentReportRows.filter((row) => {
+            if (!searchTerm) {
+                return true;
+            }
 
-    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    const stamp = new Date().toISOString().split("T")[0];
+            if (searchField === "all") {
+                return config.headers.some((header) => String(safeValue(row[header.key])).toLowerCase().includes(searchTerm));
+            }
 
-    link.href = url;
-    link.download = `${config.badge}_Report_${stamp}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-}
+            return String(safeValue(row[searchField])).toLowerCase().includes(searchTerm);
+        });
 
-loadYearFilters();
+        renderReportTable(config, filteredReportRows);
+        updateReportStats(config, filteredReportRows);
+        updatePaginationState();
+    }
+
+    function triggerReportSearch() {
+        clearTimeout(reportSearchDebounce);
+        reportSearchDebounce = setTimeout(() => {
+            currentPage = 1;
+            loadReport();
+        }, 300);
+    }
+
+    function changePage(direction) {
+        const nextPage = currentPage + direction;
+        const totalPages = Math.max(1, Math.ceil(totalReportRows / reportPageSize));
+
+        if (nextPage < 1 || nextPage > totalPages) {
+            return;
+        }
+
+        currentPage = nextPage;
+        loadReport();
+    }
+
+    function updatePaginationState() {
+        const totalPages = Math.max(1, Math.ceil(totalReportRows / reportPageSize));
+        const startRow = totalReportRows ? ((currentPage - 1) * reportPageSize) + 1 : 0;
+        const endRow = Math.min(currentPage * reportPageSize, totalReportRows);
+
+        document.getElementById("report_prev_btn").disabled = currentPage <= 1;
+        document.getElementById("report_next_btn").disabled = currentPage >= totalPages;
+        document.getElementById("report_page_info").textContent = `Page ${currentPage} of ${totalPages}`;
+        const hasClientFilters = Boolean(
+            document.getElementById("report_category")?.value ||
+            document.getElementById("report_sub_category")?.value ||
+            document.getElementById("report_material")?.value
+        );
+        if (hasClientFilters && filteredReportRows.length !== currentReportRows.length) {
+            document.getElementById("report_status_text").textContent = filteredReportRows.length
+                ? `Showing ${filteredReportRows.length} filtered records from ${currentReportRows.length} loaded records`
+                : `No visible rows for the selected category/material filter. Clear filters or choose All Categories.`;
+        } else {
+            document.getElementById("report_status_text").textContent = totalReportRows
+                ? `Showing ${startRow}-${endRow} of ${totalReportRows} records`
+                : "No records found for the selected filters.";
+        }
+    }
+
+    function populateSearchFields(config) {
+        const select = document.getElementById("report_search_field");
+        const params = new URLSearchParams(window.location.search);
+        const fieldParam = params.get("search_field") || params.get("field");
+        let current = select.value || "all";
+        if (fieldParam && current === "all") {
+            current = fieldParam;
+        }
+
+        select.innerHTML = `<option value="all">All Fields</option>` +
+            config.headers.map((header) => `<option value="${header.key}">${header.label}</option>`).join("");
+
+        if ([...select.options].some((option) => option.value === current)) {
+            select.value = current;
+        } else {
+            select.value = "all";
+        }
+    }
+
+    function renderReportTable(config, rows) {
+        const thead = document.getElementById("report_head");
+        const tbody = document.getElementById("report_body");
+        const reportType = document.getElementById("report_type").value;
+
+        const groupRow = `<tr>${config.groups.map((group) => `<th class="group-header" colspan="${group.count}">${group.name}</th>`).join("")}</tr>`;
+        const headerRow = `<tr>${config.headers.map((header) => `<th class="column-header">${header.label}</th>`).join("")}</tr>`;
+        thead.innerHTML = groupRow + headerRow;
+        tbody.innerHTML = "";
+
+        if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="${config.headers.length}" class="empty-state">No ${config.badge.toLowerCase()} records found.</td></tr>`;
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+
+        rows.forEach((row) => {
+            const tr = document.createElement("tr");
+            config.headers.forEach((header) => {
+                const td = document.createElement("td");
+                if (header.key === "actions") {
+                    td.className = "report-action-cell";
+                    const hasDoc = numberValue(row.doc_count) > 0 && row.doc_url;
+                    const docLabel = numberValue(row.doc_count) > 1 ? `View Doc (${row.doc_count})` : "View Doc";
+                    const docButton = hasDoc
+                        ? `<a href="${row.doc_url}" target="_blank" class="btn-docs-report">${docLabel}</a>`
+                        : `<span class="btn-docs-report disabled">No Doc</span>`;
+                    td.innerHTML = `
+                        ${docButton}
+                        <form action="/delete-report-entry" method="POST" onsubmit="return confirm('Delete this record?');">
+                            <input type="hidden" name="id" value="${row.id}">
+                            <input type="hidden" name="type" value="${reportType}">
+                            <button type="submit" class="btn-delete-report" title="Delete Entry">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    `;
+                } else {
+                    td.textContent = safeValue(row[header.key]);
+                }
+                tr.appendChild(td);
+            });
+            fragment.appendChild(tr);
+        });
+
+        tbody.appendChild(fragment);
+    }
+
+    function showReportDocMessage() {
+        const params = new URLSearchParams(window.location.search);
+        const status = params.get("doc_status");
+        const type = params.get("type");
+        const searchVal = params.get("search") || params.get("q");
+
+        if (type && document.getElementById("report_type")) {
+            document.getElementById("report_type").value = type;
+            const docTypeEl = document.getElementById("report_doc_type");
+            if (docTypeEl) docTypeEl.value = type;
+        }
+
+        if (searchVal && document.getElementById("report_search")) {
+            document.getElementById("report_search").value = searchVal;
+        }
+
+        if (!status) return;
+
+        const messages = {
+            matched: `Document scanned and assigned to ${params.get("matched_count") || 1} matching report entry.`,
+            no_match: `Document scanned (${params.get("scan_chars") || 0} characters read), but no matching report entry was found.`,
+            missing: "Please choose a document to upload.",
+            too_large: "Document is too large. Please upload a file below 10MB."
+        };
+        document.getElementById("report_status_text").textContent = messages[status] || "";
+    }
+
+    function updateReportStats(config, rows) {
+        const totalValue = rows.reduce((sum, row) => sum + numberValue(row[config.totalKey]), 0);
+        const locations = new Set(rows.map((row) => row[config.locationKey]).filter(Boolean));
+
+        document.getElementById("report_total_records").textContent = totalReportRows;
+        document.getElementById("report_total_value").textContent = `Rs. ${totalValue.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+        document.getElementById("report_location_count").textContent = locations.size;
+    }
+
+    function downloadReport() {
+        const type = document.getElementById("report_type").value;
+        const config = reportConfigs[type];
+        const searchTerm_dl = document.getElementById("report_search").value.trim();
+        const searchField_dl = document.getElementById("report_search_field").value || "all";
+        const category_dl = document.getElementById("report_category").value || "";
+        const subCategory_dl = document.getElementById("report_sub_category").value || "";
+        const material_dl = document.getElementById("report_material") ? document.getElementById("report_material").value : "";
+        var yearQ = selectedReportYear && selectedReportYear !== "all" ? "&year=" + selectedReportYear : "";
+        var searchQ = searchTerm_dl ? "&search=" + encodeURIComponent(searchTerm_dl) + "&field=" + encodeURIComponent(searchField_dl) : "";
+        var catQ = category_dl ? "&category=" + encodeURIComponent(category_dl) : "";
+        var subCatQ = subCategory_dl ? "&sub_category=" + encodeURIComponent(subCategory_dl) : "";
+        var matQ = material_dl ? "&material=" + encodeURIComponent(material_dl) : "";
+        var btn = document.querySelector(".download-btn");
+        if (btn) { btn.disabled = true; btn.querySelector("span").textContent = "Preparing Download..."; }
+        fetch("/report-data-export?type=" + type + yearQ + searchQ + catQ + subCatQ + matQ)
+            .then(function(res) { if (!res.ok) throw new Error("Export failed"); return res.json(); })
+            .then(function(payload) {
+                var allRows = Array.isArray(payload.data) ? payload.data : [];
+                var csvLines = [];
+                var exportHeaders = config.headers.filter(function(h) { return h.key !== "actions"; });
+                csvLines.push(exportHeaders.map(function(h) { return '"' + h.label.replace(/"/g, '""') + '"'; }).join(","));
+                allRows.forEach(function(row) {
+                    csvLines.push(exportHeaders.map(function(h) { return '"' + String(safeValue(row[h.key])).replace(/"/g, '""') + '"'; }).join(","));
+                });
+                var blob = new Blob([csvLines.join("\n")], { type: "text/csv;charset=utf-8;" });
+                var dlUrl = URL.createObjectURL(blob);
+                var link = document.createElement("a");
+                var stamp = new Date().toISOString().split("T")[0];
+                link.href = dlUrl;
+                link.download = config.badge + "_Report_" + stamp + ".csv";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(dlUrl);
+            })
+            .catch(function(err) { console.error("Download error:", err); alert("Failed to download report. Please try again."); })
+            .then(function() { if (btn) { btn.disabled = false; btn.querySelector("span").textContent = "Download Excel"; } });
+    }
+
+    showReportDocMessage();
+    fetchMaterialCategories();
+    loadYearFilters();
 </script>
 {% endblock %}

@@ -1,95 +1,203 @@
 {% extends "base.html" %}
 
 {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
 <style>
     .settings-shell {
         display: grid;
-        gap: 20px;
-        max-width: 980px;
+        gap: 32px;
+        max-width: 800px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+    }
+
+    .settings-header {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .settings-header h2 {
+        font-size: 32px;
+        font-weight: 800;
+        color: #1e293b;
+        margin: 0 0 8px;
+        letter-spacing: -0.02em;
+    }
+
+    .settings-header p {
+        font-size: 16px;
+        color: #64748b;
+        margin: 0;
     }
 
     .settings-message {
-        padding: 14px 16px;
-        border-radius: 18px;
-        border: 1px solid var(--border);
-        background: #f9fbff;
+        padding: 16px 24px;
+        border-radius: 16px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
     }
 
-    .settings-message strong {
+    .settings-message i {
+        font-size: 24px;
+        color: #059669;
+    }
+
+    .settings-message div strong {
         display: block;
+        color: #064e3b;
+        font-size: 16px;
         margin-bottom: 4px;
-        color: var(--primary-strong);
     }
 
-    .settings-message span {
-        color: var(--muted);
+    .settings-message div span {
+        color: #065f46;
         font-size: 14px;
     }
 
-    .settings-card {
-        padding: 24px;
-        border: 1px solid var(--border);
-        border-radius: 22px;
-        background: #fff;
-        box-shadow: var(--shadow);
+    /* Premium Glass Transparent Box */
+    .glass-card {
+        padding: 36px;
+        border-radius: 28px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 16px 40px rgba(31, 38, 135, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        margin-bottom: 24px;
     }
 
-    .settings-card + .settings-card {
-        margin-top: 2px;
-    }
-
-    .settings-card h3 {
-        margin: 0 0 8px;
-        color: var(--primary);
-        font-size: 22px;
-    }
-
-    .settings-card p {
-        margin: 0 0 18px;
-        color: var(--muted);
-        line-height: 1.6;
-    }
-
-    .settings-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    .glass-card-header {
+        display: flex;
+        align-items: center;
         gap: 16px;
-        margin-bottom: 16px;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    .settings-stack {
+    .glass-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 8px 16px rgba(16, 185, 129, 0.25);
+    }
+
+    .glass-card-header h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+    }
+
+    .glass-card-header p {
+        margin: 4px 0 0;
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #475569;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .input-group select {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.8);
+        color: #1e293b;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s;
+        outline: none;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .input-group select:focus {
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+        background: #ffffff;
+    }
+
+    .toggles-list {
         display: grid;
-        gap: 12px;
+        gap: 16px;
     }
 
-    .setting-item {
+    .toggle-item {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
-        padding: 14px 16px;
-        border: 1px solid #e1e8f4;
-        border-radius: 16px;
-        background: #fcfdff;
+        gap: 20px;
+        padding: 20px 24px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
     }
 
-    .setting-item strong {
+    .toggle-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 8px 24px rgba(33, 49, 85, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .toggle-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .toggle-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .toggle-text strong {
         display: block;
         margin-bottom: 4px;
-        color: var(--primary-strong);
-        font-size: 15px;
+        color: #1e293b;
+        font-size: 16px;
+        font-weight: 700;
     }
 
-    .setting-item span {
-        color: var(--muted);
-        font-size: 13px;
+    .toggle-text span {
+        display: block;
+        color: #64748b;
+        font-size: 14px;
         line-height: 1.5;
     }
 
+    /* Glass Switch */
     .switch {
         position: relative;
-        width: 52px;
-        height: 30px;
+        width: 60px;
+        height: 34px;
         flex: 0 0 auto;
     }
 
@@ -99,15 +207,16 @@
         opacity: 0;
         margin: 0;
         cursor: pointer;
-        min-height: 0;
+        z-index: 10;
     }
 
     .slider {
         position: absolute;
         inset: 0;
         border-radius: 999px;
-        background: #d7e0f0;
-        transition: background 0.18s ease;
+        background: rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .slider::after {
@@ -115,79 +224,132 @@
         position: absolute;
         top: 4px;
         left: 4px;
-        width: 22px;
-        height: 22px;
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
-        background: #fff;
-        box-shadow: 0 4px 10px rgba(42, 61, 101, 0.15);
-        transition: transform 0.18s ease;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
     }
 
     .switch input:checked + .slider {
-        background: #5c7fcb;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
     .switch input:checked + .slider::after {
-        transform: translateX(22px);
+        transform: translateX(26px);
     }
 
-    .settings-actions {
+    .actions-bar {
         display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 18px;
+        gap: 16px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    .settings-actions form {
-        margin: 0;
+    .btn-primary {
+        padding: 16px 32px;
+        border-radius: 14px;
+        border: none;
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 10px 24px rgba(79, 70, 229, 0.3);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    .settings-note {
-        margin-top: 12px;
-        color: var(--muted);
-        font-size: 14px;
-        line-height: 1.6;
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(79, 70, 229, 0.4);
     }
+
+    .btn-danger {
+        padding: 16px 32px;
+        border-radius: 14px;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        background: rgba(254, 226, 226, 0.5);
+        color: #b91c1c;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-danger:hover {
+        background: rgba(254, 226, 226, 0.9);
+        border-color: rgba(239, 68, 68, 0.5);
+        transform: translateY(-2px);
+    }
+
 </style>
 
 {% set app_settings = app_settings or {} %}
 
 <div class="settings-shell">
+    <div class="settings-header">
+        <h2>App Settings</h2>
+        <p>Manage your application UI preferences.</p>
+    </div>
+
     {% if settings_saved %}
     <div class="settings-message">
-        <strong>Settings updated</strong>
-        <span>Your important preferences were saved successfully.</span>
+        <i class="fas fa-check-circle"></i>
+        <div>
+            <strong>Settings saved successfully</strong>
+            <span>Your preferences have been updated across the application.</span>
+        </div>
     </div>
     {% elif request.args.get("reset") == "1" %}
     <div class="settings-message">
-        <strong>Defaults restored</strong>
-        <span>The settings panel is back to the recommended defaults.</span>
+        <i class="fas fa-undo"></i>
+        <div>
+            <strong>Defaults restored</strong>
+            <span>All settings have been reverted to their original recommended values.</span>
+        </div>
     </div>
     {% endif %}
 
     <form method="post" action="/setting">
-        <div class="settings-card">
-            <h3>Report Preferences</h3>
-            <p>Keep only the basic report options here so the section stays simple and useful.</p>
-
-            <div class="settings-row">
+        
+        <!-- General Preferences -->
+        <div class="glass-card">
+            <div class="glass-card-header">
+                <div class="glass-icon-box" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); box-shadow: 0 8px 16px rgba(245, 158, 11, 0.25);">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
                 <div>
-                    <label for="default_report_type">Default Report Type</label>
+                    <h3>General Preferences</h3>
+                    <p>Basic configurations for your reporting and application behavior.</p>
+                </div>
+            </div>
+
+            <div class="settings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-bottom: 8px;">
+                <div class="input-group">
+                    <label for="default_report_type"><i class="fas fa-file-alt" style="color: #64748b; margin-right: 6px;"></i> Default Report Type</label>
                     <select id="default_report_type" name="default_report_type">
                         <option value="inward" {% if app_settings.default_report_type == "inward" %}selected{% endif %}>Inward Report</option>
                         <option value="outward" {% if app_settings.default_report_type == "outward" %}selected{% endif %}>Outward Report</option>
                     </select>
                 </div>
-                <div>
-                    <label for="report_rows">Rows Per Report</label>
+                <div class="input-group">
+                    <label for="report_rows"><i class="fas fa-list-ol" style="color: #64748b; margin-right: 6px;"></i> Rows Per Report</label>
                     <select id="report_rows" name="report_rows">
                         {% for option in ["25", "50", "100", "250"] %}
                         <option value="{{ option }}" {% if app_settings.report_rows == option %}selected{% endif %}>{{ option }} rows</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div>
-                    <label for="export_format">Export Format</label>
+                <div class="input-group">
+                    <label for="export_format"><i class="fas fa-file-export" style="color: #64748b; margin-right: 6px;"></i> Export Format</label>
                     <select id="export_format" name="export_format">
                         <option value="csv" {% if app_settings.export_format == "csv" %}selected{% endif %}>CSV</option>
                         <option value="excel" {% if app_settings.export_format == "excel" %}selected{% endif %}>Excel Style</option>
@@ -197,37 +359,26 @@
             </div>
         </div>
 
-        <div class="settings-card">
-            <h3>Important Controls</h3>
-            <p>These switches keep the main workflow reliable without filling the page with extra options.</p>
-
-            <div class="settings-stack">
-                <div class="setting-item">
-                    <div>
-                        <strong>Email notifications</strong>
-                        <span>Keep admin reminders available when needed.</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" name="notify_email" {% if app_settings.notify_email %}checked{% endif %}>
-                        <span class="slider"></span>
-                    </label>
+        <!-- UI & Display -->
+        <div class="glass-card">
+            <div class="glass-card-header">
+                <div class="glass-icon-box">
+                    <i class="fas fa-desktop"></i>
                 </div>
-
-                <div class="setting-item">
-                    <div>
-                        <strong>Dashboard highlights</strong>
-                        <span>Show important alerts and quick updates on the dashboard.</span>
-                    </div>
-                    <label class="switch">
-                        <input type="checkbox" name="notify_dashboard" {% if app_settings.notify_dashboard %}checked{% endif %}>
-                        <span class="slider"></span>
-                    </label>
+                <div>
+                    <h3>UI & Experience</h3>
+                    <p>Customize the look and feel of your dashboard and tables.</p>
                 </div>
+            </div>
 
-                <div class="setting-item">
-                    <div>
-                        <strong>Compact tables</strong>
-                        <span>Use a tighter table layout when you need more rows visible.</span>
+            <div class="toggles-list">
+                <div class="toggle-item">
+                    <div class="toggle-content">
+                        <div class="toggle-icon"><i class="fas fa-compress-arrows-alt"></i></div>
+                        <div class="toggle-text">
+                            <strong>Compact Table Mode</strong>
+                            <span>Reduce padding and font sizes in data tables to view more information.</span>
+                        </div>
                     </div>
                     <label class="switch">
                         <input type="checkbox" name="compact_tables" {% if app_settings.compact_tables %}checked{% endif %}>
@@ -235,48 +386,52 @@
                     </label>
                 </div>
 
-                <div class="setting-item">
-                    <div>
-                        <strong>Approval lock</strong>
-                        <span>Protect approval-related values from accidental changes.</span>
+                <div class="toggle-item">
+                    <div class="toggle-content">
+                        <div class="toggle-icon"><i class="fas fa-chart-pie"></i></div>
+                        <div class="toggle-text">
+                            <strong>Show Analytics Dashboard</strong>
+                            <span>Display the live KPI Analytics widgets on the main Admin Dashboard screen.</span>
+                        </div>
                     </div>
                     <label class="switch">
-                        <input type="checkbox" name="approval_lock" {% if app_settings.approval_lock %}checked{% endif %}>
+                        <input type="checkbox" name="show_analytics" {% if app_settings.show_analytics %}checked{% endif %}>
                         <span class="slider"></span>
                     </label>
                 </div>
 
-                <div class="setting-item">
-                    <div>
-                        <strong>Show totals</strong>
-                        <span>Keep totals visible in important report and entry views.</span>
+                <div class="toggle-item">
+                    <div class="toggle-content">
+                        <div class="toggle-icon"><i class="fas fa-map-marked-alt"></i></div>
+                        <div class="toggle-text">
+                            <strong>Hide Live Map by Default</strong>
+                            <span>Hide the large interactive map on tracking pages by default to save screen real estate.</span>
+                        </div>
                     </div>
                     <label class="switch">
-                        <input type="checkbox" name="show_totals" {% if app_settings.show_totals %}checked{% endif %}>
+                        <input type="checkbox" name="hide_map" {% if app_settings.hide_map %}checked{% endif %}>
                         <span class="slider"></span>
                     </label>
                 </div>
             </div>
 
-            <div class="settings-actions">
-                <button class="action-btn" type="submit">Save Settings</button>
+            <div class="actions-bar">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i> Save Preferences
+                </button>
             </div>
         </div>
     </form>
 
-    <div class="settings-card">
-        <h3>Reset</h3>
-        <p>Use this only if you want to go back to the default settings.</p>
-
-        <div class="settings-actions">
-            <form method="post" action="/setting/reset">
-                <button class="secondary-btn" type="submit">Restore Defaults</button>
-            </form>
-        </div>
-
-        <div class="settings-note">
-            This reset only changes the settings panel values. It does not remove users, entries, or report data.
-        </div>
+    <div style="text-align: right; margin-right: 16px;">
+        <form method="post" action="/setting/reset">
+            <button type="submit" class="btn-danger" onclick="return confirm('Are you sure you want to reset all settings to defaults?');">
+                <i class="fas fa-undo"></i> Restore Defaults
+            </button>
+        </form>
+        <p style="color: #64748b; font-size: 13px; margin-top: 8px;">Restoring defaults will not affect your data.</p>
     </div>
+
 </div>
+
 {% endblock %}

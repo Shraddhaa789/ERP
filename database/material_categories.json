@@ -1,0 +1,1108 @@
+{
+  "H6DL04033CSNBW0500 H6-PLB DUCT 40/33 BLUE-0500M": {
+    "category": "Duct",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "39172110",
+    "has_sub_category": false
+  },
+  "CC040033RGEEE / 40/33 MM DUCT GRAY COLOUR COUPLER": {
+    "category": "Duct",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "39174000",
+    "has_sub_category": false
+  },
+  "CABLE END SEAL 40/33 MM": {
+    "category": "Cable Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "39174000",
+    "has_sub_category": false
+  },
+  "96F METAL FREE OFC ROBBON TYPE": {
+    "category": "Cable",
+    "sub_category": "96F",
+    "unit": "Km",
+    "item_code": "9001",
+    "has_sub_category": true
+  },
+  "Branching splice closer (Fiber Distribution Management System Outdoor) (96F Ribbon OFC)": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8517",
+    "has_sub_category": false
+  },
+  "Branching Splice Closer (for 24F Loose Tube OFC)": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8517",
+    "has_sub_category": false
+  },
+  "Spare Cable Box (for Taluka)": {
+    "category": "Spare Cable Box",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8517",
+    "has_sub_category": false
+  },
+  "Spare Cable Box (for GP)": {
+    "category": "Spare Cable Box",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8517",
+    "has_sub_category": false
+  },
+  "FDMS Taluka including fiber patch cords,PigTails with appropriate connetors (Ribbon Type, 4 * 96F)": {
+    "category": "FDMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "817",
+    "has_sub_category": false
+  },
+  "FDMS GP including fiber patch cords,PigTails with appropriate connetors (Ribbon Type, total 24 Fiber termination (12+12 fiber from 2*96F ribbon cable), + extra ports as spare": {
+    "category": "FDMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "817",
+    "has_sub_category": false
+  },
+  "FDMS GP including fiber patch cords,Pig-Tails with appropriate connetors (Loose Tube type, 24 Fiber termination, + extra ports as spare)": {
+    "category": "FDMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "817",
+    "has_sub_category": false
+  },
+  "24F Metel Free OFC LOOSE TYPE": {
+    "category": "Cable",
+    "sub_category": "24F",
+    "unit": "Km",
+    "item_code": "9001",
+    "has_sub_category": true
+  },
+  "H6CO075DWNBSNON00 HDPE DWC DUCT 075/061 MM ORANGE": {
+    "category": "Duct",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "39172110",
+    "has_sub_category": false
+  },
+  "PDWC075 CORROGATED PIPE COUPLER 75MM": {
+    "category": "Coupler",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "39172110",
+    "has_sub_category": false
+  },
+  "2.5 INCH GI PIPE ISI MARK MEDIUM CLASS B": {
+    "category": "GI Pipe",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "0",
+    "has_sub_category": false
+  },
+  "Chamber": {
+    "category": "Chamber",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Chamber",
+    "has_sub_category": false
+  },
+  "Route Indicator": {
+    "category": "Route Indicator",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Route Indicator",
+    "has_sub_category": false
+  },
+  "WQ  VS AL 600 Series – 42U x 600 x 1000- Switch  rack with top & bottom cover": {
+    "category": "Server Rack",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8473",
+    "has_sub_category": false
+  },
+  "WQ  XL  600 Series – 6 U x 600 x 500- Switch  rack with top & bottom cover , front end cable managementt": {
+    "category": "Server Rack",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8473",
+    "has_sub_category": false
+  },
+  "WQ VS AL 800 Series – 42U x 800 x 1000- Server rack with top & bottom cove": {
+    "category": "Server Rack",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8473",
+    "has_sub_category": false
+  },
+  "RCC Pipe 2Mtr": {
+    "category": "RCC Pipe",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "RCC Pipe 2Mtr",
+    "has_sub_category": false
+  },
+  "RCC Pipe 1Mtr- C Pipe": {
+    "category": "RCC Pipe",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "RCC Pipe 1Mtr- C Pipe",
+    "has_sub_category": false
+  },
+  "DUCTABLE SPLIT AC -11.OTR-SCROIL-HITACHI TAKUMI SERIES -CIRCUIT - R410a -PAG132ESDA3Z1": {
+    "category": "Split A/C",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8415",
+    "has_sub_category": false
+  },
+  "DUCTABLE SPLIT AC -8.5.OTR-SCROIL-HITACHI TAKUMI SERIES -CIRCUIT - R410a -PAG132ESDA3Z1": {
+    "category": "Split A/C",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8415",
+    "has_sub_category": false
+  },
+  "Pyrotech Workspace make New Moduler Control Desk for 06 Monitors & 02 Operators made in \"XLATE OE \" System": {
+    "category": "Workstation",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8537",
+    "has_sub_category": false
+  },
+  "UPS 20KVA ON-LINE (EATON)": {
+    "category": "UPS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8504",
+    "has_sub_category": false
+  },
+  "DID500O1-0006-VW-CUBE 50\"RA S-LAS(D450) XPS SCR ASSY 50\" LED LIT XTRA SLIM VIDEO WALL": {
+    "category": "VideoWall",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8528",
+    "has_sub_category": false
+  },
+  "DWCD604Z80A6954-VW CONTROLLER 24 OP, IP-4UNTV 230VAC ICON PRO CONTROLLER": {
+    "category": "VideoWall Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8471",
+    "has_sub_category": false
+  },
+  "VWB05010011M-VW 50\"HD SLIM LASER 100CM COVERED ASSY STANDARD BASE STAND": {
+    "category": "VideoWall Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "7616",
+    "has_sub_category": false
+  },
+  "308143160-S-VW DVI CABLE 10 MTR CABLE SPARE ASSY STANDARD DVI CABLE 10M": {
+    "category": "DVI Cable",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8544",
+    "has_sub_category": false
+  },
+  "48F ADSS OFC Type III(A)": {
+    "category": "Cable",
+    "sub_category": "48 ADSS",
+    "unit": "Km",
+    "item_code": "9001",
+    "has_sub_category": true
+  },
+  "RCC Muff": {
+    "category": "Rcc Muff",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "7 Meters GI galvanized poles with Lightning arrestors and Base Plate": {
+    "category": "Pole",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "7 Mtr Pole",
+    "has_sub_category": false
+  },
+  "8 Meters GI galvanized poles with Lightning arrestors and Base Plate": {
+    "category": "Pole",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8 Mtr Pole",
+    "has_sub_category": false
+  },
+  "Straight/ Branching splice closure": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Straight/ Branching splice closure",
+    "has_sub_category": false
+  },
+  "Cable Storage Bracket": {
+    "category": "Cable Storage Bracket",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Cable Storage Bracket",
+    "has_sub_category": false
+  },
+  "Demountable pulley": {
+    "category": "Demountable pulley",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Demountable pulley",
+    "has_sub_category": false
+  },
+  "Formed OFC Dead-End & termination fittings consisting of:  - -Terminating Helix 550mm-2 Nos, Protective Helix 800mm-2 Nos, Jumper Cable Clamp with Twisted Eye Link-1 Nos,  Universal Pole Clamp with Strap & Buckle -1 Nos, Turn Buckle-2 Nos, Thimble-2 Nos": {
+    "category": "Pole Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Formed OFC Dead-End & termination fittings consisting of",
+    "has_sub_category": false
+  },
+  "OFC Suspension fittings consisting of:Pole Clamp-1 No,  Twisted Eye Link-1 No,  Clevis Thimble-1 No, Suspension Helix-1, No Protective Helix 800mm-1 No, Spiral Vibration Dampner-2 Nos": {
+    "category": "Pole Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "OFC Suspension fittings consisting of",
+    "has_sub_category": false
+  },
+  "UPS 1KVA ONLINE (EATON) SERIES 9145 XL": {
+    "category": "UPS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "UPS 1KVA",
+    "has_sub_category": false
+  },
+  "BATTERY 12V-65ah": {
+    "category": "Battery",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "BATTERY 12V-65ah",
+    "has_sub_category": false
+  },
+  "Open Type Battery Rack": {
+    "category": "Battery Accessiories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "BATTERY Rack",
+    "has_sub_category": false
+  },
+  "Solar Panal 12volt 60watt polycrystalline": {
+    "category": "Solar Panal",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Solar Panal 12V60W",
+    "has_sub_category": false
+  },
+  "AERIAL OPTICAL FIBER CABLE (24F ADSS) TYPE - IIIA": {
+    "category": "Cable",
+    "sub_category": "24 ADSS",
+    "unit": "Km",
+    "item_code": "9001",
+    "has_sub_category": true
+  },
+  "PANWAPP051 PA5250 NETWORK SCRTY PWR AC DVCE APP PAN-PA-5250-AC": {
+    "category": "Firewall",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Next Generation Security solution for Taluka headend",
+    "has_sub_category": false
+  },
+  "PANWAPP052 PA5220 NETWORK SCRTY PWR AC DVCE APP PAN-PA-5220-AC": {
+    "category": "Firewall",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Next Generation Security solution for NOC/DR NOC",
+    "has_sub_category": false
+  },
+  "WQ  VS AL 600 Series – 27U x 600 x 1000- Switch  rack with top & bottom cover": {
+    "category": "Server Rack",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8473",
+    "has_sub_category": false
+  },
+  "SERVER LENOVE SR550": {
+    "category": "Server",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Server",
+    "has_sub_category": false
+  },
+  "48F ADSS OFC Type II(A)": {
+    "category": "Cable",
+    "sub_category": "48 ADSS",
+    "unit": "Km",
+    "item_code": "9001",
+    "has_sub_category": true
+  },
+  "AERIAL OPTICAL FIBER CABLE (24F ADSS) TYPE - IIA": {
+    "category": "Cable",
+    "sub_category": "24 ADSS",
+    "unit": "Km",
+    "item_code": "9001",
+    "has_sub_category": true
+  },
+  "UPS 6KVA ONLINE (EATON) SERIES 9145 XL": {
+    "category": "UPS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "UPS 6KVA",
+    "has_sub_category": false
+  },
+  "48F FDMS GP (Loose Tube) including 48 Nos. PigTails, 48 Nos. Adaptors (SC-APC), along with 04 Nos. of Patch Cords (2Mtr Length) with appropriate accessories": {
+    "category": "FDMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8517",
+    "has_sub_category": false
+  },
+  "RIB 48F Ribbon": {
+    "category": "Cable",
+    "sub_category": "RIB 48F Ribbon",
+    "unit": "Km",
+    "item_code": "RIB 48F Ribbon",
+    "has_sub_category": true
+  },
+  "RFID Markers 3M Model-1421 Xrid": {
+    "category": "Route Indicator",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "RFID Markers",
+    "has_sub_category": false
+  },
+  "Electronic cable Locator 3M Model-2273 Mid": {
+    "category": "Cable locator",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Cable locator",
+    "has_sub_category": false
+  },
+  "OTU5000 with 40 db1625nm OTDR and (16+36) ports": {
+    "category": "RFMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Remote Fibre Monitoring System at Taluka",
+    "has_sub_category": false
+  },
+  "Stay arrangement for 7 mtr / 8 mtr steel poles": {
+    "category": "Stay Arrangement",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Stay Arrangement",
+    "has_sub_category": false
+  },
+  "2 Core FIBER SINGLE": {
+    "category": "Cable",
+    "sub_category": "2 Core FIBER SINGLE",
+    "unit": "Km",
+    "item_code": "2 Core FIBER SINGLE",
+    "has_sub_category": true
+  },
+  "6 Core FIBER SINGLE": {
+    "category": "Cable",
+    "sub_category": "6 Core FIBER SINGLE",
+    "unit": "Km",
+    "item_code": "6 Core FIBER SINGLE",
+    "has_sub_category": true
+  },
+  "UPS 30KVA ON-LINE (EATON)": {
+    "category": "UPS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "UPS 30KVA",
+    "has_sub_category": false
+  },
+  "Branching splice closure (for 48F Loose Tube OFC)- Mid Span": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Branching splice closure (for 48F Loose Tube OFC)- Mid Span",
+    "has_sub_category": false
+  },
+  "12F-60-ECO-UA -12 Core FIBER SINGLE": {
+    "category": "Cable",
+    "sub_category": "12F-60-ECO-UA -12 Core FIBER SINGLE",
+    "unit": "Km",
+    "item_code": "12 Core FIBER SINGLE",
+    "has_sub_category": true
+  },
+  "Branching splice closure (48F Ribbon OFC)": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "8517",
+    "has_sub_category": false
+  },
+  "POLYCOM235 7230-84160-036 RP GROUP 500 CONF PHONE 7230-84160-036": {
+    "category": "Video Conferencing Camera",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Video Conference",
+    "has_sub_category": false
+  },
+  "700513657, AVAY0074 700513916 J139 IP PHONE 700513916 J139 IP": {
+    "category": "Extension Phone",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "IP PABX system for 150 subscribers-851769",
+    "has_sub_category": false
+  },
+  "20WZ1220C008,20WZ1220C01J, AVAY0074 700513916 J139 IP PHONE 700513916 J139 IP": {
+    "category": "Extension Phone",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "IP PABX system for 150 subscribers-851769",
+    "has_sub_category": false
+  },
+  "62.5 kVA Water Cooied 4R810TA G1 Kirloskar iGreen Diesel Generator III phase With Standard Accessories CPCB Compliant (EMERALD) Along With KRM And (B Type) - Standard AIvIF Panel": {
+    "category": "DG",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "DG 62.5 kVA",
+    "has_sub_category": false
+  },
+  "GIC25QI54B50 CATALYST 2960-X 48 GIGE POE 74 BOOK 0W, 4 X 1G SFP, LAN BASE EU#-000502625 MAHARASHTRA INFORMATI MC#G": {
+    "category": "Switch",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Switch",
+    "has_sub_category": false
+  },
+  "Think Station P330-Small From Factor": {
+    "category": "CPU",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Workstations",
+    "has_sub_category": false
+  },
+  "Think Vision T22i-10 21.5 inch Wide FHD IPS Type Monitor": {
+    "category": "Monitor",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Workstations",
+    "has_sub_category": false
+  },
+  "COMPACT JOINT ENCLOSURE": {
+    "category": "JC",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Tifin Box",
+    "has_sub_category": false
+  },
+  "JOINT ENCLOSERS 2 WAY -CORE TRAY": {
+    "category": "JC",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Tifin Box",
+    "has_sub_category": false
+  },
+  "Straight/ Branching splice closure-48": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Straight/ Branching splice closure-48",
+    "has_sub_category": false
+  },
+  "Straight/ Branching splice closure-24": {
+    "category": "Splice Closure",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Straight/ Branching splice closure-24",
+    "has_sub_category": false
+  },
+  "SS JAW BUCKLE": {
+    "category": "Pole Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "SS JAW BUCKLE",
+    "has_sub_category": false
+  },
+  "SS BUCKLE STRAPS": {
+    "category": "Pole Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "SS BUCKLE STRAPS",
+    "has_sub_category": false
+  },
+  "6 Core ADSS FIBER SINGLE": {
+    "category": "Cable",
+    "sub_category": "6 Core ADSS FIBER SINGLE",
+    "unit": "Km",
+    "item_code": "6 Core ADSS FIBER SINGLE",
+    "has_sub_category": true
+  },
+  "288F Simplex Plug": {
+    "category": "Cable Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "SS BUCKLE STRAPS",
+    "has_sub_category": false
+  },
+  "Lightning Arresters - 7 Mtr Pole": {
+    "category": "Pole Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Lightning Arresters - 7 Mtr Pole",
+    "has_sub_category": false
+  },
+  "Lightning Arresters - 8 Mtr Pole": {
+    "category": "Pole Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "Lightning Arresters - 8 Mtr Pole",
+    "has_sub_category": false
+  },
+  "4 F OFC Cable": {
+    "category": "Cable",
+    "sub_category": "4 F OFC Cable",
+    "unit": "Km",
+    "item_code": "90011000",
+    "has_sub_category": true
+  },
+  "1.5-core flexible cable for Solar battery": {
+    "category": "Electrical Cable",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "12456,58475, AVAY0011 700417462 IP OFFICE IP500 TRUNK CARD 700417462": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19\" Flanges (2 nos )": {
+    "category": "Industrial Pine",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19CW21500339, AVAY0014 700504032 IP OFFICE MEDIA CARD VOICE 700504032": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19CW30600242, AVAY0014 700504032 IP OFFICE MEDIA CARD VOICE 700504032": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ0940C02T, AVAY0015 700426224 IP OFFICEB/5800 IP500 700426224": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ0940C051, AVAY0015 700426224 IP OFFICEB/5800 IP500 700426224": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ20201758,19WZ20201761, AVAY0013 700476005 IP OFFICE 500 VERSION 2 700476005": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ2250C3F1, AVYA1272 700479702 IP OFFIP500 V2 SYS SD CARD 700479702 IP SD CARD": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ38200507,19WZ38200528, AVAY0013 700476005 IP OFFICE 500 VERSION 2": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ4900C123,19WZ4900C12L, AVAY0026 700504556 IP OFFICE IP500 V2 COMBO 700504556 IP OFFICE": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "19WZ4900C154,19WZ4900C16E, AVAY0026 700504556 IP OFFICE IP500 V2 COMBO 700504556 IP OFFICE": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "1-core flexible cable for Solar battery": {
+    "category": "Electrical Cable",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "2&1-core flexible cable for Solar battery": {
+    "category": "Electrical Cable",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "20AN11300004,20AN11300006,\nAVYA0207 700213440,IP\nOFFICE ISDN CABLE RJ45\n700213440, RJ45 CABL": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "20WZ0350C024, AVYA1272 700479702 IP OFFIP500 V2 SYS SD CARD": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "20WZ1220C04H,20WZ1220C067, AVYA0214 700504841,1408 TELSET FOR CM/IP 700504841,1408 TELE": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "20WZ1260C0CT, AVAY0012 700429202 IP OFFICE IP500 RACK 700429202": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "20WZ1260C0D3, AVAY0012 700429202 IP OFFICE IP500 RACK 700429202": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "20WZ186001PY,20WZ186001XT, AVAY0087 700513657 IP OFFICE/IP OFFICE SELECT 700513657 IP": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "2-core flexible cable for Solar Panal": {
+    "category": "Electrical Cable",
+    "sub_category": "",
+    "unit": "Km",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "70021344111,70021344222, AVAY0011 700417462 IP OFFICE IP500 TRUNK CARD 700417462": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "700514248123, AVYA000041 700514100 ACP 130 DELL R640 SRVR P5 BUND 700514100": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Access Control Systems": {
+    "category": "Access Control Systems",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Access Control Systems-DR": {
+    "category": "Access Control Systems",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "AVYA000013 R220/R230 1 TB 7200 HARD DISKD DRIVE 700514248": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "AVYA0169 390081,R230 XL SERVER IP OFFICE 390081,R230 XL SRVR": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "AVYA0207 700213440,IP OFFICE ISDN CABLE RJ45 700213440, RJ45 CABL": {
+    "category": "Extention Phone Accesaories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "BATTERY 12V-150ah": {
+    "category": "Battery",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Building management system": {
+    "category": "BMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Building management system-DR": {
+    "category": "BMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Diesel Generating Set comprising of \"KOH \" Make Engine Model 4K1080TA G2 Water Cooled Engine    Producing 156 BHP @ 1500 rpm coupled with \"KOH Green \" Alternator mounted on a base frame along with Y STD Panel, Y Batteries with leads, Y First fill of oil, Y Engine safeties & protections, Y Antivibration mounting pads. Y Hngine Model: - 4K1080TA G2. Acoustic Enclosure suitable for 125 KVA DG Set. CPCB Approved. 2-AMF PANEL": {
+    "category": "DG",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Element Management System (EMS)/ Network Management System (NMS)": {
+    "category": "EMS",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "External charger": {
+    "category": "External charger",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Fire safety system": {
+    "category": "Fire safety system",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Fire safety system-DR": {
+    "category": "Fire safety system",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "HDD LENOVO 600GB 10KSAS": {
+    "category": "Hard Disk",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "KIT-WM 96F RIBBON ROUND OFF EXPENSES": {
+    "category": "Cable Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Mountiung Bracket for Solar Panal": {
+    "category": "Mountiung Bracket for Solar Panal",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "NMS Software - ONMS": {
+    "category": "NMS Software",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "NMS/OSS/BSS Software solution services etc.": {
+    "category": "Software ETC",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP054 PALALTO SFP PLUS LR TRANSCEIVER PAN-SFP-PLUS-SR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP054 PALALTO SFP PLUS SR TRANSCEIVER PAN-SFP-PLUS-SR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP055 PALO ALTO SFP SX TRANSCEIVER PPCB PAN-SFP-SX": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP056 PALALTO SFP PLUS SR TRANSCEIVER PAN-SFP-PLUS-SR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP057 PALO ALTO SFP SX TRANSCEIVER PPCB PAN-SFP-SX": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP090 - PA WF 500 RAID DRIVES PAN-WF-50": {
+    "category": "RAID Drive",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWAPP090 - PA WF 500 RAID DRIVES PAN-WF-500": {
+    "category": "RAID Drive",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC695 PA-5250 THRTPRTN SUB 3YR ELIC PAN-PA-5250-TP-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC696 PA-5220 THRTPRTN SUB 3Y HA PAIR ELIC PAN-PA-5220-TP-3YR-HA": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC697 PA5220 DBURL FIL SUB 3Y HA PAIR ELIC PAN-PA-5220-URL4-3YR-HA2": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC698 PA5220 WILDFIRE SUBS 3Y HA PAIR ELIC PAN-PA-5220-WF-3YR-HA2": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC700 PA5220 DBURL FIL SUB 3YR ELIC PAN-PA-5220-URL4-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC701 PA5220 WILDFIRE SUBS 3YR ELIC PAN-PA-5220-WF-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC702 TRAPS SERVRS TIER A 3YR ELIC PAN-TRAPS-A-3Y": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC703 PA AF THRT INTLGCE STND SUB YR3 ELIC PAN-AF-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC704 PA-PANORAMA CNTL MANAGMT 100 DV ELIC PAN-PRA-10": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC704 PA-PANORAMA CNTL MANAGMT 100 DV ELIC PAN-PRA-100": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWLIC705 PAVM300 PERP BUNDLE PREM 3YR ELIC PAN-VM-700-PERP-BND1PREM-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWSUP301 PA-5250 PREMIUM SUPPORT 3YEAR SUPP PAN-SVC-PREM-5250-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWSUP302 PA-5220 PREMIUM SUPPORT 3YEAR SUPP PAN-SVC-PREM-5220-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWSUP303 PA-WF-500 PREMIUM SUPPORT 3YR SUPP PAN-SVC-PREM-WF-500-3Y": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWSUP304 PA-CON-CSS-BRONZE SUPP PAN-CONSULT-CSS-BRONZE": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PANWSUP305 PRA100 PREMIUM SUPPORT 3YEAR SUPP PAN-SVC-PREM-PRA-100-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "PCU CONTROL UNIT": {
+    "category": "PCU",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "POLY1505 2230-70230-000 RACK SERVER 2230-70230-000": {
+    "category": "Polycom Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "POLYCOM162 2200-71831-000 RP CLARITI SERVER 2200-71831-000": {
+    "category": "Polycom Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Power Distribution Unit": {
+    "category": "PCU",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Power Suplly Plantinum 750W": {
+    "category": "PCU",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "RAM 16GB DDR4 LENOVO": {
+    "category": "RAM",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "RAM 32GB DDR4 LENOVO": {
+    "category": "RAM",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "RPS LENOVO 750WATT": {
+    "category": "PCU",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "SMF VRLA BATTERY 12V6AH": {
+    "category": "Battery",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "SW MS WIN SERV STD LENOVO ROK 16 CORE": {
+    "category": "Lenovo Server & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "THRTPRTN SUB 3YR ELIC PAN-PA-5220-TP-3YR": {
+    "category": "PALALTO Device & Accessories",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Water leak detection system": {
+    "category": "Water leak detection system",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  },
+  "Water leak detection system-DR": {
+    "category": "Water leak detection system",
+    "sub_category": "",
+    "unit": "Nos",
+    "item_code": "",
+    "has_sub_category": false
+  }
+}

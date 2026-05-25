@@ -4,217 +4,200 @@
 <style>
     .field-data-shell {
         display: grid;
-        gap: 18px;
-    }
-
-    .field-data-intro {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 18px;
-        padding: 20px 22px;
-        border: 1px solid #d8e3f8;
-        border-radius: 22px;
-        background: linear-gradient(135deg, #ffffff 0%, #f7faff 100%);
-        box-shadow: var(--shadow);
-    }
-
-    .field-data-intro strong {
-        display: block;
-        margin-bottom: 6px;
-        color: var(--primary-strong);
-        font-size: 20px;
-    }
-
-    .field-data-intro span {
-        color: var(--muted);
-        line-height: 1.6;
-    }
-
-    .field-data-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 9px 14px;
-        border-radius: 999px;
-        background: #edf3ff;
-        color: var(--primary);
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        white-space: nowrap;
+        gap: 24px;
+        padding-bottom: 40px;
     }
 
     .field-data-tabs {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        width: fit-content;
-        padding: 6px;
-        border: 1px solid #d8e3f8;
-        border-radius: 18px;
-        background: #f8fbff;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 16px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
     }
 
     .field-data-tab {
-        min-width: 168px;
-        min-height: 44px;
-        padding: 10px 16px;
+        min-width: min(180px, 100%);
+        padding: 12px 24px;
         border: none;
-        border-radius: 14px;
+        border-radius: 12px;
         background: transparent;
-        color: #60769f;
-        font-size: 14px;
-        font-weight: 800;
+        color: #64748b;
+        font-size: 15px;
+        font-weight: 700;
         cursor: pointer;
-        transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .field-data-tab svg {
+        width: 18px;
+        height: 18px;
     }
 
     .field-data-tab:hover {
-        transform: translateY(-1px);
+        color: #1e293b;
     }
 
     .field-data-tab.active {
-        background: linear-gradient(135deg, #3559a6 0%, #5079d1 100%);
-        color: #fff;
-        box-shadow: 0 10px 22px rgba(54, 88, 163, 0.18);
+        background: #ffffff;
+        color: #4f46e5;
+        box-shadow: 0 4px 12px rgba(33, 49, 85, 0.08);
     }
 
     .field-data-panel {
-        display: grid;
-        gap: 18px;
-        padding: 22px;
-        border: 1px solid #d8e3f8;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 24px;
-        background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-        box-shadow: var(--shadow);
+        padding: 32px;
+        box-shadow: 0 12px 32px rgba(33, 49, 85, 0.04);
+        display: grid;
+        gap: 24px;
+        animation: fadeIn 0.3s ease;
     }
 
     .field-data-panel[hidden] {
         display: none;
     }
 
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     .section-head {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 18px;
+        padding-bottom: 24px;
+        border-bottom: 2px solid #f1f5f9;
     }
 
     .section-head h3 {
-        margin: 0 0 6px;
-        color: var(--primary);
-        font-size: 24px;
-    }
-
-    .section-head p {
         margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
+        color: #1e293b;
+        font-size: 24px;
+        font-weight: 800;
     }
 
     .section-count {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-width: 46px;
-        height: 46px;
-        padding: 0 14px;
+        min-width: 44px;
+        height: 44px;
+        padding: 0 16px;
         border-radius: 999px;
-        border: 1px solid #d5e1f4;
-        background: #fff;
-        color: var(--primary);
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 15px;
         font-weight: 800;
-        box-shadow: 0 8px 16px rgba(37, 52, 85, 0.06);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
     }
 
     .photo-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+        gap: 24px;
     }
 
     .photo-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
         overflow: hidden;
-        padding: 0;
-        border: 1px solid #d8e3f8;
-        border-radius: 22px;
-        background: #fff;
-        box-shadow: 0 14px 26px rgba(37, 52, 85, 0.08);
+        transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+        display: flex;
+        flex-direction: column;
+        animation: riseIn 0.45s ease both;
+    }
+
+    .photo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 32px rgba(33, 49, 85, 0.08);
+        border-color: #cbd5e1;
     }
 
     .photo-preview {
+        height: 200px;
         position: relative;
-        min-height: 190px;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: flex-start;
+        padding: 16px;
+        cursor: pointer;
         overflow: hidden;
-        border-bottom: 1px solid #e5ecfa;
+        transition: transform 0.35s ease, filter 0.35s ease;
     }
 
     .photo-preview::after {
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(180deg, rgba(9, 18, 40, 0.04), rgba(9, 18, 40, 0.16));
+        background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.26) 42%, transparent 64%);
+        transform: translateX(-115%);
+        transition: transform 0.55s ease;
     }
 
-    .photo-preview.a {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
-            linear-gradient(135deg, #d0e5ff 0%, #b5d3ff 32%, #cdb397 33%, #b88d6c 70%, #8b6e5d 100%);
+    .photo-card:hover .photo-preview {
+        filter: saturate(1.06) contrast(1.03);
     }
 
-    .photo-preview.b {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
-            linear-gradient(135deg, #d9f1ff 0%, #a9d9ff 30%, #f0d4b1 31%, #d4aa7b 68%, #9b7859 100%);
-    }
-
-    .photo-preview.c {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
-            linear-gradient(135deg, #e3efff 0%, #c1d9ff 28%, #c8bea9 29%, #9a8d75 66%, #71614f 100%);
-    }
-
-    .photo-preview.d {
-        background:
-            linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08)),
-            linear-gradient(135deg, #d4ebff 0%, #bcd7ff 32%, #d7c0a1 33%, #b48f69 70%, #86674f 100%);
+    .photo-card:hover .photo-preview::after {
+        transform: translateX(115%);
     }
 
     .preview-badge {
-        position: absolute;
-        top: 14px;
-        left: 14px;
-        z-index: 1;
         display: inline-flex;
         align-items: center;
-        padding: 7px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.92);
-        color: #2f4f95;
-        font-size: 11px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #1e293b;
+        font-size: 12px;
         font-weight: 800;
-        letter-spacing: 0.08em;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
+        backdrop-filter: blur(4px);
     }
 
     .photo-copy {
-        display: grid;
-        gap: 12px;
-        padding: 16px;
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 16px;
     }
 
     .photo-copy strong {
         display: block;
-        margin-bottom: 4px;
-        color: var(--primary-strong);
+        color: #1e293b;
         font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 4px;
+        line-height: 1.3;
     }
 
-    .photo-copy span {
-        color: var(--muted);
+    .photo-copy span.uploader {
+        color: #64748b;
         font-size: 14px;
+        display: block;
     }
 
     .photo-meta {
@@ -226,327 +209,400 @@
     .meta-pill {
         display: inline-flex;
         align-items: center;
-        padding: 7px 10px;
-        border-radius: 999px;
-        background: #eef4ff;
-        color: #4b6593;
-        font-size: 12px;
-        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
     }
 
     .document-list {
         display: grid;
-        gap: 14px;
+        gap: 16px;
     }
 
     .document-card {
         display: grid;
-        grid-template-columns: 62px minmax(0, 1fr) auto;
-        gap: 16px;
+        grid-template-columns: auto 64px minmax(0, 1fr) auto;
+        gap: 20px;
         align-items: center;
-        padding: 16px 18px;
-        border: 1px solid #d8e3f8;
-        border-radius: 20px;
-        background: #fff;
-        box-shadow: 0 12px 22px rgba(37, 52, 85, 0.06);
+        padding: 20px 24px;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        background: #f8fafc;
+        transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease, background 0.24s ease;
+        animation: riseIn 0.45s ease both;
+    }
+
+    .document-card:hover {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 12px 28px rgba(33, 49, 85, 0.05);
+        transform: translateY(-2px);
     }
 
     .document-icon {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 62px;
-        height: 62px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, #eef4ff 0%, #dce8ff 100%);
-        color: var(--primary);
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
         font-size: 15px;
-        font-weight: 900;
-        letter-spacing: 0.08em;
+        font-weight: 800;
     }
 
-    .document-copy {
-        min-width: 0;
+    .document-icon.pdf {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .document-icon.xls {
+        background: #dcfce7;
+        color: #16a34a;
+    }
+
+    .document-icon.img {
+        background: #e0e7ff;
+        color: #4f46e5;
+    }
+
+    .document-icon.doc {
+        background: #e0f2fe;
+        color: #0284c7;
     }
 
     .document-copy strong {
         display: block;
-        margin-bottom: 4px;
-        color: var(--primary-strong);
+        color: #1e293b;
         font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 6px;
     }
 
     .document-copy p {
         margin: 0;
-        color: var(--muted);
-        line-height: 1.55;
-    }
-
-    .document-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 10px;
-    }
-
-    .document-status {
-        display: grid;
-        gap: 8px;
-        justify-items: end;
-        text-align: right;
+        color: #64748b;
+        font-size: 14px;
     }
 
     .status-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 8px 11px;
+        padding: 6px 14px;
         border-radius: 999px;
         font-size: 12px;
         font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
     }
 
     .status-pill.review {
-        background: #fff1c7;
-        color: #996b00;
+        background: #fef3c7;
+        color: #d97706;
     }
 
     .status-pill.ready {
-        background: #dff7e7;
-        color: #1f7a52;
+        background: #d1fae5;
+        color: #059669;
     }
 
     .status-pill.pending {
-        background: #eef1f6;
-        color: #556784;
-    }
-
-    .document-status span {
-        color: var(--muted);
-        font-size: 13px;
-    }
-
-    @media (max-width: 980px) {
-        .field-data-intro,
-        .section-head {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .document-card {
-            grid-template-columns: 1fr;
-            justify-items: start;
-        }
-
-        .document-status {
-            justify-items: start;
-            text-align: left;
-        }
+        background: #f1f5f9;
+        color: #475569;
     }
 
     @media (max-width: 760px) {
-        .field-data-tabs {
-            width: 100%;
-            display: grid;
+        .field-data-panel {
+            padding: 20px;
         }
 
-        .field-data-tab {
+        .field-data-tabs {
             width: 100%;
-            min-width: 0;
+            flex-direction: column;
+        }
+
+        .section-head {
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+
+    .btn-delete-small {
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #fee2e2;
+        color: #ef4444;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid #fecaca;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-small:hover {
+        background: #fecaca;
+        color: #dc2626;
+    }
+
+    .btn-delete-icon-only {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #fee2e2;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-icon-only:hover {
+        background: #fecaca;
+        color: #dc2626;
+        transform: scale(1.05);
+    }
+
+    .doc-checkbox,
+    #select-all-docs {
+        width: 18px !important;
+        height: 18px !important;
+        min-height: auto !important;
+        border: none !important;
+        border-radius: 4px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        cursor: pointer !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    @keyframes riseIn {
+        from {
+            opacity: 0;
+            transform: translateY(14px) scale(0.98);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
     }
 </style>
 
-<div class="field-data-shell">
-    
+<div id="field-data-config" data-photo-count="{{ uploaded_photos|length }}"
+    data-doc-count="{{ uploaded_documents|length }}" hidden>
+</div>
 
-    <div class="field-data-tabs" role="tablist" aria-label="Field data types">
-        <button class="field-data-tab active" id="photos-tab" type="button" role="tab" aria-selected="true" aria-controls="photos-panel" onclick="showFieldDataPanel('photos')">Uploaded Photos</button>
-        <button class="field-data-tab" id="documents-tab" type="button" role="tab" aria-selected="false" aria-controls="documents-panel" onclick="showFieldDataPanel('documents')">Uploaded Documents</button>
+<div class="field-data-shell">
+    <div class="field-data-tabs">
+        <button class="field-data-tab active" id="photos-tab" onclick="showFieldDataPanel('photos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            Surveys & Photos
+        </button>
+        <button class="field-data-tab" id="documents-tab" onclick="showFieldDataPanel('documents')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            Upload Document
+        </button>
     </div>
 
-    <section class="field-data-panel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">
+    <section class="field-data-panel" id="photos-panel">
         <div class="section-head">
-            <div>
-                <span class="eyebrow">Photos</span>
-                <h3>Photos uploaded by users</h3>
-            </div>
-            <div class="section-count">4</div>
+            <h3>Surveys & Photos</h3>
+            <div class="section-count">{{ uploaded_photos|length }}</div>
         </div>
 
         <div class="photo-grid">
-            <article class="photo-card">
-                <div class="photo-preview a">
-                    <span class="preview-badge">Site Photo</span>
+            {% for photo in uploaded_photos %}
+            <article class="photo-card" id="photo-{{ photo.id }}">
+                {% if photo.path %}
+                <a href="/uploads/{{ photo.path }}" target="_blank" style="text-decoration: none;">
+                    <div class="photo-preview" style="background-image: url('/uploads/{{ photo.path }}');">
+                        <span class="preview-badge">Site Photo</span>
+                    </div>
+                </a>
+                {% else %}
+                <div class="photo-preview"
+                    style="background-color: #f8fafc; display: flex; align-items: center; justify-content: center;">
+                    <span class="preview-badge"
+                        style="background: none; color: #94a3b8; box-shadow: none; padding: 0;">No Photo Uploaded</span>
                 </div>
+                {% endif %}
                 <div class="photo-copy">
                     <div>
-                        <strong>Foundation Progress</strong>
-                        <span>Uploaded by Amit Kumar</span>
+                        <strong>{{ photo.warehouse }}</strong>
+                        <span class="uploader">{{ photo.desc }}</span>
                     </div>
                     <div class="photo-meta">
-                        <span class="meta-pill">Pune Yard</span>
-                        <span class="meta-pill">Today 10:15 AM</span>
+                        <span class="meta-pill">Survey ID #{{ photo.id }}</span>
+                        <span class="meta-pill">{{ photo.date }}</span>
+                    </div>
+                    <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+                        <form action="{{ '/delete-work-upload' if 'work-' in photo.id|string else '/delete-survey' }}"
+                            method="POST" onsubmit="return confirm('Delete this photo?');" style="margin: 0;">
+                            <input type="hidden" name="id" value="{{ photo.id|string|replace('work-', '') }}">
+                            <button type="submit" class="btn-delete-small">Delete Photo</button>
+                        </form>
                     </div>
                 </div>
             </article>
-
-            <article class="photo-card">
-                <div class="photo-preview b">
-                    <span class="preview-badge">Site Photo</span>
-                </div>
-                <div class="photo-copy">
-                    <div>
-                        <strong>Material Staging Area</strong>
-                        <span>Uploaded by Riya Shah</span>
-                    </div>
-                    <div class="photo-meta">
-                        <span class="meta-pill">Block B2</span>
-                        <span class="meta-pill">Today 9:42 AM</span>
-                    </div>
-                </div>
-            </article>
-
-            <article class="photo-card">
-                <div class="photo-preview c">
-                    <span class="preview-badge">Site Photo</span>
-                </div>
-                <div class="photo-copy">
-                    <div>
-                        <strong>Cable Trench Check</strong>
-                        <span>Uploaded by Neha Patil</span>
-                    </div>
-                    <div class="photo-meta">
-                        <span class="meta-pill">East Corridor</span>
-                        <span class="meta-pill">Yesterday 5:20 PM</span>
-                    </div>
-                </div>
-            </article>
-
-            <article class="photo-card">
-                <div class="photo-preview d">
-                    <span class="preview-badge">Site Photo</span>
-                </div>
-                <div class="photo-copy">
-                    <div>
-                        <strong>Finished Bay Snapshot</strong>
-                        <span>Uploaded by Rajvir</span>
-                    </div>
-                    <div class="photo-meta">
-                        <span class="meta-pill">Warehouse 3</span>
-                        <span class="meta-pill">Yesterday 2:05 PM</span>
-                    </div>
-                </div>
-            </article>
+            {% else %}
+            <p style="color: #64748b;">No photos uploaded yet.</p>
+            {% endfor %}
         </div>
     </section>
 
-    <section class="field-data-panel" id="documents-panel" role="tabpanel" aria-labelledby="documents-tab" hidden>
+    <section class="field-data-panel" id="documents-panel" hidden>
         <div class="section-head">
-            <div>
-                <span class="eyebrow">Documents</span>
-                <h3>Documents uploaded by users</h3>
+            <h3>Documents Archive</h3>
+            <div class="section-count">{{ uploaded_documents|length }}</div>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 18px; padding: 24px; margin-bottom: 8px; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01);">
+            <h4 style="margin: 0 0 8px 0; color: #1e293b; font-size: 16px; font-weight: 800;">Upload New Document</h4>
+            <p style="margin: 0 0 16px 0; color: #64748b; font-size: 13px;">Attach a PDF, spreadsheet, doc, or text file for mobile app users to access.</p>
+            <form action="/upload-documents" method="POST" enctype="multipart/form-data" style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin: 0;">
+                <input type="file" name="document" required style="padding: 8px 12px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; font-size: 13px; color: #475569; outline: none; font-weight: 600;">
+                <button type="submit" class="status-pill ready" style="border: none; cursor: pointer; padding: 12px 24px; border-radius: 12px; font-size: 13px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 16px; height: 16px;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Upload to Server
+                </button>
+            </form>
+        </div>
+
+        <form id="bulk-delete-form" action="/delete-multiple-documents" method="POST">
+            <div id="bulk-actions-bar" style="display: none; align-items: center; justify-content: space-between; background: #fff5f5; border: 1px solid #fee2e2; border-radius: 12px; padding: 12px 20px; margin-bottom: 16px; animation: slideDown 0.3s ease;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <input type="checkbox" id="select-all-docs" style="width: 18px; height: 18px; cursor: pointer; accent-color: #ef4444;">
+                    <span style="color: #991b1b; font-size: 14px; font-weight: 700;" id="checked-count-text">0 documents selected</span>
+                </div>
+                <button type="submit" class="btn-delete-small" style="display: flex; align-items: center; gap: 6px;" onclick="return confirm('Delete all selected documents?');">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Delete Selected
+                </button>
             </div>
-            <div class="section-count">4</div>
-        </div>
 
-        <div class="document-list">
-            <article class="document-card">
-                <div class="document-icon">PDF</div>
-                <div class="document-copy">
-                    <strong>Daily Progress Report.pdf</strong>
-                    <p>Uploaded by Amit Kumar for the civil team progress review.</p>
-                    <div class="document-meta">
-                        <span class="meta-pill">Pune Yard</span>
-                        <span class="meta-pill">2.4 MB</span>
-                        <span class="meta-pill">Today 10:28 AM</span>
+            <div class="document-list">
+                {% for doc in uploaded_documents %}
+                <article class="document-card">
+                    <div style="display: flex; align-items: center;">
+                        <input type="checkbox" name="doc_ids" value="{{ doc.id }}" class="doc-checkbox" style="width: 18px; height: 18px; cursor: pointer; accent-color: #ef4444;">
                     </div>
-                </div>
-                <div class="document-status">
-                    <span class="status-pill review">Needs Review</span>
-                    <span>Reference ID: DOC-1042</span>
-                </div>
-            </article>
-
-            <article class="document-card">
-                <div class="document-icon">XLS</div>
-                <div class="document-copy">
-                    <strong>Material Consumption Sheet.xlsx</strong>
-                    <p>Uploaded by Riya Shah with the latest quantity update from site.</p>
-                    <div class="document-meta">
-                        <span class="meta-pill">Block B2</span>
-                        <span class="meta-pill">860 KB</span>
-                        <span class="meta-pill">Today 9:54 AM</span>
+                    <div class="document-icon {{ doc.doc_type }}">{{ doc.doc_type | upper }}</div>
+                    <div class="document-copy">
+                        <strong>{{ doc.file_name }}</strong>
+                        <p>Uploaded by {{ doc.uploader }} &mdash; {{ doc.uploaded_at }}</p>
                     </div>
-                </div>
-                <div class="document-status">
-                    <span class="status-pill ready">Verified</span>
-                    <span>Reference ID: DOC-1041</span>
-                </div>
-            </article>
-
-            <article class="document-card">
-                <div class="document-icon">IMG</div>
-                <div class="document-copy">
-                    <strong>Inspection Markup.jpg</strong>
-                    <p>Uploaded by Neha Patil with notes for trench correction points.</p>
-                    <div class="document-meta">
-                        <span class="meta-pill">East Corridor</span>
-                        <span class="meta-pill">1.1 MB</span>
-                        <span class="meta-pill">Yesterday 5:33 PM</span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <a href="/uploads/{{ doc.file_path }}" target="_blank" class="status-pill ready"
+                            style="text-decoration:none;">
+                            View
+                        </a>
+                        <button type="button" class="btn-delete-icon-only" onclick="deleteSingleDoc('{{ doc.id }}')" title="Delete Document">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
                     </div>
-                </div>
-                <div class="document-status">
-                    <span class="status-pill pending">Pending</span>
-                    <span>Reference ID: DOC-1038</span>
-                </div>
-            </article>
-
-            <article class="document-card">
-                <div class="document-icon">DOC</div>
-                <div class="document-copy">
-                    <strong>Site Handover Note.docx</strong>
-                    <p>Uploaded by Rajvir with end-of-shift remarks and signoff summary.</p>
-                    <div class="document-meta">
-                        <span class="meta-pill">Warehouse 3</span>
-                        <span class="meta-pill">540 KB</span>
-                        <span class="meta-pill">Yesterday 2:18 PM</span>
-                    </div>
-                </div>
-                <div class="document-status">
-                    <span class="status-pill review">Needs Review</span>
-                    <span>Reference ID: DOC-1034</span>
-                </div>
-            </article>
-        </div>
+                </article>
+                {% else %}
+                <p style="color: #64748b;">No documents uploaded yet.</p>
+                {% endfor %}
+            </div>
+        </form>
     </section>
 </div>
 
 <script>
-function showFieldDataPanel(type) {
-    const isPhotos = type === "photos";
-    const photosPanel = document.getElementById("photos-panel");
-    const documentsPanel = document.getElementById("documents-panel");
-    const photosTab = document.getElementById("photos-tab");
-    const documentsTab = document.getElementById("documents-tab");
-
-    if (isPhotos) {
-        photosPanel.removeAttribute("hidden");
-        documentsPanel.setAttribute("hidden", "");
-        photosTab.classList.add("active");
-        documentsTab.classList.remove("active");
-        photosTab.setAttribute("aria-selected", "true");
-        documentsTab.setAttribute("aria-selected", "false");
-        return;
+    function showFieldDataPanel(type) {
+        const isPhotos = type === "photos";
+        document.getElementById("photos-panel").hidden = !isPhotos;
+        document.getElementById("documents-panel").hidden = isPhotos;
+        document.getElementById("photos-tab").classList.toggle("active", isPhotos);
+        document.getElementById("documents-tab").classList.toggle("active", !isPhotos);
     }
 
-    documentsPanel.removeAttribute("hidden");
-    photosPanel.setAttribute("hidden", "");
-    documentsTab.classList.add("active");
-    photosTab.classList.remove("active");
-    documentsTab.setAttribute("aria-selected", "true");
-    photosTab.setAttribute("aria-selected", "false");
-}
+    function deleteSingleDoc(id) {
+        if (confirm('Are you sure you want to delete this document?')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/delete-document';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'id';
+            input.value = id;
+            
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
+
+    // Auto-switch to documents tab if no photos exist or URL parameter says so
+    document.addEventListener('DOMContentLoaded', () => {
+        const config = document.getElementById('field-data-config');
+        if (!config) return;
+
+        const photoCount = parseInt(config.dataset.photoCount || '0');
+        const docCount = parseInt(config.dataset.docCount || '0');
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab');
+
+        if (activeTab === 'documents') {
+            showFieldDataPanel('documents');
+        } else if (photoCount === 0 && docCount > 0) {
+            showFieldDataPanel('documents');
+        }
+
+        // Setup Bulk Deletion event listeners
+        const selectAllCheckbox = document.getElementById('select-all-docs');
+        const docCheckboxes = document.querySelectorAll('.doc-checkbox');
+        const bulkBar = document.getElementById('bulk-actions-bar');
+        const checkedCountText = document.getElementById('checked-count-text');
+
+        function updateBulkActionsBar() {
+            const checkedCount = document.querySelectorAll('.doc-checkbox:checked').length;
+            if (checkedCount > 0) {
+                bulkBar.style.display = 'flex';
+                checkedCountText.textContent = checkedCount === 1 ? '1 document selected' : `${checkedCount} documents selected`;
+            } else {
+                bulkBar.style.display = 'none';
+            }
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = checkedCount === docCheckboxes.length && docCheckboxes.length > 0;
+            }
+        }
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', function() {
+                docCheckboxes.forEach(cb => {
+                    cb.checked = selectAllCheckbox.checked;
+                });
+                updateBulkActionsBar();
+            });
+        }
+
+        docCheckboxes.forEach(cb => {
+            cb.addEventListener('change', updateBulkActionsBar);
+        });
+    });
 </script>
 {% endblock %}

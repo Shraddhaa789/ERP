@@ -1,0 +1,510 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .admin-shell {
+        display: grid;
+        gap: 24px;
+        padding-bottom: 40px;
+    }
+
+    .admin-panel {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 12px 32px rgba(33, 49, 85, 0.04);
+        display: grid;
+        gap: 24px;
+    }
+
+    .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 24px;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .section-head h3 {
+        margin: 0 0 6px;
+        color: #1e293b;
+        font-size: 24px;
+        font-weight: 800;
+    }
+    
+    .section-head p {
+        margin: 0;
+        color: #64748b;
+        font-size: 14px;
+    }
+
+    .request-list {
+        display: grid;
+        gap: 16px;
+    }
+
+    .request-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: center;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        background: #f8fafc;
+        transition: all 0.2s ease;
+    }
+
+    .request-card:hover {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 12px 28px rgba(33, 49, 85, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .request-info strong {
+        display: block;
+        color: #1e293b;
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .request-info p {
+        margin: 0 0 12px;
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .request-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #475569;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+    }
+
+    .request-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .status-badge.pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-badge.approved {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .status-badge.rejected {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-approve {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2);
+    }
+
+    .btn-approve:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+    }
+
+    .btn-reject:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(220, 38, 38, 0.3);
+    }
+
+    .btn-new-req {
+        background: #1e293b;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 10px rgba(30, 41, 59, 0.15);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-new-req:hover {
+        background: #0f172a;
+        transform: translateY(-2px);
+    }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .modal-content {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 32px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
+        transform: translateY(20px);
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.active .modal-content {
+        transform: translateY(0);
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #475569;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    @media (max-width: 980px) {
+        .admin-panel {
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        .section-head {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .filter-bar {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input,
+        .filter-bar select {
+            flex: 1 1 220px;
+            width: 100% !important;
+        }
+
+        .request-card {
+            grid-template-columns: 1fr;
+            justify-items: start;
+            padding: 18px;
+        }
+
+        .request-actions {
+            align-items: flex-start;
+            width: 100%;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .action-buttons {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1 1 120px;
+        }
+    }
+</style>
+
+<div class="admin-shell">
+    <section class="admin-panel">
+        <div class="section-head" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <h3>Transfer Route Requests</h3>
+                <p>Manage and approve stock transfer requests submitted by the ground team.</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px;">
+                <button type="button" class="btn btn-new-req" onclick="openModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    New Request
+                </button>
+                <div class="filter-bar" style="display: flex; gap: 12px;">
+                    <input type="text" id="searchInput" onkeyup="filterRequests()" placeholder="Search transfers..." style="padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; width: 250px; font-family: inherit; font-size: 14px;">
+                    <select id="statusFilter" onchange="filterRequests()" style="padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 14px; cursor: pointer;">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+                <input type="text" id="searchInput" onkeyup="filterRequests()" placeholder="Search transfers..." style="padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; width: 250px; font-family: inherit; font-size: 14px;">
+                <select id="statusFilter" onchange="filterRequests()" style="padding: 10px 14px; border-radius: 8px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 14px; cursor: pointer;">
+                    <option value="all">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="request-list">
+            {% if requests|length == 0 %}
+            <div style="padding: 40px; text-align: center; color: #64748b; font-weight: 600;">
+                No transfer requests found.
+            </div>
+            {% endif %}
+
+            {% for req in requests %}
+            <article class="request-card" id="req-{{ req.id }}">
+                <div class="request-info">
+                    <strong style="display: flex; align-items: center; gap: 8px; font-size: 20px; color: #0f172a;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        {{ req.transfer_id }}
+                    </strong>
+                    <p style="font-size: 15px; margin-bottom: 16px;">Transfer <strong style="display:inline; font-size:15px;">{{ req.quantity }}</strong> units of <strong style="display:inline; font-size:15px;">{{ req.material }}</strong> from <strong style="display:inline; font-size:15px;">{{ req.source }}</strong> to <strong style="display:inline; font-size:15px;">{{ req.destination }}</strong>.</p>
+                    {% if req.remarks %}
+                    <p style="color: #3b82f6; font-style: italic; background: #eff6ff; padding: 10px 14px; border-radius: 8px; border-left: 3px solid #3b82f6;">"{{ req.remarks }}"</p>
+                    {% endif %}
+                    <div class="request-meta">
+                        <span class="meta-pill">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; color: #64748b;"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            Vehicle: {{ req.vehicle }}
+                        </span>
+                        <span class="meta-pill">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; color: #64748b;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Date: {{ req.created_at }}
+                        </span>
+                    </div>
+                    {% if req.admin_note %}
+                    <div style="margin-top: 12px; font-size: 14px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; color: #475569;">
+                        <strong>Admin Note:</strong> {{ req.admin_note }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="request-actions">
+                    <span class="status-badge {{ req.status|lower }}" id="status-{{ req.id }}">{{ req.status }}</span>
+                    {% if req.status == 'Pending' %}
+                    <div class="action-buttons" id="actions-{{ req.id }}">
+                        <button class="btn btn-approve" onclick="updateStatus({{ req.id }}, 'Approved (Pending Fulfillment)')">Approve</button>
+                        <button class="btn btn-reject" onclick="updateStatus({{ req.id }}, 'Rejected')">Reject</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="newReqModal">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h3 style="margin: 0; font-size: 20px; font-weight: 800; color: #1e293b;">Mandate Route Request</h3>
+            <button onclick="closeModal()" style="background: none; border: none; cursor: pointer; color: #64748b;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <form id="newReqForm" onsubmit="submitNewRequest(event)">
+            <div class="form-group">
+                <label>Transfer ID / DC No</label>
+                <input type="text" id="reqTransferId" required placeholder="e.g. TR-2026-001">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Source Warehouse</label>
+                    <input type="text" id="reqSource" required placeholder="From where?">
+                </div>
+                <div class="form-group">
+                    <label>Destination Warehouse</label>
+                    <input type="text" id="reqDest" required placeholder="To where?">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Material Description</label>
+                <input type="text" id="reqMaterial" required placeholder="What is being sent?">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="text" id="reqQty" required placeholder="e.g. 100 meters">
+                </div>
+                <div class="form-group">
+                    <label>Vehicle Type</label>
+                    <input type="text" id="reqVehicle" placeholder="e.g. Truck (Optional)">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Admin Remarks</label>
+                <textarea id="reqRemarks" rows="2" placeholder="Any specific instructions?"></textarea>
+            </div>
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="button" class="btn" style="background: #f1f5f9; color: #475569;" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn" style="background: #4f46e5; color: white;">Submit Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openModal() {
+    document.getElementById('newReqModal').classList.add('active');
+}
+function closeModal() {
+    document.getElementById('newReqModal').classList.remove('active');
+    document.getElementById('newReqForm').reset();
+}
+
+async function submitNewRequest(e) {
+    e.preventDefault();
+    
+    const payload = {
+        transfer_id: document.getElementById('reqTransferId').value,
+        source_warehouse: document.getElementById('reqSource').value,
+        destination_warehouse: document.getElementById('reqDest').value,
+        material_description: document.getElementById('reqMaterial').value,
+        quantity: document.getElementById('reqQty').value,
+        vehicle_type: document.getElementById('reqVehicle').value,
+        remarks: document.getElementById('reqRemarks').value
+    };
+
+    try {
+        const response = await fetch('/submit-route-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+            alert("Request mandated successfully. It is now pending fulfillment.");
+            window.location.reload();
+        } else {
+            alert(data.error || "Failed to submit request.");
+        }
+    } catch (err) {
+        alert("Network error occurred.");
+    }
+}
+
+async function updateStatus(id, newStatus) {
+    let note = prompt(`Enter an optional note for marking this request as ${newStatus}:`);
+    if (note === null) return; // user cancelled
+
+    try {
+        const response = await fetch('/update-route-request-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id, status: newStatus, admin_note: note })
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert("Failed to update status. Please try again.");
+        }
+    } catch (err) {
+        alert("Network error occurred.");
+    }
+}
+
+function filterRequests() {
+    let searchInput = document.getElementById('searchInput').value.toLowerCase();
+    let statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+    let cards = document.getElementsByClassName('request-card');
+
+    for (let i = 0; i < cards.length; i++) {
+        let textContent = cards[i].innerText.toLowerCase();
+        let statusBadge = cards[i].querySelector('.status-badge').innerText.toLowerCase();
+        
+        let matchesSearch = textContent.includes(searchInput);
+        let matchesStatus = (statusFilter === 'all') || (statusBadge === statusFilter);
+
+        if (matchesSearch && matchesStatus) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
+</script>
+{% endblock %}

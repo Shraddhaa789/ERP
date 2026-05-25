@@ -91,6 +91,13 @@
         transform: translateY(-1px);
     }
 
+    .material-choice-note {
+        margin: 0;
+        color: #667089;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
     .field.span-2 {
         grid-column: span 2;
     }
@@ -184,6 +191,8 @@
 
     .table-wrap {
         overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
         padding: 0 8px 10px;
         background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
     }
@@ -234,6 +243,28 @@
     }
 
     @media (max-width: 760px) {
+        .entry-shell,
+        .entry-grid,
+        .entry-card,
+        .records-card {
+            min-width: 0;
+        }
+
+        .entry-card {
+            border-radius: 14px;
+        }
+
+        .entry-card-header,
+        .records-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .entry-card-body {
+            padding: 16px;
+        }
+
         .grid-form {
             grid-template-columns: 1fr;
         }
@@ -245,6 +276,12 @@
         .submit-bar {
             align-items: flex-start;
             flex-direction: column;
+            position: static;
+            padding: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
         }
 
         .records-header h3 {
@@ -388,8 +425,27 @@
                         <input id="item_code" placeholder="Enter item code">
                     </div>
                     <div class="field">
+                        <label for="material_category">Categorised Item/Services</label>
+                        <select id="material_category" onchange="populateMaterialSubCategories()">
+                            <option value="">Loading categories...</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="material_sub_category">Short Description</label>
+                        <select id="material_sub_category" onchange="populateMaterialTrackers()">
+                            <option value="">Select short description</option>
+                        </select>
+                    </div>
+                    <div class="field span-2">
+                        <label for="material_tracker">Tracker Description</label>
+                        <select id="material_tracker" onchange="applySelectedMaterial()">
+                            <option value="">Select tracker description</option>
+                        </select>
+                    </div>
+                    <div class="field">
                         <label for="description">Description</label>
                         <input id="description" placeholder="Enter material description">
+                        <p class="material-choice-note">Choose from categorised materials or type new material details here.</p>
                     </div>
                     <div class="field">
                         <label for="qty">NO/Qty</label>
@@ -728,6 +784,122 @@ const fieldIds = [
     "approved_dpm", "approved_tpa"
 ];
 
+let materialOptions = [];
+let lastAppliedMaterialDescription = "";
+
+function createMaterialOption(value, label) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    return option;
+}
+
+function setSelectOptions(selectId, options, placeholder) {
+    const select = document.getElementById(selectId);
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = "";
+    select.appendChild(createMaterialOption("", placeholder));
+    options.forEach((option) => {
+        select.appendChild(createMaterialOption(option.value, option.label));
+    });
+}
+
+function sortedUnique(values) {
+    return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+
+function populateMaterialCategories() {
+    const categories = sortedUnique(materialOptions.map((item) => item.category));
+    setSelectOptions(
+        "material_category",
+        categories.map((category) => ({ value: category, label: category })),
+        "Select categorised item/services"
+    );
+    populateMaterialSubCategories();
+}
+
+function populateMaterialSubCategories() {
+    clearAppliedMaterialDescription();
+    const category = getFieldValue("material_category");
+    const subCategories = sortedUnique(
+        materialOptions
+            .filter((item) => !category || item.category === category)
+            .map((item) => item.subCategory)
+            .filter(Boolean)
+    );
+    const subCategoryField = document.getElementById("material_sub_category")?.closest(".field");
+    if (subCategoryField) {
+        subCategoryField.style.display = subCategories.length ? "" : "none";
+    }
+    setSelectOptions(
+        "material_sub_category",
+        subCategories.map((subCategory) => ({ value: subCategory, label: subCategory })),
+        "Select short description"
+    );
+    populateMaterialTrackers();
+}
+
+function populateMaterialTrackers() {
+    clearAppliedMaterialDescription();
+    const category = getFieldValue("material_category");
+    const subCategory = getFieldValue("material_sub_category");
+    const visibleSubCategories = sortedUnique(
+        materialOptions
+            .filter((item) => !category || item.category === category)
+            .map((item) => item.subCategory)
+            .filter(Boolean)
+    );
+    const trackers = materialOptions
+        .filter((item) => (
+            (!category || item.category === category) &&
+            (!visibleSubCategories.length || !subCategory || item.subCategory === subCategory)
+        ))
+        .map((item) => ({ value: item.description, label: item.description }));
+
+    setSelectOptions("material_tracker", trackers, "Select tracker description");
+}
+
+function applySelectedMaterial() {
+    const selectedDescription = getFieldValue("material_tracker");
+    if (selectedDescription) {
+        document.getElementById("description").value = selectedDescription;
+        lastAppliedMaterialDescription = selectedDescription;
+    }
+}
+
+function clearAppliedMaterialDescription() {
+    const descriptionInput = document.getElementById("description");
+    if (descriptionInput && descriptionInput.value === lastAppliedMaterialDescription) {
+        descriptionInput.value = "";
+    }
+    lastAppliedMaterialDescription = "";
+}
+
+function loadMaterialCategories() {
+    fetch("/material-categories")
+    .then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Material categories failed with status ${res.status}`);
+        }
+        return res.json();
+    })
+    .then((payload) => {
+        materialOptions = Object.entries(payload || {}).map(([description, info]) => ({
+            description,
+            category: info.category || "Uncategorized",
+            subCategory: info.sub_category || ""
+        }));
+        populateMaterialCategories();
+    })
+    .catch((error) => {
+        console.error(error);
+        setSelectOptions("material_category", [], "Categories unavailable");
+    });
+}
+
 function getFieldValue(id) {
     const element = document.getElementById(id);
     return element ? element.value : "";
@@ -742,6 +914,14 @@ function resetEntryForm() {
 
         element.value = "";
     });
+    ["material_category", "material_sub_category", "material_tracker"].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = "";
+        }
+    });
+    lastAppliedMaterialDescription = "";
+    populateMaterialSubCategories();
 }
 
 function calculateTotal() {
@@ -853,5 +1033,6 @@ function loadData() {
 }
 
 loadData();
+loadMaterialCategories();
 </script>
 {% endblock %}

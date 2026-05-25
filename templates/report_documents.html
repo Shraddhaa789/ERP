@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block panel_actions %}
+<a class="secondary-btn" href="/report">Back to Report</a>
+{% endblock %}
+
+{% block content %}
+<style>
+    .report-doc-shell {
+        display: grid;
+        gap: 18px;
+    }
+
+    .report-doc-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid #d8e3f8;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    }
+
+    .summary-item {
+        display: grid;
+        gap: 5px;
+    }
+
+    .summary-item span {
+        color: #60769f;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .summary-item strong {
+        color: var(--primary-strong);
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .doc-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .doc-toolbar h3 {
+        margin: 0;
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+    .add-doc-btn {
+        min-height: 34px;
+        padding: 8px 12px;
+        border-radius: 9px;
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .upload-panel {
+        display: none;
+        padding: 14px;
+        border: 1px solid #d8e3f8;
+        border-radius: 14px;
+        background: #fff;
+    }
+
+    .upload-panel.open {
+        display: block;
+    }
+
+    .upload-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .upload-row .single-field {
+        flex: 1 1 280px;
+        margin-bottom: 0;
+    }
+
+    .doc-table-card {
+        border: 1px solid #d8e3f8;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .doc-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+    }
+
+    .doc-view-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 32px;
+        padding: 7px 11px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        color: #047857;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .doc-delete-btn {
+        min-height: 32px;
+        padding: 7px 11px;
+        border-radius: 8px;
+        border: 1px solid #fecaca;
+        background: #fee2e2;
+        color: #dc2626;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .empty-docs {
+        padding: 34px 18px;
+        color: var(--muted);
+        text-align: center;
+    }
+</style>
+
+<div class="report-doc-shell">
+    <section class="report-doc-summary">
+        <div class="summary-item">
+            <span>Report Type</span>
+            <strong>{{ entry.report_type|title }}</strong>
+        </div>
+        <div class="summary-item">
+            <span>Sr / Entry No</span>
+            <strong>{{ entry.serial_no or "-" }}</strong>
+        </div>
+        <div class="summary-item">
+            <span>Warehouse</span>
+            <strong>{{ entry.warehouse or "-" }}</strong>
+        </div>
+        <div class="summary-item">
+            <span>Document No</span>
+            <strong>{{ entry.document_no or "-" }}</strong>
+        </div>
+        <div class="summary-item">
+            <span>Date</span>
+            <strong>{{ entry.document_date or "-" }}</strong>
+        </div>
+        <div class="summary-item">
+            <span>Material</span>
+            <strong>{{ entry.description or "-" }}</strong>
+        </div>
+    </section>
+
+    <div class="doc-toolbar">
+        <h3>Upload Document</h3>
+        <button class="add-doc-btn" type="button" onclick="toggleReportDocUpload()">Add New Doc</button>
+    </div>
+
+    <section class="upload-panel" id="report_doc_upload_panel">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="upload-row">
+                <div class="single-field">
+                    <label for="report_document">Select Document</label>
+                    <input id="report_document" type="file" name="document" required>
+                </div>
+                <button class="action-btn" type="submit">Upload</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="doc-table-card">
+        {% if documents %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Type</th>
+                        <th>Uploaded</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr>
+                        <td>{{ doc.file_name }}</td>
+                        <td>{{ doc.doc_type|upper }}</td>
+                        <td>{{ doc.uploaded_at }}</td>
+                        <td>
+                            <div class="doc-actions">
+                                <a class="doc-view-link" href="/uploads/{{ doc.file_path }}" target="_blank">View</a>
+                                <form action="/delete-report-document" method="POST"
+                                    onsubmit="return confirm('Delete this document?');" style="margin: 0;">
+                                    <input type="hidden" name="id" value="{{ doc.id }}">
+                                    <input type="hidden" name="type" value="{{ entry.report_type }}">
+                                    <input type="hidden" name="report_id" value="{{ entry.id }}">
+                                    <button class="doc-delete-btn" type="submit">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-docs">No documents uploaded for this report entry yet.</div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+    function toggleReportDocUpload() {
+        document.getElementById("report_doc_upload_panel").classList.toggle("open");
+    }
+</script>
+{% endblock %}

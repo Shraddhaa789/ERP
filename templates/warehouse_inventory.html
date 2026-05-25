@@ -4,128 +4,212 @@
 <style>
     .inventory-shell {
         display: grid;
-        gap: 18px;
+        gap: 24px;
+        padding-bottom: 40px;
     }
 
-    .inventory-hero,
-    .inventory-filters,
-    .inventory-card {
-        border: 1px solid #d8e3f8;
-        border-radius: 20px;
-        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-        box-shadow: var(--shadow);
+    @keyframes heroGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .inventory-hero {
-        padding: 24px 26px;
+        padding: 40px 32px;
+        background: linear-gradient(135deg, #ffffff 0%, #eef2ff 50%, #f0fdf4 100%);
+        background-size: 200% 200%;
+        animation: heroGradient 10s ease infinite;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(33, 49, 85, 0.05), inset 0 1px 0 #ffffff;
+    }
+
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 10px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 16px;
+    }
+
+    .eyebrow svg {
+        width: 16px;
+        height: 16px;
     }
 
     .inventory-hero h2 {
-        margin: 0 0 8px;
-        color: var(--primary-strong);
-        font-size: 30px;
-        letter-spacing: -0.04em;
-    }
-
-    .inventory-hero p {
         margin: 0;
-        color: var(--muted);
-        max-width: 780px;
-        line-height: 1.6;
+        color: #1e293b;
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
     }
 
     .inventory-stats {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+        gap: 20px;
     }
 
     .inventory-stat {
-        padding: 18px 20px;
-        border: 1px solid #d8e3f8;
-        border-radius: 18px;
-        background: #fff;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 24px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        box-shadow: 0 10px 24px rgba(33, 49, 85, 0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .inventory-stat:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(33, 49, 85, 0.06);
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    .stat-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .stat-icon.rows { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #4338ca; }
+    .stat-icon.wh { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #d97706; }
+    .stat-icon.mat { background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #15803d; }
+    .stat-icon.qty { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #b91c1c; }
+
+    .stat-content {
+        display: grid;
+        gap: 4px;
     }
 
     .inventory-stat-label {
-        color: #60769f;
-        font-size: 12px;
-        font-weight: 800;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.05em;
     }
 
     .inventory-stat-value {
-        margin-top: 8px;
-        color: var(--primary-strong);
+        color: #1e293b;
         font-size: 28px;
         font-weight: 800;
-        letter-spacing: -0.04em;
+        letter-spacing: -0.02em;
     }
 
     .inventory-filters {
-        padding: 18px 22px;
+        padding: 28px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        box-shadow: 0 10px 24px rgba(33, 49, 85, 0.03);
     }
 
     .filter-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
     }
 
     .filter-grid label {
         display: block;
-        margin-bottom: 8px;
-        color: #60769f;
-        font-size: 12px;
-        font-weight: 800;
+        margin-bottom: 10px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.05em;
     }
 
-    .filter-grid select,
-    .filter-grid input {
+    .filter-control {
         width: 100%;
-        min-height: 48px;
-        padding: 12px 14px;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
         border-radius: 14px;
-        border: 1px solid #cfdcf2;
+        background: #f8fafc;
+        color: #1e293b;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .filter-control:focus {
+        outline: none;
+        border-color: #3b82f6;
         background: #fff;
-        color: var(--text);
-        font-size: 14px;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    select.filter-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 16px;
+        padding-right: 40px;
+        cursor: pointer;
+    }
+
+    .inventory-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        box-shadow: 0 12px 32px rgba(33, 49, 85, 0.04);
+        overflow: hidden;
     }
 
     .inventory-card-head {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
         flex-wrap: wrap;
-        padding: 18px 22px;
-        border-bottom: 1px solid #e6edf8;
-        background: linear-gradient(180deg, #f7faff 0%, #eef4ff 100%);
+        padding: 24px 32px;
+        border-bottom: 2px solid #f1f5f9;
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
     }
 
     .inventory-card-head h3 {
-        margin: 0 0 4px;
-        color: var(--primary);
+        margin: 0 0 6px;
+        color: #1e293b;
         font-size: 22px;
+        font-weight: 800;
     }
 
     .inventory-card-head p {
         margin: 0;
-        color: var(--muted);
+        color: #64748b;
+        font-size: 14px;
     }
 
     .inventory-badge {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 8px 12px;
+        padding: 8px 16px;
         border-radius: 999px;
-        background: #e7efff;
-        color: #4766a4;
-        font-size: 12px;
+        background: #eef2ff;
+        color: #4338ca;
+        font-size: 13px;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -133,7 +217,9 @@
 
     .table-wrap {
         overflow-x: auto;
-        max-height: 680px;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+        max-height: 700px;
     }
 
     .inventory-table {
@@ -145,10 +231,10 @@
 
     .inventory-table th,
     .inventory-table td {
-        padding: 13px 14px;
-        border-bottom: 1px solid #e8eef8;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
         text-align: left;
-        font-size: 13px;
+        font-size: 14px;
         vertical-align: top;
     }
 
@@ -156,26 +242,55 @@
         position: sticky;
         top: 0;
         z-index: 1;
-        background: #edf3ff;
-        color: #536a98;
+        background: #f8fafc;
+        color: #334155;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        font-size: 11px;
+        font-size: 12px;
+        font-weight: 800;
+        border-bottom: 2px solid #e2e8f0;
     }
 
-    .inventory-table tbody tr:nth-child(even) {
-        background: #fafcff;
+    .inventory-table tbody tr {
+        transition: background 0.2s ease;
+    }
+
+    .inventory-table tbody tr:hover {
+        background: #f8fafc;
     }
 
     .stock-qty {
         font-weight: 800;
-        color: #2d4f93;
+        color: #1d4ed8;
+        background: #eff6ff;
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: inline-block;
+        border: 1px solid #bfdbfe;
+    }
+
+    .stock-negative {
+        color: #b91c1c;
+        background: #fef2f2;
+        border-color: #fecaca;
+    }
+
+    .metric-val {
+        font-weight: 700;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 6px 10px;
+        display: inline-block;
     }
 
     .empty-state {
-        padding: 34px 20px;
+        padding: 48px 24px;
         text-align: center;
-        color: var(--muted);
+        color: #64748b;
+        font-size: 15px;
+        font-weight: 600;
     }
 
     @media (max-width: 980px) {
@@ -187,27 +302,70 @@
 
 <div class="inventory-shell">
     <section class="inventory-hero">
-        <span class="eyebrow">Warehouse Stock</span>
+        <span class="eyebrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            Warehouse Stock
+        </span>
         <h2>Current physical inventory across warehouses</h2>
-        <p>This stock view is now calculated live from inward and outward records, so the remaining warehouse balance reflects actual movement data item by item.</p>
     </section>
 
     <section class="inventory-stats">
         <div class="inventory-stat">
-            <div class="inventory-stat-label">Inventory Rows</div>
-            <div class="inventory-stat-value" id="inventory_row_count">0</div>
+            <div class="stat-icon rows">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="inventory-stat-label">Inventory Rows</div>
+                <div class="inventory-stat-value" id="inventory_row_count">0</div>
+            </div>
         </div>
         <div class="inventory-stat">
-            <div class="inventory-stat-label">Warehouses</div>
-            <div class="inventory-stat-value" id="inventory_warehouse_count">0</div>
+            <div class="stat-icon wh">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="inventory-stat-label">Warehouses</div>
+                <div class="inventory-stat-value" id="inventory_warehouse_count">0</div>
+            </div>
         </div>
         <div class="inventory-stat">
-            <div class="inventory-stat-label">Materials</div>
-            <div class="inventory-stat-value" id="inventory_material_count">0</div>
+            <div class="stat-icon mat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="inventory-stat-label">Materials</div>
+                <div class="inventory-stat-value" id="inventory_material_count">0</div>
+            </div>
         </div>
         <div class="inventory-stat">
-            <div class="inventory-stat-label">Physical Stock Qty</div>
-            <div class="inventory-stat-value" id="inventory_total_qty">0</div>
+            <div class="stat-icon qty">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+            </div>
+            <div class="stat-content">
+                <div class="inventory-stat-label">Physical Stock Qty</div>
+                <div class="inventory-stat-value" id="inventory_total_qty">0</div>
+            </div>
         </div>
     </section>
 
@@ -215,15 +373,33 @@
         <div class="filter-grid">
             <div>
                 <label for="inventoryWarehouse">Warehouse</label>
-                <select id="inventoryWarehouse" onchange="renderInventoryRows()"></select>
+                <select id="inventoryWarehouse" class="filter-control" onchange="updateInventoryFilterOptions('warehouse')"></select>
             </div>
             <div>
-                <label for="inventoryMaterial">Material</label>
-                <select id="inventoryMaterial" onchange="renderInventoryRows()"></select>
+                <label for="inventoryCategory">Categorised Item/Services</label>
+                <select id="inventoryCategory" class="filter-control" onchange="updateInventoryFilterOptions('category')"></select>
+            </div>
+            <div id="inventoryShortDescriptionField">
+                <label for="inventoryShortDescription">Short Description</label>
+                <select id="inventoryShortDescription" class="filter-control" onchange="updateInventoryFilterOptions('short')"></select>
+            </div>
+            <div>
+                <label for="inventoryMaterial">Tracker Description</label>
+                <select id="inventoryMaterial" class="filter-control" onchange="renderInventoryRows()"></select>
             </div>
             <div>
                 <label for="inventorySearch">Quick Search</label>
-                <input id="inventorySearch" type="text" placeholder="Search warehouse or material" oninput="renderInventoryRows()">
+                <input id="inventorySearch" class="filter-control" type="text" placeholder="Search warehouse, tracker or category" oninput="renderInventoryRows()">
+            </div>
+            <div>
+                <label for="inventoryStockLevel">Stock Level</label>
+                <select id="inventoryStockLevel" class="filter-control" onchange="renderInventoryRows()">
+                    <option value="all">All Stock Levels</option>
+                    <option value="out_of_stock">Out of Stock / Negative</option>
+                    <option value="low">Low Stock (1 - 50)</option>
+                    <option value="medium">Medium Stock (51 - 500)</option>
+                    <option value="high">High Stock (500+)</option>
+                </select>
             </div>
         </div>
     </section>
@@ -241,17 +417,11 @@
             <table class="inventory-table">
                 <thead>
                     <tr>
-                        <th>Warehouse</th>
-                        <th>Description</th>
-                        <th>Inward Qty</th>
-                        <th>Outward Qty</th>
-                        <th>Physical Qty</th>
-                        <th>Inward Mtr</th>
-                        <th>Outward Mtr</th>
-                        <th>Physical Mtr</th>
-                        <th>Inward Unit Km</th>
-                        <th>Outward Unit Km</th>
-                        <th>Physical Unit Km</th>
+                        <th style="width: 18%;">Warehouse</th>
+                        <th style="width: 40%;">Material Details</th>
+                        <th style="width: 14%;">Inward</th>
+                        <th style="width: 14%;">Outward</th>
+                        <th style="width: 14%;">Physical Stock</th>
                     </tr>
                 </thead>
                 <tbody id="inventoryTableBody"></tbody>
@@ -261,82 +431,215 @@
 </div>
 
 <script>
-let inventoryPayload = { rows: [], warehouses: [], materials: [], summary: {} };
+    let inventoryPayload = { rows: [], warehouses: [], materials: [], summary: {} };
 
-function formatInventoryNumber(value) {
-    const num = Number(value || 0);
-    return Number.isInteger(num) ? num.toLocaleString("en-IN") : num.toLocaleString("en-IN", { maximumFractionDigits: 3 });
-}
-
-function populateInventoryFilters() {
-    const warehouseSelect = document.getElementById("inventoryWarehouse");
-    const materialSelect = document.getElementById("inventoryMaterial");
-
-    warehouseSelect.innerHTML = `<option value="all">All Warehouses</option>` +
-        inventoryPayload.warehouses.map((warehouse) => `<option value="${warehouse}">${warehouse}</option>`).join("");
-
-    materialSelect.innerHTML = `<option value="all">All Materials</option>` +
-        inventoryPayload.materials.map((material) => `<option value="${material}">${material}</option>`).join("");
-}
-
-function renderInventoryRows() {
-    const warehouseValue = document.getElementById("inventoryWarehouse").value;
-    const materialValue = document.getElementById("inventoryMaterial").value;
-    const searchValue = document.getElementById("inventorySearch").value.trim().toLowerCase();
-    const tbody = document.getElementById("inventoryTableBody");
-
-    const filteredRows = inventoryPayload.rows.filter((row) => {
-        const warehouseMatch = warehouseValue === "all" || row.warehouse === warehouseValue;
-        const materialMatch = materialValue === "all" || row.description === materialValue;
-        const searchMatch = !searchValue || `${row.warehouse} ${row.description}`.toLowerCase().includes(searchValue);
-        return warehouseMatch && materialMatch && searchMatch;
-    });
-
-    document.getElementById("inventory_result_badge").textContent = `${filteredRows.length} records`;
-    document.getElementById("inventory_table_note").textContent = filteredRows.length
-        ? `Showing ${filteredRows.length} live stock records calculated from inward and outward entries.`
-        : "No inventory rows match the selected filters.";
-
-    if (!filteredRows.length) {
-        tbody.innerHTML = `<tr><td colspan="11" class="empty-state">No inventory records found for the selected filters.</td></tr>`;
-        return;
+    function escapeInventoryHtml(value) {
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 
-    tbody.innerHTML = filteredRows.map((row) => `
+    function formatInventoryNumber(value) {
+        const num = Number(value || 0);
+        return Number.isInteger(num) ? num.toLocaleString("en-IN") : num.toLocaleString("en-IN", { maximumFractionDigits: 3 });
+    }
+
+    function getMaterialCategoryInfo(description) {
+        const categories = inventoryPayload.categories || {};
+        const normalized = String(description || "").trim().replace(/\s+/g, " ").toLowerCase();
+        
+        if (categories[description]) return categories[description];
+        
+        const match = Object.entries(categories).find(([key]) => String(key).trim().replace(/\s+/g, " ").toLowerCase() === normalized);
+        if (match) return match[1];
+
+        return {
+            category: "Uncategorized",
+            sub_category: "",
+            unit: "Nos"
+        };
+    }
+
+    function getEnrichedInventoryRows() {
+        return (inventoryPayload.rows || []).map((row) => {
+            const categoryInfo = getMaterialCategoryInfo(row.description);
+            return {
+                ...row,
+                tracker_description: row.description || "",
+                short_description: categoryInfo.sub_category || "",
+                categorised_item_services: categoryInfo.category || "Uncategorized",
+                unit: categoryInfo.unit || "Nos"
+            };
+        });
+    }
+
+    function uniqueSorted(values) {
+        return [...new Set(values.filter((value) => String(value || "").trim()))].sort((a, b) => a.localeCompare(b));
+    }
+
+    function setInventoryOptions(select, allLabel, values, selectedValue = "all") {
+        select.innerHTML = `<option value="all">${allLabel}</option>` +
+            values.map((value) => `<option value="${escapeInventoryHtml(value)}">${escapeInventoryHtml(value)}</option>`).join("");
+        select.value = values.includes(selectedValue) ? selectedValue : "all";
+    }
+
+    function populateInventoryFilters() {
+        const warehouseSelect = document.getElementById("inventoryWarehouse");
+        setInventoryOptions(warehouseSelect, "All Warehouses", inventoryPayload.warehouses || []);
+        updateInventoryFilterOptions();
+    }
+
+    function updateInventoryFilterOptions() {
+        const warehouseSelect = document.getElementById("inventoryWarehouse");
+        const categorySelect = document.getElementById("inventoryCategory");
+        const shortDescriptionSelect = document.getElementById("inventoryShortDescription");
+        const materialSelect = document.getElementById("inventoryMaterial");
+
+        const warehouseValue = warehouseSelect.value || "all";
+        const categoryValue = categorySelect.value || "all";
+        const shortValue = shortDescriptionSelect.value || "all";
+        const materialValue = materialSelect.value || "all";
+
+        const allRows = getEnrichedInventoryRows();
+
+        const whRows = allRows.filter(row => warehouseValue === "all" || row.warehouse === warehouseValue);
+        const validCats = uniqueSorted(whRows.map(r => r.categorised_item_services || "Uncategorized"));
+        setInventoryOptions(categorySelect, "All Categorised Items/Services", validCats, categoryValue);
+        const activeCategory = categorySelect.value; 
+
+        const catRows = whRows.filter(row => activeCategory === "all" || row.categorised_item_services === activeCategory);
+        const validShorts = uniqueSorted(catRows.map(r => r.short_description).filter(Boolean));
+        setInventoryOptions(shortDescriptionSelect, "All Short Descriptions", validShorts, shortValue);
+        const activeShort = shortDescriptionSelect.value;
+
+        const shortDescriptionField = document.getElementById("inventoryShortDescriptionField");
+        if (shortDescriptionField) {
+            shortDescriptionField.style.display = shortDescriptionSelect.options.length > 1 ? "" : "none";
+        }
+
+        const shortRows = catRows.filter(row => activeShort === "all" || row.short_description === activeShort);
+        const validMats = uniqueSorted(shortRows.map(r => r.tracker_description || r.description || "Unmapped"));
+        setInventoryOptions(materialSelect, "All Tracker Descriptions", validMats, materialValue);
+
+        renderInventoryRows();
+    }
+
+    function formatMetric(qty, mtr, km, unit, isHighlight = false) {
+        let parts = [];
+        const numQty = Number(qty) || 0;
+        const numMtr = Number(mtr) || 0;
+        const numKm = Number(km) || 0;
+
+        const makeSpan = (val, uom) => {
+            let classes = isHighlight ? 'stock-qty' : 'metric-val';
+            if (isHighlight && val < 0) classes += ' stock-negative';
+            return `<span class="${classes}">${formatInventoryNumber(val)} <small style="opacity: 0.8; font-weight: 800; font-size: 11px; margin-left: 2px;">${uom}</small></span>`;
+        };
+
+        if (numQty !== 0) parts.push(makeSpan(numQty, "Nos"));
+        if (numMtr !== 0) parts.push(makeSpan(numMtr, "Mtr"));
+        if (numKm !== 0) parts.push(makeSpan(numKm, "Km"));
+        
+        if (parts.length === 0) {
+            let uom = String(unit || "Nos").trim();
+            if (uom.toLowerCase() === "km") uom = "Km";
+            else if (uom.toLowerCase() === "mtr") uom = "Mtr";
+            else uom = "Nos";
+            parts.push(makeSpan(0, uom));
+        }
+        
+        return parts.join('<div style="height: 6px;"></div>');
+    }
+
+    function renderInventoryRows() {
+        const warehouseValue = document.getElementById("inventoryWarehouse").value;
+        const materialValue = document.getElementById("inventoryMaterial").value;
+        const categoryValue = document.getElementById("inventoryCategory").value;
+        const shortDescriptionValue = document.getElementById("inventoryShortDescription").value;
+        const searchValue = document.getElementById("inventorySearch").value.trim().toLowerCase();
+        const stockLevelValue = document.getElementById("inventoryStockLevel")?.value || "all";
+        const tbody = document.getElementById("inventoryTableBody");
+
+        const filteredRows = getEnrichedInventoryRows().filter((row) => {
+            const warehouseMatch = warehouseValue === "all" || row.warehouse === warehouseValue;
+            const rowMat = row.tracker_description || row.description || "Unmapped";
+            const materialMatch = materialValue === "all" || rowMat === materialValue;
+            const categoryMatch = categoryValue === "all" || row.categorised_item_services === categoryValue;
+            const shortDescriptionMatch = document.getElementById("inventoryShortDescription").options.length <= 1 || shortDescriptionValue === "all" || row.short_description === shortDescriptionValue;
+            const searchableText = `${row.warehouse} ${row.tracker_description} ${row.short_description} ${row.categorised_item_services}`.toLowerCase();
+            const searchMatch = !searchValue || searchableText.includes(searchValue);
+
+            let stockMatch = true;
+            if (stockLevelValue !== "all") {
+                const totalQty = Number(row.phy_stock_qty || 0) + Number(row.phy_stock_mtr || 0) + Number(row.phy_stock_unit_km || 0);
+                if (stockLevelValue === "out_of_stock") stockMatch = totalQty <= 0;
+                else if (stockLevelValue === "low") stockMatch = totalQty > 0 && totalQty <= 50;
+                else if (stockLevelValue === "medium") stockMatch = totalQty > 50 && totalQty <= 500;
+                else if (stockLevelValue === "high") stockMatch = totalQty > 500;
+            }
+
+            return warehouseMatch && materialMatch && categoryMatch && shortDescriptionMatch && searchMatch && stockMatch;
+        });
+
+        document.getElementById("inventory_result_badge").textContent = `${filteredRows.length} records`;
+        document.getElementById("inventory_table_note").textContent = filteredRows.length
+            ? `Showing ${filteredRows.length} live stock records calculated from inward and outward entries.`
+            : "No inventory rows match the selected filters.";
+
+        renderInventorySummary(filteredRows);
+
+        if (!filteredRows.length) {
+            tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No inventory records found for the selected filters.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filteredRows.map((row) => `
         <tr>
-            <td>${row.warehouse}</td>
-            <td>${row.description}</td>
-            <td>${formatInventoryNumber(row.inward_qty)}</td>
-            <td>${formatInventoryNumber(row.outward_qty)}</td>
-            <td class="stock-qty">${formatInventoryNumber(row.phy_stock_qty)}</td>
-            <td>${formatInventoryNumber(row.inward_mtr)}</td>
-            <td>${formatInventoryNumber(row.outward_mtr)}</td>
-            <td>${formatInventoryNumber(row.phy_stock_mtr)}</td>
-            <td>${formatInventoryNumber(row.inward_unit_km)}</td>
-            <td>${formatInventoryNumber(row.outward_unit_km)}</td>
-            <td>${formatInventoryNumber(row.phy_stock_unit_km)}</td>
+            <td>
+                <div style="font-weight: 800; color: #1e293b; font-size: 15px;">${escapeInventoryHtml(row.warehouse)}</div>
+            </td>
+            <td>
+                <div style="font-weight: 800; color: #0f172a; margin-bottom: 8px; font-size: 14px; line-height: 1.4;">${escapeInventoryHtml(row.tracker_description)}</div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <span style="background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">${escapeInventoryHtml(row.categorised_item_services)}</span>
+                    ${row.short_description ? `<span style="background: #e0e7ff; border: 1px solid #c7d2fe; color: #3730a3; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">${escapeInventoryHtml(row.short_description)}</span>` : ''}
+                </div>
+            </td>
+            <td>${formatMetric(row.inward_qty, row.inward_mtr, row.inward_unit_km, row.unit)}</td>
+            <td>${formatMetric(row.outward_qty, row.outward_mtr, row.outward_unit_km, row.unit)}</td>
+            <td>${formatMetric(row.phy_stock_qty, row.phy_stock_mtr, row.phy_stock_unit_km, row.unit, true)}</td>
         </tr>
     `).join("");
-}
+    }
 
-function renderInventorySummary() {
-    document.getElementById("inventory_row_count").textContent = formatInventoryNumber(inventoryPayload.summary.row_count || 0);
-    document.getElementById("inventory_warehouse_count").textContent = formatInventoryNumber(inventoryPayload.summary.warehouse_count || 0);
-    document.getElementById("inventory_material_count").textContent = formatInventoryNumber(inventoryPayload.summary.material_count || 0);
-    document.getElementById("inventory_total_qty").textContent = formatInventoryNumber(inventoryPayload.summary.total_physical_qty || 0);
-}
+    function renderInventorySummary(rows) {
+        if (!rows) return;
+        const dynamicSummary = rows.reduce((acc, row) => {
+            if (row.warehouse) acc.warehouses.add(row.warehouse);
+            if (row.description) acc.materials.add(row.description);
+            acc.totalQty += Number(row.phy_stock_qty || 0);
+            return acc;
+        }, { warehouses: new Set(), materials: new Set(), totalQty: 0 });
 
-fetch("/warehouse-inventory-data")
-    .then((res) => res.json())
-    .then((payload) => {
-        inventoryPayload = payload || inventoryPayload;
-        populateInventoryFilters();
-        renderInventorySummary();
-        renderInventoryRows();
-    })
-    .catch((error) => {
-        console.error(error);
-        document.getElementById("inventoryTableBody").innerHTML = `<tr><td colspan="11" class="empty-state">Inventory data could not be loaded.</td></tr>`;
-    });
+        document.getElementById("inventory_row_count").textContent = formatInventoryNumber(rows.length);
+        document.getElementById("inventory_warehouse_count").textContent = formatInventoryNumber(dynamicSummary.warehouses.size);
+        document.getElementById("inventory_material_count").textContent = formatInventoryNumber(dynamicSummary.materials.size);
+        document.getElementById("inventory_total_qty").textContent = formatInventoryNumber(dynamicSummary.totalQty);
+    }
+
+    fetch("/warehouse-inventory-data")
+        .then((res) => res.json())
+        .then((payload) => {
+            inventoryPayload = payload || inventoryPayload;
+            populateInventoryFilters();
+            renderInventoryRows();
+        })
+        .catch((error) => {
+            console.error(error);
+            document.getElementById("inventoryTableBody").innerHTML = `<tr><td colspan="5" class="empty-state">Inventory data could not be loaded.</td></tr>`;
+        });
 </script>
 {% endblock %}

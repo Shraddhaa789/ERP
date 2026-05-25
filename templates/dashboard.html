@@ -1,755 +1,1239 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-    .ops-shell {
+    :root {
+        --dash-bg: #f4f8fe;
+        --dash-card: #ffffff;
+        --dash-border: #d7e2f0;
+        --dash-text: #12243e;
+        --dash-muted: #6a7d9d;
+        --dash-soft: #f0f6ff;
+        --dash-blue: #223861;
+        --dash-green: #13865e;
+        --dash-amber: #b16e1e;
+        --dash-red: #b91c1c;
+        --dash-ink: #12243e;
+        --dash-shadow: 0 18px 42px rgba(18, 32, 58, 0.07);
+    }
+
+    .dashboard {
         display: grid;
         gap: 20px;
+        padding: 24px;
+        max-width: 1680px;
+        margin: 0 auto;
+        color: var(--dash-text);
     }
 
-    .ops-hero {
-        position: relative;
-        overflow: hidden;
-        padding: 28px 30px;
-        border-radius: 28px;
-        border: 1px solid #dce7f8;
-        background:
-            radial-gradient(circle at top right, rgba(110, 164, 255, 0.16), transparent 30%),
-            linear-gradient(135deg, #ffffff 0%, #f2f7ff 45%, #eef7f1 100%);
-        box-shadow: 0 20px 40px rgba(38, 58, 96, 0.08);
+    .dash-hero,
+    .dash-card,
+    .dash-panel {
+        background: var(--dash-card);
+        border: 1px solid var(--dash-border);
+        border-radius: 20px;
+        box-shadow: var(--dash-shadow);
+        animation: dashRise 520ms cubic-bezier(.2, .8, .2, 1) both;
     }
 
-    .ops-hero::after {
-        content: "";
-        position: absolute;
-        right: -50px;
-        bottom: -58px;
-        width: 220px;
-        height: 220px;
-        border-radius: 50%;
-        background: rgba(95, 132, 216, 0.08);
+    @keyframes heroGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
-    .ops-hero h2 {
-        margin: 0 0 10px;
-        color: #1f2f4d;
-        font-size: 34px;
-        letter-spacing: -0.05em;
-    }
-
-    .ops-hero p {
-        max-width: 840px;
-        margin: 0;
-        color: #5f718f;
-        line-height: 1.7;
-        font-size: 14px;
-    }
-
-    .hero-chip-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 18px;
-    }
-
-    .hero-chip {
-        display: inline-flex;
+    .dash-hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
         align-items: center;
-        min-height: 36px;
-        padding: 0 13px;
-        border-radius: 999px;
-        border: 1px solid #dce7fa;
-        background: rgba(255, 255, 255, 0.92);
-        color: #4262a7;
-        font-size: 12px;
+        padding: 32px;
+        background: linear-gradient(135deg, #ffffff 0%, #f4f8fe 50%, #e6f0ff 100%);
+        background-size: 200% 200%;
+        animation: dashRise 520ms cubic-bezier(.2, .8, .2, 1) both, heroGradient 10s ease infinite;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        box-shadow: 0 16px 40px rgba(34, 56, 97, 0.06), inset 0 1px 0 #ffffff;
+    }
+
+    .dash-title {
+        display: grid;
+        gap: 6px;
+    }
+
+    .dash-title h1 {
+        margin: 0;
+        color: var(--dash-text);
+        font-size: 28px;
+        font-family: "Space Grotesk", "Inter", Arial, sans-serif;
         font-weight: 800;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
+        letter-spacing: 0;
+    }
+
+    .dash-title p {
+        margin: 0;
+        color: var(--dash-muted);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .dash-toolbar {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .dash-select,
+    .dash-button {
+        min-height: 42px;
+        border: 1px solid var(--dash-border);
+        border-radius: 12px;
+        background: #ffffff;
+        color: var(--dash-ink);
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .dash-select {
+        min-width: 260px;
+        padding: 0 14px;
+    }
+
+    .dash-button {
+        padding: 0 14px;
+        cursor: pointer;
+    }
+
+    .dash-button:hover,
+    .dash-select:focus {
+        border-color: var(--dash-blue);
+        outline: none;
+    }
+
+    .scope-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+        padding: 14px 18px;
+        background: #f0f6ff;
+        border: 1px solid #d7e2f0;
+        border-radius: 14px;
+        color: var(--dash-blue);
+        font-size: 13px;
+        font-weight: 800;
     }
 
     .kpi-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 16px;
     }
 
-    .kpi-card {
-        position: relative;
+    .dash-card {
+        display: grid;
+        gap: 12px;
         padding: 18px;
-        border-radius: 22px;
-        border: 1px solid #dce7f8;
-        background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-        box-shadow: 0 16px 30px rgba(36, 52, 83, 0.07);
+        min-height: 128px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .kpi-card::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 18px;
-        right: 18px;
-        height: 4px;
-        border-radius: 0 0 10px 10px;
-        background: linear-gradient(90deg, #4f78d1 0%, #7fb0ff 100%);
+    .dash-card:hover,
+    .dash-panel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 46px rgba(18, 32, 58, 0.1);
     }
 
-    .kpi-card.accent-green::before {
-        background: linear-gradient(90deg, #4daa69 0%, #8ad89a 100%);
-    }
-
-    .kpi-card.accent-sky::before {
-        background: linear-gradient(90deg, #6ea4ff 0%, #a1c8ff 100%);
-    }
-
-    .kpi-card.accent-deep::before {
-        background: linear-gradient(90deg, #304f97 0%, #5078d0 100%);
+    .kpi-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
     }
 
     .kpi-label {
-        color: #60729a;
-        font-size: 12px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-
-    .kpi-value {
-        margin-top: 10px;
-        color: #223452;
-        font-size: 32px;
-        font-weight: 800;
-        letter-spacing: -0.05em;
-    }
-
-    .kpi-meta {
-        margin-top: 8px;
-        color: #6b7d99;
-        font-size: 13px;
-        line-height: 1.55;
-    }
-
-    .ops-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr);
-        gap: 18px;
-        align-items: start;
-    }
-
-    .panel-card {
-        border: 1px solid #dce7f8;
-        border-radius: 24px;
-        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
-        box-shadow: 0 16px 32px rgba(37, 54, 87, 0.07);
-        overflow: hidden;
-    }
-
-    .panel-head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        padding: 18px 20px;
-        border-bottom: 1px solid #e6edf9;
-        background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
-    }
-
-    .panel-head h3 {
-        margin: 0 0 4px;
-        color: #28416d;
-        font-size: 20px;
-    }
-
-    .panel-head p,
-    .panel-head span {
-        margin: 0;
-        color: #6d7f9b;
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .panel-badge {
-        display: inline-flex;
-        align-items: center;
-        min-height: 34px;
-        padding: 0 12px;
-        border-radius: 999px;
-        background: #edf3ff;
-        color: #4669b4;
+        color: var(--dash-muted);
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.05em;
         text-transform: uppercase;
     }
 
-    .panel-body {
-        padding: 20px;
-    }
-
-    .trend-chart {
-        display: grid;
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-        gap: 14px;
-        align-items: end;
-        min-height: 300px;
-    }
-
-    .trend-group {
-        display: grid;
-        gap: 10px;
-        justify-items: center;
-    }
-
-    .trend-bars {
-        width: 100%;
-        max-width: 78px;
-        min-height: 230px;
-        display: flex;
-        align-items: end;
-        justify-content: center;
-        gap: 8px;
-        padding: 14px 10px 0;
-        border-radius: 20px 20px 14px 14px;
-        background: linear-gradient(180deg, #f7faff 0%, #edf3ff 100%);
-    }
-
-    .trend-bar {
-        width: 22px;
-        border-radius: 14px 14px 8px 8px;
-        position: relative;
-    }
-
-    .trend-bar.inward {
-        background: linear-gradient(180deg, #4f78d1 0%, #3255a7 100%);
-        box-shadow: 0 10px 18px rgba(52, 86, 166, 0.18);
-    }
-
-    .trend-bar.outward {
-        background: linear-gradient(180deg, #8bdc98 0%, #4da769 100%);
-        box-shadow: 0 10px 18px rgba(75, 151, 100, 0.16);
-    }
-
-    .trend-label {
-        color: #546986;
-        font-size: 13px;
-        font-weight: 800;
-    }
-
-    .legend-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px 14px;
-        margin-top: 16px;
-    }
-
-    .legend-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: #5f7293;
-        font-size: 13px;
-        font-weight: 700;
-    }
-
-    .legend-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-    }
-
-    .ring-block {
-        display: grid;
-        grid-template-columns: 220px minmax(0, 1fr);
-        gap: 18px;
-        align-items: center;
-    }
-
-    .ring-chart {
-        width: 190px;
-        height: 190px;
-        margin: 0 auto;
-        border-radius: 50%;
-        position: relative;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
-        background: conic-gradient(#4f78d1 0deg 180deg, #79b6ff 180deg 250deg, #8bdc98 250deg 310deg, #dce9ff 310deg 360deg);
-    }
-
-    .ring-chart::after {
-        content: attr(data-total);
-        position: absolute;
-        inset: 26px;
+    .kpi-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
         display: grid;
         place-items: center;
-        white-space: pre;
-        border-radius: 50%;
-        background: #fff;
-        color: #28416d;
-        text-align: center;
-        font-size: 26px;
-        font-weight: 800;
-        line-height: 1.15;
-        box-shadow: 0 10px 20px rgba(38, 56, 92, 0.08);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 900;
     }
 
-    .dist-list,
-    .activity-list,
-    .material-list,
-    .alert-list {
-        display: grid;
-        gap: 12px;
+    .kpi-icon.blue { background: var(--dash-blue); }
+    .kpi-icon.green { background: var(--dash-green); }
+    .kpi-icon.amber { background: var(--dash-amber); }
+    .kpi-icon.red { background: var(--dash-red); }
+
+    .kpi-value {
+        color: var(--dash-text);
+        font-size: 30px;
+        font-family: "Space Grotesk", "Inter", Arial, sans-serif;
+        font-weight: 900;
+        letter-spacing: 0;
     }
 
-    .dist-item,
-    .activity-item,
-    .material-item,
-    .alert-item {
-        padding: 14px 15px;
-        border: 1px solid #e1eaf8;
-        border-radius: 18px;
-        background: #fff;
-    }
-
-    .dist-top,
-    .activity-top,
-    .material-top,
-    .alert-top {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 10px;
-        color: #29416d;
-        font-weight: 800;
-    }
-
-    .dist-track,
-    .material-track,
-    .alert-track {
-        height: 8px;
-        border-radius: 999px;
-        background: #eaf0fb;
-        overflow: hidden;
-    }
-
-    .dist-fill,
-    .material-fill,
-    .alert-fill {
-        height: 100%;
-        border-radius: inherit;
-    }
-
-    .dist-fill {
-        background: linear-gradient(90deg, #4f78d1 0%, #84b7ff 100%);
-    }
-
-    .material-fill {
-        background: linear-gradient(90deg, #79b6ff 0%, #4f78d1 100%);
-    }
-
-    .alert-fill {
-        background: linear-gradient(90deg, #8bdc98 0%, #4da769 100%);
-    }
-
-    .meta-line {
-        color: #6b7d99;
+    .kpi-note {
+        color: var(--dash-muted);
         font-size: 13px;
-        line-height: 1.55;
+        line-height: 1.4;
     }
 
-    .sub-grid {
+    .kpi-filter-stack {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
+        gap: 10px;
     }
 
-    .status-chip {
-        display: inline-flex;
-        align-items: center;
-        min-height: 28px;
-        padding: 0 10px;
-        border-radius: 999px;
+    .kpi-filter-row {
+        display: grid;
+        gap: 7px;
+    }
+
+    .kpi-filter-row label {
+        color: var(--dash-muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: 0.05em;
         text-transform: uppercase;
     }
 
-    .status-chip.inward {
-        background: #ecf3ff;
-        color: #3d61b3;
+    .kpi-filter-row select {
+        width: 100%;
+        min-height: 38px;
+        border: 1px solid var(--dash-border);
+        border-radius: 10px;
+        background: #fff;
+        color: var(--dash-ink);
+        font-size: 13px;
+        font-weight: 800;
+        padding: 0 10px;
     }
 
-    .status-chip.outward {
-        background: #ebfaee;
-        color: #2e8d56;
+    .kpi-filter-row select:focus {
+        border-color: var(--dash-blue);
+        outline: none;
     }
 
-    .loading-state {
-        padding: 32px 20px;
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .dash-panel {
+        min-width: 0;
+        padding: 18px;
+    }
+
+    .span-8 { grid-column: span 8; }
+    .span-7 { grid-column: span 7; }
+    .span-6 { grid-column: span 6; }
+    .span-5 { grid-column: span 5; }
+    .span-4 { grid-column: span 4; }
+    .span-12 { grid-column: span 12; }
+
+    .panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .panel-head h2 {
+        margin: 0;
+        color: var(--dash-text);
+        font-size: 17px;
+        font-family: "Space Grotesk", "Inter", Arial, sans-serif;
+        font-weight: 800;
+    }
+
+    .panel-head p {
+        margin: 4px 0 0;
+        color: var(--dash-muted);
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .metric-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: var(--dash-soft);
+        border: 1px solid var(--dash-border);
+        color: var(--dash-muted);
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .chart-box {
+        position: relative;
+        height: 310px;
+    }
+
+    .health-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .health-card {
+        padding: 14px;
+        border: 1px solid var(--dash-border);
+        border-radius: 12px;
+        background: var(--dash-soft);
+    }
+
+    .health-card strong {
+        display: block;
+        margin-top: 8px;
+        color: var(--dash-text);
+        font-size: 22px;
+        font-weight: 900;
+    }
+
+    .health-card span {
+        color: var(--dash-muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .list-stack {
+        display: grid;
+        gap: 10px;
+        max-height: 330px;
+        overflow: auto;
+        padding-right: 4px;
+    }
+
+    .rank-row,
+    .stock-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border: 1px solid var(--dash-border);
+        border-radius: 12px;
+        background: var(--dash-soft);
+    }
+
+    .row-title {
+        color: var(--dash-text);
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.35;
+    }
+
+    .row-sub {
+        margin-top: 4px;
+        color: var(--dash-muted);
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+    .row-value {
+        color: var(--dash-blue);
+        font-size: 14px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .stock-row.warning .row-value { color: var(--dash-red); }
+
+    .activity-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .activity-table th,
+    .activity-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--dash-border);
+        text-align: left;
+        vertical-align: top;
+        font-size: 13px;
+    }
+
+    .activity-table th {
+        color: var(--dash-muted);
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        background: var(--dash-soft);
+    }
+
+    .type-pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .type-pill.inward {
+        background: rgba(19, 134, 94, 0.12);
+        color: var(--dash-green);
+    }
+
+    .type-pill.outward {
+        background: rgba(185, 28, 28, 0.12);
+        color: var(--dash-red);
+    }
+
+    .loader-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: grid;
+        place-items: center;
+        background: rgba(244, 247, 251, 0.76);
+        backdrop-filter: blur(3px);
+        color: var(--dash-blue);
+        font-weight: 800;
+    }
+
+    @keyframes dashRise {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .empty-state {
+        padding: 26px;
+        color: var(--dash-muted);
         text-align: center;
-        color: #6b7d99;
+        font-weight: 700;
     }
 
-    @media (max-width: 1120px) {
-        .ops-layout,
-        .ring-block,
-        .sub-grid {
-            grid-template-columns: 1fr;
-        }
+    @media (max-width: 1180px) {
+        .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .span-8, .span-7, .span-6, .span-5, .span-4 { grid-column: span 12; }
     }
 
-    @media (max-width: 760px) {
-        .ops-hero {
-            padding: 22px 20px;
-        }
-
-        .ops-hero h2 {
-            font-size: 28px;
-        }
-
-        .trend-chart {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
+    @media (max-width: 720px) {
+        .dashboard { padding: 16px; }
+        .dash-hero { grid-template-columns: 1fr; }
+        .dash-toolbar { justify-content: stretch; }
+        .dash-select, .dash-button { width: 100%; }
+        .kpi-grid, .health-grid { grid-template-columns: 1fr; }
+        .chart-box { height: 260px; }
     }
 </style>
 
-<div class="ops-shell">
-    <section class="ops-hero">
-        <span class="eyebrow">Operations Control</span>
-        <h2>Warehouse movement, stock balance, and live field visibility in one dashboard</h2>
-        <p>
-            This dashboard uses your inward entries, outward entries, and live warehouse inventory logic to show the
-            most important operational numbers in one place. The stock view respects the workbook-aligned summary
-            baseline and any new app-created movement deltas.
-        </p>
-        <div class="hero-chip-row" id="heroChips">
-            <div class="hero-chip">Loading live metrics...</div>
+<div class="dashboard" id="dashApp">
+    {% if app_settings and not app_settings.get("show_analytics", True) %}
+    <section class="dash-panel empty-state">
+        Analytics Dashboard is hidden by your Settings. Go to <a href="/setting">Settings</a> to enable it.
+    </section>
+    {% else %}
+    <div id="loader" class="loader-layer">Loading dashboard data...</div>
+
+    <section class="dash-hero">
+        <div class="dash-title">
+            <h1>Operations Dashboard</h1>
+            <p>Live warehouse stock, movement trends, request flow, and items that need attention.</p>
+        </div>
+        <div class="dash-toolbar">
+            <select id="warehouseFilter" class="dash-select" onchange="setFilter(this.value)">
+                <option value="">All Warehouses</option>
+            </select>
+            <button class="dash-button" type="button" onclick="clearFilter()">Clear Filter</button>
         </div>
     </section>
 
-    <section class="kpi-grid" id="kpiGrid">
-        <div class="kpi-card"><div class="kpi-label">Loading</div><div class="kpi-value">...</div><div class="kpi-meta">Fetching dashboard metrics.</div></div>
-    </section>
+    <div class="scope-strip">
+        <span id="scopeLabel">Viewing all warehouses</span>
+        <span id="scopeMeta">Live inward, outward, and physical stock summary</span>
+    </div>
 
-    <section class="ops-layout">
-        <article class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <h3>Yearly Movement Trend</h3>
-                    <p>Inward and outward entry count by year</p>
-                </div>
-                <span class="panel-badge">Live Records</span>
+    <section class="kpi-grid">
+        <article class="dash-card">
+            <div class="kpi-head">
+                <span class="kpi-label">Physical Stock</span>
+                <span class="kpi-icon blue">PS</span>
             </div>
-            <div class="panel-body">
-                <div class="trend-chart" id="trendChart"></div>
-                <div class="legend-row">
-                    <div class="legend-item"><span class="legend-dot" style="background:#4f78d1;"></span> Inward entries</div>
-                    <div class="legend-item"><span class="legend-dot" style="background:#6bc17f;"></span> Outward entries</div>
-                </div>
-            </div>
+            <div class="kpi-value"><span id="kpi-stock">0</span> <span id="kpi-stock-unit" style="font-size: 14px; font-weight: 700; color: var(--dash-muted);"></span></div>
+            <div class="kpi-note">Current available quantity after inward and outward movement.</div>
         </article>
-
-        <article class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <h3>Warehouse Stock Share</h3>
-                    <p>Top warehouses by current physical stock</p>
-                </div>
-                <span class="panel-badge">Live Inventory</span>
+        <article class="dash-card">
+            <div class="kpi-head">
+                <span class="kpi-label">Inward Quantity</span>
+                <span class="kpi-icon green">IN</span>
             </div>
-            <div class="panel-body ring-block">
-                <div class="ring-chart" id="warehouseRing" data-total="0&#10;Total Stock"></div>
-                <div class="dist-list" id="warehouseDistribution"></div>
-            </div>
+            <div class="kpi-value"><span id="kpi-in">0</span> <span id="kpi-in-unit" style="font-size: 14px; font-weight: 700; color: var(--dash-muted);"></span></div>
+            <div class="kpi-note">Total quantity received in the selected dashboard scope.</div>
         </article>
-    </section>
-
-    <section class="sub-grid">
-        <article class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <h3>Top Material Stock</h3>
-                    <p>Highest remaining items in warehouses</p>
-                </div>
-                <span class="panel-badge">Inventory Depth</span>
+        <article class="dash-card">
+            <div class="kpi-head">
+                <span class="kpi-label">Outward Quantity</span>
+                <span class="kpi-icon red">OUT</span>
             </div>
-            <div class="panel-body">
-                <div class="material-list" id="topMaterials"></div>
-            </div>
+            <div class="kpi-value"><span id="kpi-out">0</span> <span id="kpi-out-unit" style="font-size: 14px; font-weight: 700; color: var(--dash-muted);"></span></div>
+            <div class="kpi-note">Total quantity dispatched or issued from stock.</div>
         </article>
-
-        <article class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <h3>Low Stock Attention</h3>
-                    <p>Items with low but still available physical stock</p>
-                </div>
-                <span class="panel-badge">Planner Input</span>
+        <article class="dash-card">
+            <div class="kpi-head">
+                <span class="kpi-label">Active Materials</span>
+                <span class="kpi-icon amber">MAT</span>
             </div>
-            <div class="panel-body">
-                <div class="alert-list" id="lowStockList"></div>
-            </div>
+            <div class="kpi-value" id="kpi-mat">0</div>
+            <div class="kpi-note">Material types with positive physical stock.</div>
         </article>
-
-        <article class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <h3>Recent Warehouse Activity</h3>
-                    <p>Latest inward and outward movement records</p>
+        <article class="dash-card">
+            <div class="kpi-head">
+                <span class="kpi-label">Category / Sub Category</span>
+                <span class="kpi-icon blue">CAT</span>
+            </div>
+            <div class="kpi-filter-stack">
+                <div class="kpi-filter-row">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter" onchange="setCategoryFilter(this.value)">
+                        <option value="">All Categories</option>
+                    </select>
                 </div>
-                <span class="panel-badge">Latest 8</span>
-            </div>
-            <div class="panel-body">
-                <div class="activity-list" id="recentActivity"></div>
-            </div>
-        </article>
-
-        <article class="panel-card">
-            <div class="panel-head">
-                <div>
-                    <h3>Movement Overview</h3>
-                    <p>Quick quantity view across warehouse operations</p>
+                <div class="kpi-filter-row" id="subCategoryFilterRow">
+                    <label for="subCategoryFilter">Sub Category</label>
+                    <select id="subCategoryFilter" onchange="setSubCategoryFilter(this.value)">
+                        <option value="">All Sub Categories</option>
+                    </select>
                 </div>
-                <span class="panel-badge">Operational Summary</span>
+                <div class="kpi-filter-row" id="descriptionFilterRow">
+                    <label for="descriptionFilter">Description</label>
+                    <select id="descriptionFilter" onchange="setDescriptionFilter(this.value)">
+                        <option value="">All Descriptions</option>
+                    </select>
+                </div>
             </div>
-            <div class="panel-body">
-                <div class="dist-list" id="movementOverview"></div>
-            </div>
+            <div class="kpi-note" id="kpi-cat-note">Mapped from Stock Summary category and sub category.</div>
         </article>
     </section>
+
+    {% if route_stats is defined %}
+    <section class="dashboard-grid">
+        <article class="dash-panel span-12">
+            <div class="panel-head">
+                <div>
+                    <h2>Route Request Flow</h2>
+                    <p>Admin approval and fulfillment pipeline for stock transfers.</p>
+                </div>
+            </div>
+            <div class="health-grid">
+                <div class="health-card">
+                    <span>Pending Approval</span>
+                    <strong>{{ route_stats.get('Pending', 0) }}</strong>
+                </div>
+                <div class="health-card">
+                    <span>Approved / Pending Fulfillment</span>
+                    <strong>{{ route_stats.get('Approved', 0) + route_stats.get('Approved (Pending Fulfillment)', 0) }}</strong>
+                </div>
+                <div class="health-card">
+                    <span>Rejected</span>
+                    <strong>{{ route_stats.get('Rejected', 0) }}</strong>
+                </div>
+            </div>
+        </article>
+    </section>
+    {% endif %}
+
+    <section class="dashboard-grid">
+        <article class="dash-panel span-8">
+            <div class="panel-head">
+                <div>
+                    <h2>Movement Trend</h2>
+                    <p>Monthly inward and outward quantity so you can see stock flow over time.</p>
+                </div>
+                <span class="metric-pill" id="movementTotal">0 movements</span>
+            </div>
+            <div class="chart-box">
+                <canvas id="trendChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dash-panel span-4">
+            <div class="panel-head">
+                <div>
+                    <h2>Stock Distribution</h2>
+                    <p>Top warehouses by physical stock. Click a slice to filter.</p>
+                </div>
+            </div>
+            <div class="chart-box">
+                <canvas id="warehouseChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dash-panel span-7">
+            <div class="panel-head">
+                <div>
+                    <h2>Top Material Stock</h2>
+                    <p>Highest available material quantities in the selected warehouse scope.</p>
+                </div>
+            </div>
+            <div class="chart-box">
+                <canvas id="materialsChart"></canvas>
+            </div>
+        </article>
+
+        <article class="dash-panel span-5">
+            <div class="panel-head">
+                <div>
+                    <h2>Stock Health</h2>
+                    <p>Simple operational split of available, low, and empty stock lines.</p>
+                </div>
+            </div>
+            <div class="health-grid">
+                <div class="health-card">
+                    <span>Positive Lines</span>
+                    <strong id="healthPositive">0</strong>
+                </div>
+                <div class="health-card">
+                    <span>Low Stock Lines</span>
+                    <strong id="healthLow">0</strong>
+                </div>
+                <div class="health-card">
+                    <span>Zero / Negative</span>
+                    <strong id="healthZero">0</strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="dash-panel span-6">
+            <div class="panel-head">
+                <div>
+                    <h2>Top Warehouses</h2>
+                    <p>Warehouses carrying the highest available physical stock.</p>
+                </div>
+            </div>
+            <div class="list-stack" id="warehouseRankList"></div>
+        </article>
+
+        <article class="dash-panel span-6">
+            <div class="panel-head">
+                <div>
+                    <h2>Attention Needed</h2>
+                    <p>Lowest positive stock lines in the selected scope.</p>
+                </div>
+            </div>
+            <div class="list-stack" id="lowStockList"></div>
+        </article>
+
+        <article class="dash-panel span-12">
+            <div class="panel-head">
+                <div>
+                    <h2>Recent Movement</h2>
+                    <p>Latest inward and outward entries with warehouse, material, and quantity.</p>
+                </div>
+                <span class="metric-pill" id="recentCount">0 rows</span>
+            </div>
+            <div style="overflow-x:auto;">
+                <table class="activity-table" id="recentTable">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Warehouse</th>
+                            <th>Material</th>
+                            <th>Quantity</th>
+                            <th>Document</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </article>
+    </section>
+    {% endif %}
 </div>
 
 <script>
-function formatNumber(value, digits = 0) {
-    const number = Number(value || 0);
-    return number.toLocaleString("en-IN", { maximumFractionDigits: digits });
-}
+    if (window.Chart) {
+        Chart.defaults.font.family = "Inter, Arial, sans-serif";
+        Chart.defaults.color = "#6A7D9D";
+    }
 
-function buildKpiCards(kpis) {
-    const cards = [
-        {
-            label: "Inward Entries",
-            value: formatNumber(kpis.inward_count),
-            meta: "Real inward workbook and app records now visible in one flow.",
-            accent: "accent-deep"
-        },
-        {
-            label: "Outward Entries",
-            value: formatNumber(kpis.outward_count),
-            meta: "Outbound material movement captured from the live outward register.",
-            accent: "accent-green"
-        },
-        {
-            label: "Total Inward Qty",
-            value: formatNumber(kpis.total_inward_qty, 1),
-            meta: "Overall inward quantity accumulated across warehouse receipt movements.",
-            accent: "accent-sky"
-        },
-        {
-            label: "Total Outward Qty",
-            value: formatNumber(kpis.total_outward_qty, 1),
-            meta: "Overall outward quantity consumed or dispatched from active stock.",
-            accent: "accent-deep"
-        },
-        {
-            label: "Live Physical Stock",
-            value: formatNumber(kpis.total_physical_qty, 1),
-            meta: "Remaining stock currently available across all mapped warehouses.",
-            accent: "accent-green"
-        },
-        {
-            label: "Warehouses",
-            value: formatNumber(kpis.warehouse_count),
-            meta: "Warehouse groups represented in the active inventory balance.",
-            accent: "accent-sky"
-        },
-        {
-            label: "Materials",
-            value: formatNumber(kpis.material_count),
-            meta: "Distinct material descriptions currently present in stock analytics.",
-            accent: "accent-deep"
-        },
-        {
-            label: "Inventory Rows",
-            value: formatNumber(kpis.inventory_rows),
-            meta: "Live stock records built from the summary baseline plus movement delta.",
-            accent: "accent-green"
+    let rawInventory = [];
+    let rawMovements = [];
+    let materialCategories = {};
+    let filterWarehouse = null;
+    let filterCategory = "";
+    let filterSubCategory = "";
+    let filterDescription = "";
+    let filterUnit = "";
+    let materialLookup = { byDescription: {}, byCode: {} };
+    let charts = {};
+
+    const chartColors = ["#223861", "#13865E", "#B16E1E", "#B91C1C", "#4A6491", "#64A0F8", "#12203A", "#6A7D9D"];
+    const formatNum = (value) => Number(value || 0).toLocaleString("en-IN", { maximumFractionDigits: 1 });
+    const formatUnit = (unit) => String(unit || "Nos").trim() || "Nos";
+    const isKmUnit = (unit) => formatUnit(unit).toLowerCase() === "km";
+    const shortText = (value, max = 34) => {
+        const text = String(value || "-");
+        return text.length > max ? `${text.slice(0, max - 3)}...` : text;
+    };
+
+    function setFilter(warehouse) {
+        filterWarehouse = warehouse || null;
+        const dropdown = document.getElementById("warehouseFilter");
+        if (dropdown) {
+            dropdown.value = filterWarehouse || "";
         }
-    ];
-
-    document.getElementById("kpiGrid").innerHTML = cards.map((card) => `
-        <article class="kpi-card ${card.accent || ""}">
-            <div class="kpi-label">${card.label}</div>
-            <div class="kpi-value">${card.value}</div>
-            <div class="kpi-meta">${card.meta}</div>
-        </article>
-    `).join("");
-}
-
-function buildHero(payload) {
-    const hero = payload.hero || {};
-    const inventorySource = String(hero.inventory_source || "live").split("_").join(" ");
-    document.getElementById("heroChips").innerHTML = `
-        <div class="hero-chip">Source: ${inventorySource}</div>
-        <div class="hero-chip">${formatNumber(hero.warehouse_count)} Warehouses Tracked</div>
-        <div class="hero-chip">${formatNumber(hero.material_count)} Material Types</div>
-    `;
-}
-
-function buildTrendChart(yearlyTrend) {
-    const target = document.getElementById("trendChart");
-    if (!yearlyTrend.length) {
-        target.innerHTML = `<div class="loading-state">No yearly trend data available.</div>`;
-        return;
+        renderDashboard();
     }
 
-    const maxValue = Math.max(...yearlyTrend.flatMap((row) => [row.inward, row.outward]), 1);
-    target.innerHTML = yearlyTrend.map((row) => `
-        <div class="trend-group">
-            <div class="trend-bars">
-                <div class="trend-bar inward" style="height:${Math.max(12, (row.inward / maxValue) * 100)}%;"></div>
-                <div class="trend-bar outward" style="height:${Math.max(12, (row.outward / maxValue) * 100)}%;"></div>
-            </div>
-            <div class="trend-label">${row.year}</div>
-        </div>
-    `).join("");
-}
-
-function buildWarehouseShare(topWarehouses, totalPhysicalQty) {
-    const ring = document.getElementById("warehouseRing");
-    const list = document.getElementById("warehouseDistribution");
-
-    if (!topWarehouses.length || !totalPhysicalQty) {
-        ring.setAttribute("data-total", "0\\nTotal Stock");
-        list.innerHTML = `<div class="loading-state">No warehouse stock data available.</div>`;
-        return;
+    function clearFilter() {
+        filterWarehouse = null;
+        filterCategory = "";
+        filterSubCategory = "";
+        filterDescription = "";
+        filterUnit = "";
+        ["warehouseFilter", "categoryFilter", "subCategoryFilter", "descriptionFilter", "unitFilter"].forEach((id) => {
+            const select = document.getElementById(id);
+            if (select) select.value = "";
+        });
+        populateSubCategoryFilter();
+        populateDescriptionFilter();
+        populateUnitFilter();
+        renderDashboard();
     }
 
-    const palette = ["#4f78d1", "#7bb2ff", "#8bdc98", "#d3e4ff", "#9dc4b3"];
-    let currentDeg = 0;
-    const segments = topWarehouses.map((item, index) => {
-        const share = (item.stock_qty / totalPhysicalQty) * 100;
-        const start = currentDeg;
-        const sweep = (share / 100) * 360;
-        currentDeg += sweep;
-        return { ...item, share, color: palette[index % palette.length], start, end: currentDeg };
-    });
-
-    ring.style.background = `conic-gradient(${segments.map((segment) => `${segment.color} ${segment.start}deg ${segment.end}deg`).join(", ")}, #e6eefc ${currentDeg}deg 360deg)`;
-    ring.setAttribute("data-total", `${formatNumber(totalPhysicalQty, 1)}\\nQty In Stock`);
-
-    list.innerHTML = segments.map((segment) => `
-        <div class="dist-item">
-            <div class="dist-top">
-                <span>${segment.warehouse}</span>
-                <span>${segment.share.toFixed(1)}%</span>
-            </div>
-            <div class="dist-track"><div class="dist-fill" style="width:${segment.share.toFixed(1)}%; background:${segment.color};"></div></div>
-            <div class="meta-line" style="margin-top:8px;">Current stock: ${formatNumber(segment.stock_qty, 1)}</div>
-        </div>
-    `).join("");
-}
-
-function buildTopMaterials(items) {
-    const target = document.getElementById("topMaterials");
-    if (!items.length) {
-        target.innerHTML = `<div class="loading-state">No material stock data available.</div>`;
-        return;
+    function setCategoryFilter(category) {
+        filterCategory = category || "";
+        filterSubCategory = "";
+        filterDescription = "";
+        filterUnit = "";
+        ["subCategoryFilter", "descriptionFilter", "unitFilter"].forEach((id) => {
+            const select = document.getElementById(id);
+            if (select) select.value = "";
+        });
+        populateSubCategoryFilter();
+        populateDescriptionFilter();
+        populateUnitFilter();
+        renderDashboard();
     }
 
-    const maxValue = Math.max(...items.map((item) => item.stock_qty), 1);
-    target.innerHTML = items.map((item) => `
-        <div class="material-item">
-            <div class="material-top">
-                <span>${item.description}</span>
-                <span>${formatNumber(item.stock_qty, 1)}</span>
-            </div>
-            <div class="material-track"><div class="material-fill" style="width:${(item.stock_qty / maxValue) * 100}%;"></div></div>
-        </div>
-    `).join("");
-}
-
-function buildLowStock(items) {
-    const target = document.getElementById("lowStockList");
-    if (!items.length) {
-        target.innerHTML = `<div class="loading-state">No low stock items currently available.</div>`;
-        return;
+    function setSubCategoryFilter(subCategory) {
+        filterSubCategory = subCategory || "";
+        filterDescription = "";
+        filterUnit = "";
+        const select = document.getElementById("descriptionFilter");
+        if (select) select.value = "";
+        populateDescriptionFilter();
+        populateUnitFilter();
+        renderDashboard();
+    }
+    
+    function setDescriptionFilter(desc) {
+        filterDescription = desc || "";
+        filterUnit = "";
+        populateUnitFilter();
+        renderDashboard();
     }
 
-    const maxValue = Math.max(...items.map((item) => item.phy_stock_qty), 1);
-    target.innerHTML = items.map((item) => `
-        <div class="alert-item">
-            <div class="alert-top">
-                <span>${item.description}</span>
-                <span>${formatNumber(item.phy_stock_qty, 1)}</span>
-            </div>
-            <div class="meta-line">${item.warehouse}</div>
-            <div class="alert-track" style="margin-top:10px;"><div class="alert-fill" style="width:${(item.phy_stock_qty / maxValue) * 100}%;"></div></div>
-        </div>
-    `).join("");
-}
-
-function buildRecentActivity(items) {
-    const target = document.getElementById("recentActivity");
-    if (!items.length) {
-        target.innerHTML = `<div class="loading-state">No recent movement activity found.</div>`;
-        return;
+    function setUnitFilter(unit) {
+        filterUnit = unit || "";
+        renderDashboard();
     }
 
-    target.innerHTML = items.map((item) => `
-        <div class="activity-item">
-            <div class="activity-top">
-                <span>${item.warehouse}</span>
-                <span class="status-chip ${item.type.toLowerCase()}">${item.type}</span>
-            </div>
-            <div class="meta-line">
-                <strong>${item.description}</strong><br>
-                Qty: ${item.qty} | Doc: ${item.document_no}<br>
-                Date: ${item.date || "-"}
-            </div>
-        </div>
-    `).join("");
-}
+    function rowMatchesMasterFilters(row) {
+        const info = getMaterialInfo(row);
+        if (filterCategory && info.category !== filterCategory) return false;
+        if (filterSubCategory && info.sub_category !== filterSubCategory) return false;
+        if (filterDescription && normalizeMaterialKey(row.description) !== normalizeMaterialKey(filterDescription)) return false;
+        if (filterUnit && formatUnit(info.unit) !== filterUnit) return false;
+        return true;
+    }
 
-function buildMovementOverview(kpis) {
-    const totalMovement = Math.max(kpis.total_inward_qty, kpis.total_outward_qty, kpis.total_physical_qty, 1);
-    const items = [
-        { label: "Total Inward Qty", value: kpis.total_inward_qty, cls: "dist-fill" },
-        { label: "Total Outward Qty", value: kpis.total_outward_qty, cls: "material-fill" },
-        { label: "Remaining Physical Qty", value: kpis.total_physical_qty, cls: "alert-fill" }
-    ];
+    function getScopedInventory() {
+        return rawInventory.filter((row) => {
+            const warehouseMatch = !filterWarehouse || row.warehouse === filterWarehouse;
+            return warehouseMatch && rowMatchesMasterFilters(row);
+        });
+    }
 
-    document.getElementById("movementOverview").innerHTML = items.map((item) => `
-        <div class="dist-item">
-            <div class="dist-top">
-                <span>${item.label}</span>
-                <span>${formatNumber(item.value, 1)}</span>
+    function getScopedMovements() {
+        return rawMovements.filter((row) => {
+            const warehouseMatch = !filterWarehouse || row.warehouse === filterWarehouse;
+            return warehouseMatch && rowMatchesMasterFilters(row);
+        });
+    }
+
+    function normalizeMaterialKey(value) {
+        return String(value || "").trim().replace(/\s+/g, " ").toLowerCase();
+    }
+
+    function buildMaterialLookup() {
+        const byDescription = {};
+        const byCode = {};
+        Object.entries(materialCategories || {}).forEach(([description, info]) => {
+            byDescription[normalizeMaterialKey(description)] = info;
+            if (info.item_code) {
+                byCode[normalizeMaterialKey(info.item_code)] = info;
+            }
+        });
+        return { byDescription, byCode };
+    }
+
+    function getMaterialInfo(row) {
+        return materialLookup.byCode[normalizeMaterialKey(row.item_code || row.out_item_code)] ||
+            materialLookup.byDescription[normalizeMaterialKey(row.description)] || {
+            category: "Uncategorized",
+            sub_category: "",
+            unit: "Nos"
+        };
+    }
+
+    function getStockValue(row) {
+        return isKmUnit(getMaterialInfo(row).unit) ? Number(row.phy_stock_unit_km || 0) : Number(row.phy_stock_qty || 0);
+    }
+
+    function getInwardValue(row) {
+        return isKmUnit(getMaterialInfo(row).unit) ? Number(row.inward_unit_km || 0) : Number(row.inward_qty || 0);
+    }
+
+    function getOutwardValue(row) {
+        return isKmUnit(getMaterialInfo(row).unit) ? Number(row.outward_unit_km || 0) : Number(row.outward_qty || 0);
+    }
+
+    function getMovementValue(row) {
+        return Number(row.qty || 0);
+    }
+
+    function setSelectOptions(select, options, placeholder, selectedValue = "") {
+        if (!select) return;
+        select.innerHTML = "";
+        const first = document.createElement("option");
+        first.value = "";
+        first.textContent = placeholder;
+        select.appendChild(first);
+        options.forEach((value) => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+        select.value = options.includes(selectedValue) ? selectedValue : "";
+    }
+
+    function populateMasterFilters() {
+        const entries = Object.values(materialCategories || {});
+        const categories = [...new Set(entries.map((info) => info.category).filter(Boolean))].sort();
+        setSelectOptions(document.getElementById("categoryFilter"), categories, "All Categories", filterCategory);
+        populateSubCategoryFilter();
+        populateDescriptionFilter();
+        populateUnitFilter();
+    }
+
+    function populateSubCategoryFilter() {
+        const subRow = document.getElementById("subCategoryFilterRow");
+        const subSelect = document.getElementById("subCategoryFilter");
+        const subCategories = [...new Set(Object.values(materialCategories || {})
+            .filter((info) => !filterCategory || info.category === filterCategory)
+            .map((info) => info.sub_category)
+            .filter(Boolean))].sort();
+        if (subRow) subRow.style.display = subCategories.length ? "grid" : "none";
+        setSelectOptions(subSelect, subCategories, "All Sub Categories", filterSubCategory);
+        if (!subCategories.includes(filterSubCategory)) {
+            filterSubCategory = "";
+        }
+    }
+    
+    function populateDescriptionFilter() {
+        const descRow = document.getElementById("descriptionFilterRow");
+        const descSelect = document.getElementById("descriptionFilter");
+        const descriptions = Object.keys(materialCategories || {})
+            .filter((desc) => {
+                const info = materialCategories[desc];
+                if (filterCategory && info.category !== filterCategory) return false;
+                if (filterSubCategory && info.sub_category !== filterSubCategory) return false;
+                return true;
+            }).sort();
+            
+        let descText = document.getElementById("descriptionTextDisplay");
+        if (!descText && descRow) {
+            descText = document.createElement("div");
+            descText.id = "descriptionTextDisplay";
+            descText.style.padding = "10px 12px";
+            descText.style.fontSize = "13px";
+            descText.style.fontWeight = "600";
+            descText.style.color = "var(--dash-blue)";
+            descText.style.background = "var(--dash-soft)";
+            descText.style.borderRadius = "12px";
+            descText.style.border = "1px solid var(--dash-border)";
+            descRow.appendChild(descText);
+        }
+            
+        if (descriptions.length === 1) {
+            descSelect.style.display = "none";
+            if (descText) {
+                descText.textContent = descriptions[0];
+                descText.style.display = "block";
+            }
+            filterDescription = descriptions[0];
+            setSelectOptions(descSelect, descriptions, "All Descriptions", filterDescription);
+        } else {
+            descSelect.style.display = "block";
+            if (descText) {
+                descText.style.display = "none";
+            }
+            setSelectOptions(descSelect, descriptions, "All Descriptions", filterDescription);
+            if (!descriptions.includes(filterDescription)) {
+                filterDescription = "";
+            }
+        }
+        
+        if (descRow) descRow.style.display = descriptions.length > 0 ? "grid" : "none";
+    }
+
+    function getFilteredMaterialMasterEntries() {
+        return Object.values(materialCategories || {}).filter((info) => {
+            if (filterCategory && info.category !== filterCategory) return false;
+            if (filterSubCategory && info.sub_category !== filterSubCategory) return false;
+            // Note: filterDescription logic is handled by rowMatchesMasterFilters for actual rows.
+            return true;
+        });
+    }
+
+    function populateUnitFilter() {
+        const unitSelect = document.getElementById("unitFilter");
+        const units = [...new Set(getFilteredMaterialMasterEntries()
+            .map((info) => formatUnit(info.unit))
+            .filter(Boolean))].sort();
+
+        if (units.length === 1) {
+            filterUnit = units[0];
+        } else if (!units.includes(filterUnit)) {
+            filterUnit = "";
+        }
+
+        setSelectOptions(unitSelect, units, units.length === 1 ? units[0] : "All Units", filterUnit);
+    }
+
+    function renderMasterCards(inventory) {
+        const categorySet = new Set();
+        const subCategorySet = new Set();
+        const unitCounts = {};
+        const unitStock = {};
+
+        Object.values(materialCategories || {}).forEach((info) => {
+            if (info.category) categorySet.add(info.category);
+            if (info.sub_category) subCategorySet.add(info.sub_category);
+            const unit = info.unit || "Not Set";
+            unitCounts[unit] = (unitCounts[unit] || 0) + 1;
+        });
+
+        inventory.forEach((row) => {
+            const info = getMaterialInfo(row);
+            const unit = formatUnit(info.unit);
+            const stockValue = getStockValue(row);
+            unitStock[unit] = (unitStock[unit] || 0) + stockValue;
+        });
+
+        document.getElementById("kpi-cat-note").textContent = `${formatNum(categorySet.size)} categories, ${formatNum(subCategorySet.size)} sub categories, ${formatNum(Object.keys(materialCategories || {}).length)} descriptions.`;
+    }
+
+    function renderDashboard() {
+        const inventory = getScopedInventory();
+        const movements = getScopedMovements();
+        const positiveRows = inventory.filter((row) => getStockValue(row) > 0);
+        const lowRows = positiveRows.filter((row) => getStockValue(row) <= 10);
+        const zeroRows = inventory.filter((row) => getStockValue(row) <= 0);
+
+        const totals = inventory.reduce((acc, row) => {
+            const info = getMaterialInfo(row);
+            const unit = formatUnit(info.unit);
+            
+            acc.stock += getStockValue(row);
+            acc.inward += getInwardValue(row);
+            acc.outward += getOutwardValue(row);
+            
+            if (getStockValue(row) > 0) acc.stockUnits.add(unit);
+            if (getInwardValue(row) > 0) acc.inwardUnits.add(unit);
+            if (getOutwardValue(row) > 0) acc.outwardUnits.add(unit);
+            
+            if (getStockValue(row) > 0 && row.description) {
+                acc.materials.add(row.description);
+            }
+            return acc;
+        }, { stock: 0, inward: 0, outward: 0, materials: new Set(), stockUnits: new Set(), inwardUnits: new Set(), outwardUnits: new Set() });
+
+        const formatUnits = (unitSet) => {
+            const arr = Array.from(unitSet);
+            return arr.length > 0 ? arr.join(", ") : "";
+        };
+
+        document.getElementById("kpi-stock").textContent = formatNum(totals.stock);
+        document.getElementById("kpi-stock-unit").textContent = formatUnits(totals.stockUnits);
+        
+        document.getElementById("kpi-in").textContent = formatNum(totals.inward);
+        document.getElementById("kpi-in-unit").textContent = formatUnits(totals.inwardUnits);
+        
+        document.getElementById("kpi-out").textContent = formatNum(totals.outward);
+        document.getElementById("kpi-out-unit").textContent = formatUnits(totals.outwardUnits);
+        
+        document.getElementById("kpi-mat").textContent = formatNum(totals.materials.size);
+        document.getElementById("healthPositive").textContent = formatNum(positiveRows.length);
+        document.getElementById("healthLow").textContent = formatNum(lowRows.length);
+        document.getElementById("healthZero").textContent = formatNum(zeroRows.length);
+        const filterParts = [filterWarehouse, filterCategory, filterSubCategory, filterUnit].filter(Boolean);
+        document.getElementById("scopeLabel").textContent = filterParts.length ? `Viewing ${filterParts.join(" / ")}` : "Viewing all warehouses";
+        document.getElementById("scopeMeta").textContent = `${formatNum(inventory.length)} stock lines and ${formatNum(movements.length)} movement rows`;
+        document.getElementById("movementTotal").textContent = `${formatNum(movements.length)} movements`;
+        renderMasterCards(inventory);
+
+        renderTrendChart(movements);
+        renderWarehouseChart();
+        renderMaterialsChart(inventory);
+        renderWarehouseRankList(inventory);
+        renderLowStockList(positiveRows);
+        renderRecentTable(movements);
+    }
+
+    function renderTrendChart(movements) {
+        const ctx = document.getElementById("trendChart").getContext("2d");
+        const grouped = {};
+
+        movements.forEach((movement) => {
+            if (!movement.date) return;
+            const month = movement.date.slice(0, 7);
+            grouped[month] ||= { inward: 0, outward: 0 };
+            if (String(movement.type).toLowerCase() === "inward") {
+                grouped[month].inward += getMovementValue(movement);
+            } else {
+                grouped[month].outward += getMovementValue(movement);
+            }
+        });
+
+        const labels = Object.keys(grouped).sort().slice(-12);
+        if (charts.trend) charts.trend.destroy();
+        charts.trend = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Inward",
+                        data: labels.map((label) => grouped[label].inward),
+                        borderColor: "#059669",
+                        backgroundColor: "rgba(5, 150, 105, 0.12)",
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 2
+                    },
+                    {
+                        label: "Outward",
+                        data: labels.map((label) => grouped[label].outward),
+                        borderColor: "#dc2626",
+                        backgroundColor: "rgba(220, 38, 38, 0.10)",
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: "bottom" } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, ticks: { callback: formatNum } }
+                }
+            }
+        });
+    }
+
+    function renderWarehouseChart() {
+        const ctx = document.getElementById("warehouseChart").getContext("2d");
+        const grouped = {};
+        rawInventory.filter(rowMatchesMasterFilters).forEach((row) => {
+            const warehouse = row.warehouse || "Unknown";
+            grouped[warehouse] = (grouped[warehouse] || 0) + getStockValue(row);
+        });
+
+        const sorted = Object.entries(grouped)
+            .map(([warehouse, value]) => ({ warehouse, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 8);
+
+        if (charts.warehouse) charts.warehouse.destroy();
+        charts.warehouse = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: sorted.map((item) => item.warehouse),
+                datasets: [{
+                    data: sorted.map((item) => item.value),
+                    backgroundColor: sorted.map((item, index) => filterWarehouse && item.warehouse !== filterWarehouse ? "#D7E2F0" : chartColors[index % chartColors.length]),
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "68%",
+                plugins: { legend: { position: "bottom" } },
+                onClick: (_, elements) => {
+                    if (!elements.length) return;
+                    const warehouse = sorted[elements[0].index].warehouse;
+                    setFilter(filterWarehouse === warehouse ? "" : warehouse);
+                }
+            }
+        });
+    }
+
+    function renderMaterialsChart(inventory) {
+        const ctx = document.getElementById("materialsChart").getContext("2d");
+        const grouped = {};
+        inventory.forEach((row) => {
+            const material = row.description || "Unknown";
+            grouped[material] = (grouped[material] || 0) + getStockValue(row);
+        });
+
+        const sorted = Object.entries(grouped)
+            .map(([material, value]) => ({ material, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 8);
+
+        if (charts.materials) charts.materials.destroy();
+        charts.materials = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: sorted.map((item) => shortText(item.material, 22)),
+                datasets: [{
+                    label: filterUnit ? `Physical ${filterUnit}` : "Physical Stock",
+                    data: sorted.map((item) => item.value),
+                    backgroundColor: "#223861",
+                    borderRadius: 7
+                }]
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { beginAtZero: true, ticks: { callback: formatNum } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+    }
+
+    function renderWarehouseRankList(inventory) {
+        const list = document.getElementById("warehouseRankList");
+        const grouped = {};
+
+        inventory.forEach((row) => {
+            const warehouse = row.warehouse || "Unknown";
+            grouped[warehouse] = (grouped[warehouse] || 0) + getStockValue(row);
+        });
+
+        const rows = Object.entries(grouped)
+            .map(([warehouse, value]) => ({ warehouse, value }))
+            .sort((a, b) => b.value - a.value)
+            .slice(0, 8);
+
+        list.innerHTML = rows.length ? rows.map((row, index) => `
+            <div class="rank-row">
+                <div>
+                    <div class="row-title">${index + 1}. ${row.warehouse}</div>
+                    <div class="row-sub">Physical stock contribution</div>
+                </div>
+                <div class="row-value">${formatNum(row.value)}</div>
             </div>
-            <div class="dist-track"><div class="${item.cls}" style="width:${(item.value / totalMovement) * 100}%;"></div></div>
-        </div>
-    `).join("");
-}
+        `).join("") : `<div class="empty-state">No warehouse stock available.</div>`;
+    }
 
-fetch("/dashboard-data")
-    .then((res) => res.json())
-    .then((payload) => {
-        buildHero(payload);
-        buildKpiCards(payload.kpis || {});
-        buildTrendChart(payload.yearly_trend || []);
-        buildWarehouseShare(payload.top_warehouses || [], Number(((payload.kpis || {}).total_physical_qty) || 0));
-        buildTopMaterials(payload.top_materials || []);
-        buildLowStock(payload.low_stock_items || []);
-        buildRecentActivity(payload.recent_activity || []);
-        buildMovementOverview(payload.kpis || {});
-    })
-    .catch((error) => {
-        console.error(error);
-        document.getElementById("kpiGrid").innerHTML = `<div class="loading-state">Dashboard data could not be loaded.</div>`;
-        document.getElementById("trendChart").innerHTML = `<div class="loading-state">Dashboard trend could not be loaded.</div>`;
-        document.getElementById("warehouseDistribution").innerHTML = `<div class="loading-state">Warehouse stock split could not be loaded.</div>`;
-        document.getElementById("topMaterials").innerHTML = `<div class="loading-state">Material stock data could not be loaded.</div>`;
-        document.getElementById("lowStockList").innerHTML = `<div class="loading-state">Low stock data could not be loaded.</div>`;
-        document.getElementById("recentActivity").innerHTML = `<div class="loading-state">Recent activity could not be loaded.</div>`;
-        document.getElementById("movementOverview").innerHTML = `<div class="loading-state">Movement overview could not be loaded.</div>`;
+    function renderLowStockList(positiveRows) {
+        const list = document.getElementById("lowStockList");
+        const rows = [...positiveRows]
+            .sort((a, b) => getStockValue(a) - getStockValue(b))
+            .slice(0, 8);
+
+        list.innerHTML = rows.length ? rows.map((row) => `
+            <div class="stock-row warning">
+                <div>
+                    <div class="row-title">${shortText(row.description, 52)}</div>
+                    <div class="row-sub">${row.warehouse}</div>
+                </div>
+                <div class="row-value">${formatNum(getStockValue(row))} ${formatUnit(getMaterialInfo(row).unit)}</div>
+            </div>
+        `).join("") : `<div class="empty-state">No positive low-stock lines found.</div>`;
+    }
+
+    function renderRecentTable(movements) {
+        const tbody = document.querySelector("#recentTable tbody");
+        const recent = [...movements].slice(0, 12);
+        document.getElementById("recentCount").textContent = `${formatNum(recent.length)} rows`;
+
+        tbody.innerHTML = recent.length ? recent.map((row) => {
+            const typeClass = String(row.type || "").toLowerCase() === "inward" ? "inward" : "outward";
+            return `
+                <tr>
+                    <td><span class="type-pill ${typeClass}">${row.type || "-"}</span></td>
+                    <td>${row.date ? row.date.slice(0, 10) : "-"}</td>
+                    <td>${row.warehouse || "-"}</td>
+                    <td>${shortText(row.description, 58)}</td>
+                    <td><strong>${typeClass === "inward" ? "+" : "-"}${formatNum(row.qty)} ${formatUnit(getMaterialInfo(row).unit)}</strong></td>
+                    <td>${row.document_no || "-"}</td>
+                </tr>
+            `;
+        }).join("") : `<tr><td colspan="6" class="empty-state">No movement rows found for this scope.</td></tr>`;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("/dashboard-raw-data")
+            .then((response) => response.json())
+            .then((data) => {
+                rawInventory = Array.isArray(data.inventory) ? data.inventory : [];
+                rawMovements = Array.isArray(data.movements) ? data.movements : [];
+                materialCategories = data.categories || {};
+                materialLookup = buildMaterialLookup();
+
+                const dropdown = document.getElementById("warehouseFilter");
+                const warehouses = [...new Set(rawInventory.map((row) => row.warehouse).filter(Boolean))].sort();
+                warehouses.forEach((warehouse) => {
+                    const option = document.createElement("option");
+                    option.value = warehouse;
+                    option.textContent = warehouse;
+                    dropdown.appendChild(option);
+                });
+                populateMasterFilters();
+
+                document.getElementById("loader").style.display = "none";
+                renderDashboard();
+            })
+            .catch((error) => {
+                console.error(error);
+                document.getElementById("loader").textContent = "Dashboard data could not be loaded.";
+            });
     });
 </script>
 {% endblock %}

@@ -1,0 +1,2060 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<style>
+    .planner-shell {
+        display: grid;
+        gap: 20px;
+        padding-bottom: 40px;
+    }
+
+    .planner-hero {
+        padding: 32px;
+        background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        border: 1px solid #dcfce7;
+        border-radius: 20px;
+        box-shadow: 0 12px 32px rgba(22, 163, 74, 0.05);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .planner-hero::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 100%;
+        background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.1), transparent 70%);
+        pointer-events: none;
+    }
+
+    .planner-hero h2,
+    .planner-hero h3 {
+        margin: 0 0 8px;
+        color: #1e293b;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        max-width: 760px;
+    }
+
+    .planner-hero p {
+        max-width: 820px;
+        margin: 0;
+        color: #64748b;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .hero-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .planner-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    @media (min-width: 1024px) {
+        .planner-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        }
+    }
+
+    .planner-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .planner-card,
+    .map-card,
+    .result-card,
+    .alternatives-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.02);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .map-card {
+        min-height: auto;
+        position: sticky;
+        top: calc(var(--nav-height) + 24px);
+    }
+
+    .route-topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px 14px;
+        border-bottom: 2px solid #f1f5f9;
+        background: #ffffff;
+    }
+
+    .route-order {
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .route-doc-btn {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #4f46e5;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .card-head {
+        padding: 20px;
+        border-bottom: 2px solid #f1f5f9;
+        background: #ffffff;
+    }
+
+    .card-head h3 {
+        margin: 0 0 6px;
+        color: #1e293b;
+        font-size: 18px;
+        font-weight: 800;
+    }
+
+    .card-head p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .planner-form {
+        display: grid;
+        gap: 16px;
+    }
+
+    .planner-form label {
+        display: block;
+        margin-bottom: 6px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .planner-form select,
+    .planner-form input {
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #0f172a;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 16px;
+    }
+
+    .planner-form select:hover,
+    .planner-form input:hover {
+        background-color: #ffffff;
+        border-color: #cbd5e1;
+    }
+
+    .planner-form select:focus,
+    .planner-form input:focus {
+        outline: none;
+        background-color: #ffffff;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    }
+
+    .planner-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-top: 4px;
+    }
+
+    .planner-btn {
+        border: none;
+        border-radius: 12px;
+        padding: 14px 24px;
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .planner-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(79, 70, 229, 0.35);
+        background: linear-gradient(135deg, #4338ca 0%, #2563eb 100%);
+    }
+
+    .planner-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .submit-request-panel {
+        margin-top: 24px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+    
+    .submit-request-panel h4 {
+        margin: 0 0 16px;
+        color: #0f172a;
+        font-size: 18px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .submit-request-panel label {
+        display: block;
+        margin-bottom: 8px;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .submit-request-panel textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: #ffffff;
+        color: #1e293b;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .submit-request-panel textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    .planner-status {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.55;
+        padding: 14px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        font-weight: 600;
+    }
+
+    .planner-hint {
+        padding: 14px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .result-card[hidden],
+    .alternatives-card[hidden] {
+        display: none;
+    }
+
+    .nearest-highlight {
+        display: grid;
+        gap: 14px;
+    }
+
+    .warehouse-pill {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        min-height: 30px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #f0fdf4;
+        color: #16a34a;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        border: 1px solid #bbf7d0;
+    }
+
+    .nearest-name {
+        margin: 0;
+        color: #1e293b;
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .nearest-subtext {
+        color: #64748b;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .metric-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .metric-card {
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .metric-card:hover {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        transform: translateY(-2px);
+    }
+
+    .metric-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .metric-value {
+        margin-top: 6px;
+        color: #1e293b;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .metric-note {
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 12px;
+    }
+
+    .availability-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .warehouse-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .warehouse-detail {
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .warehouse-detail-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .warehouse-detail-value {
+        margin-top: 4px;
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.5;
+    }
+
+    .availability-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #059669;
+        font-weight: 800;
+        font-size: 12px;
+    }
+
+    .map-canvas {
+        width: 100%;
+        height: 360px;
+        background: #f8fafc;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .map-stage {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .map-overlay-stats {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        z-index: 500;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .map-floating-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 500;
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 0 14px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.95);
+        color: #1e293b;
+        font-size: 12px;
+        font-weight: 800;
+        box-shadow: 0 8px 24px rgba(33, 49, 85, 0.1);
+        backdrop-filter: blur(8px);
+    }
+
+    .map-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 16px 0 0;
+        border-top: none;
+        background: transparent;
+    }
+
+    .legend-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .warehouse-pin {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 3px solid #ffffff;
+        box-shadow: 0 8px 16px rgba(33, 49, 85, 0.15);
+    }
+
+    .warehouse-pin.all {
+        background: #3b82f6;
+    }
+
+    .warehouse-pin.shortage {
+        background: #f59e0b;
+    }
+
+    .warehouse-pin.source {
+        background: #10b981;
+    }
+
+    .warehouse-pin.inactive {
+        background: #94a3b8;
+    }
+
+    .alternatives-list {
+        display: grid;
+        gap: 12px;
+    }
+
+    .alternative-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 16px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #ffffff;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .alternative-item:hover {
+        border-color: #94a3b8;
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+        transform: translateY(-2px);
+        background: #f8fafc;
+    }
+
+    .alternative-item strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .alternative-item span {
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .alternative-metrics {
+        display: grid;
+        gap: 6px;
+        justify-items: end;
+        text-align: right;
+    }
+
+    .mini-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 10px;
+        border-radius: 999px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .route-stat {
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(33, 49, 85, 0.1);
+    }
+
+    .route-stat-label {
+        color: #64748b;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .route-stat-value {
+        margin-top: 4px;
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .main-info {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        background: #f8fafc;
+    }
+
+    .main-info h4 {
+        margin: 0 0 6px;
+        color: #1e293b;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .main-info-note {
+        margin: 0 0 16px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .info-tabs {
+        display: none;
+    }
+
+    .vehicle-panel {
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: 20px;
+        align-items: center;
+    }
+
+    .vehicle-visual {
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+    }
+
+    .truck-card {
+        position: relative;
+        width: 200px;
+        height: 120px;
+        border-radius: 16px;
+        background: #ffffff;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 12px 24px rgba(33, 49, 85, 0.06);
+    }
+
+    .truck-card::before {
+        content: "";
+        position: absolute;
+        left: 50px;
+        bottom: 31px;
+        width: 100px;
+        height: 50px;
+        border-radius: 6px;
+        background: #ffffff;
+        border: 2px solid #cbd5e1;
+    }
+
+    .truck-card::after {
+        content: "";
+        position: absolute;
+        left: 24px;
+        bottom: 31px;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px 10px 8px 8px;
+        background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+        border: 2px solid #cbd5e1;
+    }
+
+    .truck-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .truck-load {
+        position: absolute;
+        left: 50px;
+        bottom: 31px;
+        height: 50px;
+        max-width: 100px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 800;
+        transition: width 0.3s ease;
+        overflow: hidden;
+        z-index: 10;
+    }
+
+    .truck-wheel {
+        position: absolute;
+        bottom: 22px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #1e293b;
+        box-shadow: inset 0 0 0 5px #f8fafc;
+        z-index: 5;
+    }
+
+    .truck-wheel.left {
+        left: 40px;
+    }
+
+    .truck-wheel.right {
+        left: 125px;
+    }
+
+    .truck-wheel.rear {
+        right: 24px;
+    }
+
+    .truck-line {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: 30px;
+        height: 2px;
+        background: #e2e8f0;
+    }
+
+    .vehicle-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .vehicle-info {
+        display: grid;
+        gap: 4px;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .vehicle-info-label {
+        color: #64748b;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .vehicle-info-value {
+        color: #1e293b;
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.4;
+    }
+
+    .vehicle-info select {
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        background: #f8fafc;
+        color: #1e293b;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .vehicle-info select:focus {
+        border-color: #4f46e5;
+        outline: none;
+    }
+
+    @media (max-width: 1080px) {
+        .planner-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .map-canvas {
+            height: 360px;
+        }
+
+        .planner-card,
+        .map-card {
+            min-height: auto;
+            position: static;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .ground-shell,
+        .planner-shell,
+        .planner-layout,
+        .planner-stack,
+        .planner-card,
+        .map-card,
+        .result-card,
+        .alternatives-card {
+            min-width: 0;
+        }
+
+        .planner-hero {
+            padding: 16px;
+        }
+
+        .planner-hero h2,
+        .planner-hero h3 {
+            font-size: 20px;
+        }
+
+        .metric-row {
+            grid-template-columns: 1fr;
+        }
+
+        .map-overlay-stats,
+        .vehicle-panel,
+        .vehicle-grid,
+        .warehouse-detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .map-overlay-stats {
+            position: static;
+            margin-top: 12px;
+        }
+
+        .map-canvas {
+            height: 300px;
+        }
+
+        .route-topbar,
+        .card-head,
+        .card-body,
+        .main-info {
+            padding: 16px;
+        }
+
+        .planner-actions,
+        .planner-btn {
+            width: 100%;
+        }
+
+        .alternative-item {
+            grid-template-columns: 1fr;
+        }
+
+        .alternative-metrics {
+            justify-items: start;
+            text-align: left;
+        }
+    }
+</style>
+
+<div class="planner-shell">
+    <section class="planner-hero">
+        <h3>Ground Team Shortage Locator</h3>
+        <p>Use this tool to find the nearest available material stock in real-time from the field.</p>
+    </section>
+
+    <div class="planner-layout">
+        <div class="planner-stack">
+            <section class="planner-card">
+                <div class="card-head">
+                    <h3>Shortage Input</h3>
+                    <p>Select your location and the missing material.</p>
+                </div>
+                <div class="card-body">
+                    <div class="planner-form">
+                        <div>
+                            <label for="currentWarehouse">Current Warehouse</label>
+                            <select id="currentWarehouse"></select>
+                        </div>
+                        <div>
+                            <label for="materialCategory">Categorised Item/Services</label>
+                            <select id="materialCategory" onchange="filterSubCategories()"></select>
+                        </div>
+                        <div>
+                            <label for="materialSubCategory">Short Description</label>
+                            <select id="materialSubCategory" onchange="filterMaterials()"></select>
+                        </div>
+                        <div>
+                            <label for="materialType">Tracker Description</label>
+                            <select id="materialType"></select>
+                        </div>
+                        <div>
+                            <label for="requiredQty">Required Quantity</label>
+                            <input id="requiredQty" type="number" min="1" placeholder="Enter shortage quantity">
+                        </div>
+                        <div class="planner-actions">
+                            <button class="planner-btn" id="findBtn" type="button" onclick="findNearestWarehouse()">Find Nearest
+                                Available Warehouse</button>
+                        </div>
+                        <div id="plannerErrorMsg" style="display: none; margin-top: 16px; padding: 14px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; color: #991b1b; font-size: 14px; font-weight: 600; line-height: 1.5;">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="result-card" id="nearestResultCard" hidden>
+                <div class="card-head">
+                    <h3>Best Match</h3>
+                    <p>The top recommendation is based on both stock availability and the shortest route distance.</p>
+                </div>
+                <div class="card-body">
+                    <div class="nearest-highlight">
+                        <span class="warehouse-pill" id="bestMatchLabel">Nearest Warehouse</span>
+                        <h3 class="nearest-name" id="bestWarehouseName">--</h3>
+                        <div class="nearest-subtext" id="bestWarehouseMeta">--</div>
+
+                        <div class="metric-row">
+                            <div class="metric-card">
+                                <div class="metric-label">Distance</div>
+                                <div class="metric-value" id="bestDistance">--</div>
+
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Estimated Time</div>
+                                <div class="metric-value" id="bestDuration">--</div>
+
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Available Stock</div>
+                                <div class="metric-value" id="bestStock">--</div>
+
+                            </div>
+                        </div>
+
+                        <div class="availability-line">
+                            <div class="availability-chip" id="requestSummary">--</div>
+                            <div class="availability-chip" id="supplySummary">--</div>
+                        </div>
+
+                        <div class="warehouse-detail-grid">
+                            <div class="warehouse-detail">
+                                <div class="warehouse-detail-label">Warehouse In Charge</div>
+                                <div class="warehouse-detail-value" id="bestInCharge">--</div>
+                            </div>
+                            <div class="warehouse-detail">
+                                <div class="warehouse-detail-label">Contact Number</div>
+                                <div class="warehouse-detail-value" id="bestContact">--</div>
+                            </div>
+                            <div class="warehouse-detail">
+                                <div class="warehouse-detail-label">District Type</div>
+                                <div class="warehouse-detail-value" id="bestDistrictType">--</div>
+                            </div>
+                            <div class="warehouse-detail">
+                                <div class="warehouse-detail-label">Package and Status</div>
+                                <div class="warehouse-detail-value" id="bestPackageStatus">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="alternatives-card" id="alternativesCard" hidden>
+                <div class="card-head">
+                    <h3>Other Nearby Options</h3>
+                    <p>These warehouses also have available stock for the selected material.</p>
+                </div>
+                <div class="card-body">
+                    <div class="alternatives-list" id="alternativesList"></div>
+                </div>
+            </section>
+        </div>
+
+        {% if app_settings and not app_settings.get("hide_map") %}
+        <section class="map-card">
+            <div class="route-topbar">
+                <div class="route-order" id="routeOrderId">Transfer ID: --</div>
+                <div class="route-doc-btn">Route Preview</div>
+            </div>
+            <div class="card-head">
+                <h3>Transfer Route Map</h3>
+            </div>
+            <div class="card-body">
+                <div class="map-stage">
+                    <div id="trackingMap" class="map-canvas" aria-label="Warehouse tracking map"></div>
+                    <div class="map-floating-badge" id="routeMapBadge">Live Route Preview</div>
+                    <div class="map-overlay-stats">
+                        <div class="route-stat">
+                            <div class="route-stat-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                Current Location
+                            </div>
+                            <div class="route-stat-value" id="routeCurrentStat">--</div>
+                        </div>
+                        <div class="route-stat">
+                            <div class="route-stat-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                Source
+                            </div>
+                            <div class="route-stat-value" id="routeSourceStat">--</div>
+                        </div>
+                        <div class="route-stat">
+                            <div class="route-stat-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                                Kilometers Left
+                            </div>
+                            <div class="route-stat-value" id="routeKmStat">--</div>
+                        </div>
+                        <div class="route-stat">
+                            <div class="route-stat-label">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                ETA
+                            </div>
+                            <div class="route-stat-value" id="routeEtaStat">--</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-legend">
+                    <div class="legend-chip"><span class="legend-dot" style="background:#5b7fd6;"></span> Other
+                        warehouses</div>
+                    <div class="legend-chip"><span class="legend-dot" style="background:#f59e0b;"></span> Shortage
+                        warehouse</div>
+                    <div class="legend-chip"><span class="legend-dot" style="background:#1fa36c;"></span> Recommended
+                        source</div>
+                    <div class="legend-chip"><span class="legend-dot" style="background:#98a7c2;"></span>
+                        Non-operational warehouse</div>
+                </div>
+
+                <div class="main-info">
+                    <h4>Vehicle Planning</h4>
+                    <p class="main-info-note">Pick a vehicle type to see how well the shortage quantity fits and what
+                        the trip is likely to consume in fuel.</p>
+
+                    <div class="vehicle-panel">
+                        <div class="vehicle-visual">
+                            <div class="truck-card">
+                                <div class="truck-load" id="truckLoadBar" style="width:0%;">0%</div>
+                                <span class="truck-line"></span>
+                                <span class="truck-wheel left"></span>
+                                <span class="truck-wheel right"></span>
+                                <span class="truck-wheel rear"></span>
+                            </div>
+                            <div class="truck-badge" id="vehicleBadge">Vehicle: --</div>
+                        </div>
+                        <div class="vehicle-grid">
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Vehicle Type</div>
+                                <select id="vehicleType" onchange="refreshVehicleCharges()"></select>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Fuel Type</div>
+                                <select id="fuelType" onchange="refreshVehicleCharges()">
+                                    <option value="diesel">Diesel</option>
+                                    <option value="petrol">Petrol</option>
+                                </select>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Selected Vehicle</div>
+                                <div class="vehicle-info-value" id="vehicleTypeInfo">--</div>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Fuel Rate</div>
+                                <div class="vehicle-info-value" id="fuelTypeInfo">--</div>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Fuel Used</div>
+                                <div class="vehicle-info-value" id="fuelUsedInfo">--</div>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Load Fill</div>
+                                <div class="vehicle-info-value" id="loadFillInfo">--</div>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Fuel Charge</div>
+                                <div class="vehicle-info-value" id="fuelChargeInfo">--</div>
+                            </div>
+                            <div class="vehicle-info">
+                                <div class="vehicle-info-label">Estimated Fuel Cost</div>
+                                <div class="vehicle-info-value" id="totalChargeInfo">--</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="submit-request-panel" id="submitRequestPanel" style="display: none;">
+                        <h4>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            Submit Route Request
+                        </h4>
+                        <div style="margin-bottom: 20px;">
+                            <label for="routeRemarks">Remarks (Optional)</label>
+                            <textarea id="routeRemarks" rows="3" placeholder="Add any special instructions, load constraints, or notes for the admin..."></textarea>
+                        </div>
+                        <button type="button" class="planner-btn" onclick="submitRouteRequest()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            Send Request to Admin
+                        </button>
+                        <div id="submitRequestStatus" style="margin-top: 14px; font-size: 14px; font-weight: 600; text-align: center; height: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    const warehouseSeedData = [
+        {
+            id: "ahmednagar",
+            districtName: "Ahmednagar",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-C/o Prakash Warehousing And Cold Storage, Sahyadri Chowk,Plot No-A-12, MIDC, Ahmadnagar-414111",
+            inCharge: "Pankaj Prabhakar Raut",
+            contact: "9921227277/9139566787",
+            districtType: "UG+Aerial",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 19.0948,
+            lon: 74.7480
+        },
+        {
+            id: "aurangabad",
+            districtName: "Aurangabad",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Gut NO 198, Beside GreenPack Packaging, Near Saptshrungi Mata Temple, Limbejalgaon, Aurangabad - Pune Road, Aurangabad, Maharashtra 431133",
+            inCharge: "Ishwar Gangadhar korhale",
+            contact: "9623235648/8668496334",
+            districtType: "UG",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 19.8762,
+            lon: 75.3433
+        },
+        {
+            id: "buldhana-chikhali",
+            districtName: "Buldhana/Chikhali",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-PLOT NO. P-20, MIDC CHIKHALI Chinchole Patil Warehouse Plot No. P-20 MIDC Chikhali, Tal- Chikhali, Dist- Buldhana. PIN CODE-443201",
+            inCharge: "Chetan Pundlik Waghode",
+            contact: "7558790793 / 7030258506",
+            districtType: "Aerial",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 20.3505,
+            lon: 76.2577
+        },
+        {
+            id: "hingoli-basmat",
+            districtName: "Hingoli/Basmat",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Gut No-193, AT-PangraSati, Tal-Basmath Dist-Hingoli (M.s)-431512",
+            inCharge: "Mahadev Dindurkar",
+            contact: "9527474846",
+            districtType: "Aerial",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 19.3280,
+            lon: 77.1570
+        },
+        {
+            id: "jalgaon-paldhi",
+            districtName: "JALGAON/Paldhi",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-GAT NO:-65 Musli Phata, Near Paldhi, Sancheti Warehouse Industrial Park, Musli Phata, Near Paldhi Jalgaon Highway, Near Eklagna Petrol Pump, Jalgaon-425103",
+            inCharge: "Padmakar Marathe",
+            contact: "9158153194 / 7219838222",
+            districtType: "UG",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 21.0397,
+            lon: 75.5773
+        },
+        {
+            id: "kolhapur",
+            districtName: "KOLHAPUR",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Shivam Industries, Plot No-A-18, Five Star MIDC, Kagal, Kolhapur-416236",
+            inCharge: "Nikhil Desai",
+            contact: "7499753077",
+            districtType: "UG",
+            packageType: "Package - A",
+            status: "Operational",
+            lat: 16.7050,
+            lon: 74.2433
+        },
+        {
+            id: "latur",
+            districtName: "Latur",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-PADMA Warehouse, Plot No-R-2, Old MIDC area, old Kalamb Road, Near Hadco Chowk, Latur-413512",
+            inCharge: "Rahul Jadhav",
+            contact: "9021346433",
+            districtType: "Aerial",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 18.4088,
+            lon: 76.5604
+        },
+        {
+            id: "nashik",
+            districtName: "Nashik",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Mahendra Ratilal Raka, Nakoda Warehousing, Gat No-207, Behind Manga Capsul, A/P-Jaulke, Tal-Dindori, Dist-Nashik-422206",
+            inCharge: "-",
+            contact: "-",
+            districtType: "UG",
+            packageType: "Package - A",
+            status: "Operational",
+            lat: 19.9975,
+            lon: 73.7898
+        },
+        {
+            id: "palghar",
+            districtName: "Palghar",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Dahanu-Charoti main road, Sarvali, Dahanu Road East, before Pink Lake Resort, Bothra nursery, Palghar-401601",
+            inCharge: "Jignesh Bharwad",
+            contact: "8999108322",
+            districtType: "Aerial",
+            packageType: "Package - A",
+            status: "Operational",
+            lat: 19.6967,
+            lon: 72.7699
+        },
+        {
+            id: "parbhani",
+            districtName: "Parbhani",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Abhijit Bauburao Salunkhe Warehouse, H No-08, NH-61, Parbhani Pathari Road, Hasnapur, Parbhani-431401",
+            inCharge: "PAWAR SWAPNIL RAJESH",
+            contact: "8080225518, 9146034458",
+            districtType: "Aerial",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 19.2608,
+            lon: 76.7748
+        },
+        {
+            id: "pune",
+            districtName: "PUNE",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-GAT NO-36 Manjari-Wagholi Road, Mahadeo Warehouse, Manjari Khurd, Wagholi, Tal-Haveli, Dist-Pune-412307",
+            inCharge: "Ramakant K",
+            contact: "9545456644",
+            districtType: "UG",
+            packageType: "Package - A",
+            status: "Operational",
+            lat: 18.5204,
+            lon: 73.8567
+        },
+        {
+            id: "sangli",
+            districtName: "SANGLI",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Shivneri, Plot No-A-9, MIDC, Jath, Sangli-416404",
+            inCharge: "-",
+            contact: "-",
+            districtType: "UG",
+            packageType: "Package - A",
+            status: "Non-Operational",
+            lat: 16.8524,
+            lon: 74.5815
+        },
+        {
+            id: "satara",
+            districtName: "SATARA",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Ahilyanagar Udyog Samuha, Plot No-H-37, Old MIDC, Satara-415004",
+            inCharge: "Vikas Pawar",
+            contact: "8788324711",
+            districtType: "Aerial",
+            packageType: "Package - A",
+            status: "Operational",
+            lat: 17.6805,
+            lon: 74.0183
+        },
+        {
+            id: "nagpur",
+            districtName: "Nagpur",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-C/O Indira Tekade, Plot No-04, Nara Bus Stop, Near Sonu Pan Palace, Behind Ganesh Kirana Store, Nara Jaripatka, Nagpur-440014",
+            inCharge: "-",
+            contact: "-",
+            districtType: "DR NOC",
+            packageType: "Package - A",
+            status: "Non-Operational",
+            lat: 21.1458,
+            lon: 79.0882
+        },
+        {
+            id: "pune-open-plot",
+            districtName: "Pune-Open Plot",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Mr. Balu Soma Kotwal, Sr No 15/8/1, SRPF Camp Road, Wadachi Wadi, Tal-Haveli, Dist-Pune-411060",
+            inCharge: "-",
+            contact: "-",
+            districtType: "UG",
+            packageType: "Package - A",
+            status: "Non-Operational",
+            lat: 18.4875,
+            lon: 73.9656
+        },
+        {
+            id: "pune-open-plot-kc",
+            districtName: "Pune-Open Plot-K-C",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Gut No 453, At Post Wagholi Katkewadi, Pune Nagar Road, Opp. Gade Wasti Road, Taluka Haveli, Dist Pune-412207",
+            inCharge: "Ramakant K",
+            contact: "9545456644",
+            districtType: "UG+Aerial",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 18.5934,
+            lon: 73.9850
+        },
+        {
+            id: "sindhudurg-new",
+            districtName: "Sindhudurg-New",
+            address: "Aksenttech Tech Services Ltd-ITI Ltd-Plot No-H-121, Additional MIDC Kudal, Near Govt. Godown, Behind Purshottam Industries, Kudal, Sindhudurg-416525",
+            inCharge: "Balaji Deshmukh",
+            contact: "8421143565",
+            districtType: "Aerial",
+            packageType: "Package - A",
+            status: "Operational",
+            lat: 16.0111,
+            lon: 73.6889
+        },
+        {
+            id: "solapur-new",
+            districtName: "SOLAPUR-New",
+            address: "Aksentt Tech Services Ltd-ITI Ltd-Furde Group Warehouse, Vidya Vihar, Gat No.321/1, Hiraj Road, Solapur-Pune Highway, Kondi, Solapur-413255",
+            inCharge: "Sagar Mahindrakar",
+            contact: "9637374339",
+            districtType: "UG",
+            packageType: "Package - C",
+            status: "Operational",
+            lat: 17.6599,
+            lon: 75.9064
+        },
+        {
+            id: "amravati",
+            districtName: "Amravati",
+            address: "Amravati Warehouse, Maharashtra",
+            inCharge: "-",
+            contact: "-",
+            districtType: "Inventory",
+            packageType: "Package - Existing",
+            status: "Operational",
+            lat: 20.9374,
+            lon: 77.7796
+        },
+        {
+            id: "beed-ahmednagar",
+            districtName: "Beed-A'Nagar",
+            address: "Beed-A'Nagar Warehouse, Maharashtra",
+            inCharge: "-",
+            contact: "-",
+            districtType: "Inventory",
+            packageType: "Package - Existing",
+            status: "Operational",
+            lat: 18.9891,
+            lon: 75.7601
+        },
+        {
+            id: "noc-sanpada",
+            districtName: "Noc Sanpada",
+            address: "Noc Sanpada, Navi Mumbai, Maharashtra",
+            inCharge: "-",
+            contact: "-",
+            districtType: "NOC",
+            packageType: "Package - Existing",
+            status: "Operational",
+            lat: 19.0607,
+            lon: 73.0127
+        },
+        {
+            id: "ratnagiri",
+            districtName: "Ratnagiri",
+            address: "Ratnagiri Warehouse, Maharashtra",
+            inCharge: "-",
+            contact: "-",
+            districtType: "Inventory",
+            packageType: "Package - Existing",
+            status: "Operational",
+            lat: 16.9902,
+            lon: 73.3120
+        },
+        {
+            id: "thane",
+            districtName: "Thane",
+            address: "Thane Warehouse, Maharashtra",
+            inCharge: "-",
+            contact: "-",
+            districtType: "Inventory",
+            packageType: "Package - Existing",
+            status: "Operational",
+            lat: 19.2183,
+            lon: 72.9781
+        }
+    ];
+
+    let warehouseData = warehouseSeedData.map((warehouse) => ({
+        ...warehouse,
+        name: `${warehouse.districtName} Warehouse`,
+        searchText: `${warehouse.address}, ${warehouse.districtName}, Maharashtra`,
+        stock: {},
+        stockRows: [],
+        lat: warehouse.lat,
+        lon: warehouse.lon
+    }));
+
+    let materialOptions = [];
+
+    const vehicleOptions = [
+        { id: "pickup", label: "Pickup Van", mileage: { diesel: 14, petrol: 11 }, capacity: 20 },
+        { id: "truck-14ft", label: "14ft Cargo Truck", mileage: { diesel: 8, petrol: 6 }, capacity: 60 },
+        { id: "truck-17ft", label: "17ft Medium Truck", mileage: { diesel: 7, petrol: 5 }, capacity: 90 },
+        { id: "container", label: "Container Vehicle", mileage: { diesel: 5, petrol: 4 }, capacity: 140 }
+    ];
+
+    const fuelRates = {
+        diesel: 92,
+        petrol: 106
+    };
+
+    const warehouseStockAliases = {
+        "ahmednagar": ["A'Nagar Warehouse"],
+        "aurangabad": ["Aurangabad Warehouse"],
+        "buldhana-chikhali": ["Buldhana Warehouse"],
+        "hingoli-basmat": ["Hingoli Warehouse"],
+        "jalgaon-paldhi": ["Jalgaon Warehouse"],
+        "kolhapur": ["Kolhapur Warehouse"],
+        "latur": ["Latur Warehouse"],
+        "nashik": ["Nasik warehouse"],
+        "palghar": ["Palghar Warehouse"],
+        "parbhani": ["Parbhani Warehouse"],
+        "pune": ["Pune warehouse"],
+        "sangli": ["Sangli Warehouse"],
+        "satara": ["Satara Warehouse"],
+        "nagpur": ["Nagpur DR NOC"],
+        "pune-open-plot": ["Pune warehouse-Open Plot"],
+        "pune-open-plot-kc": ["Pune-Open Plot-K-C"],
+        "sindhudurg-new": ["Shindhudurg Warehouse", "Sindhudurg Warehouse"],
+        "solapur-new": ["Solhapur Warehouse", "Solhapur warehouse"],
+        "amravati": ["Amravati Warehouse"],
+        "beed-ahmednagar": ["Beed-A'Nagar Warehouse"],
+        "noc-sanpada": ["Noc Sanpada"],
+        "ratnagiri": ["Ratnagiri Warehouse"],
+        "thane": ["Thane Warehouse"]
+    };
+
+    function getWarehouseAliases(warehouseId) {
+        return warehouseStockAliases[warehouseId] || [];
+    }
+
+    function getCanonicalWarehouseName(warehouse) {
+        return getWarehouseAliases(warehouse.id)[0] || warehouse.name;
+    }
+
+    function formatStockValue(value) {
+        const numeric = Number(value || 0);
+        if (!Number.isFinite(numeric)) {
+            return "0";
+        }
+        return Number.isInteger(numeric) ? numeric.toLocaleString("en-IN") : numeric.toLocaleString("en-IN", { maximumFractionDigits: 3 });
+    }
+
+    let trackingMap;
+    let trackingRouteLayer;
+    let trackingMarkerLayer;
+    let warehouseMarkerLayer;
+    let activeRecommendation = null;
+    let currentRecommendations = [];
+    const loggedInWarehouseName = {{ session.get("user", "")|tojson }};
+
+    function createWarehouseIcon(type, label) {
+        return L.divIcon({
+            className: "",
+            html: `<div class="warehouse-pin ${type}"></div><div style="margin-top:6px;padding:2px 8px;border-radius:999px;background:#ffffff;color:#334d81;font-size:11px;font-weight:700;box-shadow:0 6px 12px rgba(18,31,61,0.08);white-space:nowrap;">${label}</div>`,
+            iconSize: [34, 46],
+            iconAnchor: [17, 23],
+            popupAnchor: [0, -18]
+        });
+    }
+
+    function formatDuration(seconds) {
+        const totalMinutes = Math.round(seconds / 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        if (hours > 0 && minutes > 0) {
+            return `${hours}h ${minutes}m`;
+        }
+        if (hours > 0) {
+            return `${hours}h`;
+        }
+        return `${minutes}m`;
+    }
+
+    function getAvailableWarehouses() {
+        return warehouseData.filter((warehouse) => warehouse.status.toLowerCase() === "operational");
+    }
+
+    function normalizeWarehouseName(name) {
+        return String(name || "").trim().toLowerCase();
+    }
+
+    function warehouseMatchesLogin(warehouse) {
+        const loginName = normalizeWarehouseName(loggedInWarehouseName);
+        if (!loginName) {
+            return false;
+        }
+
+        const names = [
+            warehouse.name,
+            `${warehouse.districtName} Warehouse`,
+            ...getWarehouseAliases(warehouse.id)
+        ];
+
+        return names.some((name) => normalizeWarehouseName(name) === loginName);
+    }
+
+    function getLoggedInWarehouse() {
+        return warehouseData.find(warehouseMatchesLogin);
+    }
+
+    function getSelectedCurrentWarehouse() {
+        return getLoggedInWarehouse() || warehouseData.find((warehouse) => warehouse.id === document.getElementById("currentWarehouse").value);
+    }
+
+    function lockCurrentWarehouseField() {
+        const warehouseSelect = document.getElementById("currentWarehouse");
+        const loggedInWarehouse = getLoggedInWarehouse();
+
+        if (!warehouseSelect || !loggedInWarehouse) {
+            return;
+        }
+
+        warehouseSelect.value = loggedInWarehouse.id;
+        warehouseSelect.disabled = true;
+        warehouseSelect.title = `Locked to logged-in warehouse: ${loggedInWarehouseName}`;
+    }
+
+    let materialCategoriesPayload = {};
+
+    async function loadTrackingInventoryData() {
+        const response = await fetch("/warehouse-inventory-data");
+        if (!response.ok) {
+            throw new Error(`Inventory lookup failed with status ${response.status}`);
+        }
+
+        const payload = await response.json();
+        materialCategoriesPayload = payload.categories || {};
+        
+        const rows = Array.isArray(payload.rows) ? payload.rows : [];
+        const materialSet = new Set();
+
+        warehouseData = warehouseData.map((warehouse) => {
+            const aliases = getWarehouseAliases(warehouse.id);
+            const stockRows = rows.filter((row) => aliases.includes(row.warehouse));
+            const stock = {};
+
+            stockRows.forEach((row) => {
+                const materialName = row.description;
+                const availableQty = Number(row.phy_stock_qty || 0);
+                stock[materialName] = availableQty;
+                materialSet.add(materialName);
+            });
+
+            return {
+                ...warehouse,
+                stockRows,
+                stock
+            };
+        });
+
+        materialOptions = [...materialSet]
+            .sort((a, b) => a.localeCompare(b))
+            .map((materialName) => {
+                const catInfo = materialCategoriesPayload[materialName] || { category: "Uncategorized", sub_category: "" };
+                return {
+                    id: materialName,
+                    label: materialName,
+                    category: catInfo.category,
+                    sub_category: catInfo.sub_category
+                };
+            });
+    }
+
+    function populatePlannerFields() {
+        const warehouseSelect = document.getElementById("currentWarehouse");
+        const categorySelect = document.getElementById("materialCategory");
+        const vehicleSelect = document.getElementById("vehicleType");
+
+        const lockedWarehouse = getLoggedInWarehouse();
+        const currentWarehouseOptions = lockedWarehouse ? [lockedWarehouse] : warehouseData;
+
+        warehouseSelect.innerHTML = currentWarehouseOptions
+            .map((warehouse) => `<option value="${warehouse.id}">${warehouse.districtName} | ${warehouse.packageType} | ${warehouse.districtType} | ${warehouse.status}</option>`)
+            .join("");
+        lockCurrentWarehouseField();
+
+        vehicleSelect.innerHTML = vehicleOptions
+            .map((vehicle) => `<option value="${vehicle.id}">${vehicle.label}</option>`)
+            .join("");
+
+        const categories = [...new Set(materialOptions.map(m => m.category))].sort();
+        categorySelect.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join("");
+        
+        filterSubCategories();
+    }
+
+    function filterSubCategories() {
+        const category = document.getElementById("materialCategory").value;
+        const subCategorySelect = document.getElementById("materialSubCategory");
+        
+        const subCategories = [...new Set(materialOptions.filter(m => m.category === category).map(m => m.sub_category).filter(Boolean))].sort();
+        const subCategoryField = subCategorySelect.closest(".field") || subCategorySelect.parentElement;
+        if (subCategoryField) {
+            subCategoryField.style.display = subCategories.length ? "" : "none";
+        }
+        subCategorySelect.innerHTML = subCategories.map(sc => `<option value="${sc}">${sc}</option>`).join("");
+        
+        filterMaterials();
+    }
+
+    function filterMaterials() {
+        const category = document.getElementById("materialCategory").value;
+        const subCategory = document.getElementById("materialSubCategory").value;
+        const materialSelect = document.getElementById("materialType");
+        const subCategories = [...new Set(materialOptions.filter(m => m.category === category).map(m => m.sub_category).filter(Boolean))];
+        
+        const materials = materialOptions.filter(m => m.category === category && (!subCategories.length || m.sub_category === subCategory));
+        materialSelect.innerHTML = materials.map(m => `<option value="${m.id}">${m.label}</option>`).join("");
+    }
+
+    async function ensureTrackingMap() {
+        if (trackingMap || !window.L) {
+            return;
+        }
+
+        trackingMap = L.map("trackingMap");
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+            attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(trackingMap);
+
+        trackingMap.setView([19.2, 75.3], 7);
+        await drawWarehouseMarkers();
+    }
+
+    async function drawWarehouseMarkers() {
+        if (!trackingMap) {
+            return;
+        }
+
+        if (warehouseMarkerLayer) {
+            trackingMap.removeLayer(warehouseMarkerLayer);
+        }
+
+        warehouseMarkerLayer = L.layerGroup(
+            warehouseData.map((warehouse) =>
+                L.marker(
+                    [warehouse.lat, warehouse.lon],
+                    {
+                        icon: createWarehouseIcon(
+                            warehouse.status.toLowerCase() === "operational" ? "all" : "inactive",
+                            warehouse.districtName
+                        )
+                    }
+                ).bindPopup(
+                    `<strong>${warehouse.name}</strong><br>${warehouse.districtName}<br>${warehouse.address}<br>In charge: ${warehouse.inCharge}<br>Contact: ${warehouse.contact}<br>${warehouse.districtType} | ${warehouse.packageType} | ${warehouse.status}<br>Tracked stock items: ${warehouse.stockRows.length}`
+                )
+            )
+        ).addTo(trackingMap);
+    }
+
+    async function drawTrackingRoute(currentWarehouse, recommendedWarehouse, coordinates) {
+        await ensureTrackingMap();
+
+        if (!trackingMap) {
+            return;
+        }
+
+        if (trackingRouteLayer) {
+            trackingMap.removeLayer(trackingRouteLayer);
+        }
+
+        if (trackingMarkerLayer) {
+            trackingMap.removeLayer(trackingMarkerLayer);
+        }
+
+        trackingRouteLayer = L.polyline(
+            coordinates.map((pair) => [pair[1], pair[0]]),
+            { color: "#31539d", weight: 5, opacity: 0.92 }
+        ).addTo(trackingMap);
+
+        trackingMarkerLayer = L.layerGroup([
+            L.marker(
+                [currentWarehouse.lat, currentWarehouse.lon],
+                { icon: createWarehouseIcon("shortage", currentWarehouse.districtName) }
+            ).bindPopup(`Shortage: ${currentWarehouse.name}<br>${currentWarehouse.address}`),
+            L.marker(
+                [recommendedWarehouse.lat, recommendedWarehouse.lon],
+                { icon: createWarehouseIcon("source", recommendedWarehouse.districtName) }
+            ).bindPopup(`Source: ${recommendedWarehouse.name}<br>${recommendedWarehouse.address}`)
+        ]).addTo(trackingMap);
+
+        trackingMap.fitBounds(trackingRouteLayer.getBounds(), { padding: [28, 28] });
+    }
+    function formatCurrency(value) {
+        return `Rs. ${Math.round(value).toLocaleString("en-IN")}`;
+    }
+
+    function renderRouteInfoPanel(currentWarehouse, recommendedWarehouse, recommendation) {
+        const vehicleId = document.getElementById("vehicleType").value;
+        const fuelType = document.getElementById("fuelType").value;
+        const requiredQty = parseInt(document.getElementById("requiredQty").value, 10) || 0;
+        const vehicle = vehicleOptions.find((item) => item.id === vehicleId) || vehicleOptions[0];
+        const distanceKm = recommendation.distanceKm;
+        const durationText = formatDuration(recommendation.route.duration || 0);
+        const mileage = vehicle.mileage[fuelType] || 1;
+        const fuelLitres = distanceKm / mileage;
+        const fuelCharge = fuelLitres * fuelRates[fuelType];
+        const loadPercent = Math.min(100, Math.max(0, Math.round((requiredQty / vehicle.capacity) * 100)));
+        const transferId = `TRF-${Date.now().toString().slice(-6)}`;
+
+        document.getElementById("routeOrderId").textContent = `Transfer ID: ${transferId}`;
+        document.getElementById("routeMapBadge").textContent = `${currentWarehouse.districtName} to ${recommendedWarehouse.districtName}`;
+        document.getElementById("routeCurrentStat").textContent = currentWarehouse.name;
+        document.getElementById("routeSourceStat").textContent = recommendedWarehouse.name;
+        document.getElementById("routeKmStat").textContent = `${distanceKm.toFixed(1)} km`;
+        document.getElementById("routeEtaStat").textContent = durationText;
+
+        document.getElementById("vehicleBadge").textContent = vehicle.label;
+        document.getElementById("vehicleTypeInfo").textContent = vehicle.label;
+        document.getElementById("fuelTypeInfo").textContent = `${fuelType.charAt(0).toUpperCase()}${fuelType.slice(1)} @ Rs. ${fuelRates[fuelType]}/L`;
+        document.getElementById("fuelChargeInfo").textContent = formatCurrency(fuelCharge);
+        document.getElementById("fuelUsedInfo").textContent = `${fuelLitres.toFixed(1)} L`;
+        document.getElementById("loadFillInfo").textContent = `${loadPercent}% of capacity`;
+        document.getElementById("totalChargeInfo").textContent = formatCurrency(fuelCharge);
+        document.getElementById("truckLoadBar").style.width = `${loadPercent}%`;
+        document.getElementById("truckLoadBar").textContent = `${loadPercent}%`;
+        
+        document.getElementById("submitRequestPanel").style.display = "block";
+    }
+
+    async function submitRouteRequest() {
+        if (!activeRecommendation) return;
+
+        const btn = document.querySelector("#submitRequestPanel button");
+        const statusDiv = document.getElementById("submitRequestStatus");
+        
+        btn.disabled = true;
+        btn.textContent = "Submitting...";
+        
+        const transferId = document.getElementById("routeOrderId").textContent.replace("Transfer ID: ", "").trim();
+        const vehicleId = document.getElementById("vehicleType").value;
+        const vehicle = vehicleOptions.find((item) => item.id === vehicleId) || vehicleOptions[0];
+        const requiredQty = document.getElementById("requiredQty").value;
+        const materialId = document.getElementById("materialType").value;
+        const material = materialOptions.find((item) => item.id === materialId);
+        
+        const payload = {
+            transfer_id: transferId,
+            source_warehouse: getCanonicalWarehouseName(activeRecommendation.recommendedWarehouse),
+            destination_warehouse: getCanonicalWarehouseName(activeRecommendation.currentWarehouse),
+            material_description: material ? material.label : "",
+            quantity: requiredQty,
+            vehicle_type: vehicle.label,
+            remarks: document.getElementById("routeRemarks").value.trim()
+        };
+
+        try {
+            const response = await fetch("/submit-route-request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                statusDiv.style.color = "#059669";
+                statusDiv.textContent = "Request successfully submitted!";
+                document.getElementById("routeRemarks").value = "";
+                setTimeout(() => {
+                    statusDiv.textContent = "";
+                    btn.disabled = false;
+                    btn.textContent = "Submit Request to Admin";
+                }, 3000);
+            } else {
+                statusDiv.style.color = "#dc2626";
+                statusDiv.textContent = result.error || "Failed to submit request.";
+                btn.disabled = false;
+                btn.textContent = "Submit Request to Admin";
+            }
+        } catch (err) {
+            statusDiv.style.color = "#dc2626";
+            statusDiv.textContent = "Network error occurred.";
+            btn.disabled = false;
+            btn.textContent = "Submit Request to Admin";
+        }
+    }
+
+    function refreshVehicleCharges() {
+        if (!activeRecommendation) {
+            return;
+        }
+
+        renderRouteInfoPanel(
+            activeRecommendation.currentWarehouse,
+            activeRecommendation.recommendedWarehouse,
+            activeRecommendation.recommendation
+        );
+    }
+
+
+
+    async function fetchWarehouseRoute(fromWarehouse, toWarehouse) {
+        try {
+            const response = await fetch(
+                `https://router.project-osrm.org/route/v1/driving/${fromWarehouse.lon},${fromWarehouse.lat};${toWarehouse.lon},${toWarehouse.lat}?overview=full&geometries=geojson`
+            );
+
+            if (!response.ok) {
+                throw new Error(`Route lookup failed with status ${response.status}`);
+            }
+
+            const payload = await response.json();
+            const route = payload && Array.isArray(payload.routes) ? payload.routes[0] : null;
+
+            if (!route) {
+                throw new Error(`No route found for ${toWarehouse.name}.`);
+            }
+
+            return route;
+        } catch (error) {
+            const dx = (toWarehouse.lon - fromWarehouse.lon) * 111.32 * Math.cos(((fromWarehouse.lat + toWarehouse.lat) / 2) * Math.PI / 180);
+            const dy = (toWarehouse.lat - fromWarehouse.lat) * 110.57;
+            const straightKm = Math.sqrt((dx * dx) + (dy * dy));
+            const routeKm = Math.max(straightKm * 1.22, 1);
+            const durationSeconds = (routeKm / 42) * 3600;
+
+            return {
+                distance: routeKm * 1000,
+                duration: durationSeconds,
+                geometry: {
+                    coordinates: [
+                        [fromWarehouse.lon, fromWarehouse.lat],
+                        [toWarehouse.lon, toWarehouse.lat]
+                    ]
+                }
+            };
+        }
+    }
+    function renderNearestResult(currentWarehouse, materialLabel, quantity, recommendation) {
+        document.getElementById("nearestResultCard").hidden = false;
+        document.getElementById("bestWarehouseName").textContent = recommendation.warehouse.name;
+        document.getElementById("bestWarehouseMeta").textContent = recommendation.warehouse.address;
+        document.getElementById("bestDistance").textContent = `${recommendation.distanceKm.toFixed(2)} km`;
+        document.getElementById("bestDuration").textContent = formatDuration(recommendation.route.duration || 0);
+        document.getElementById("bestStock").textContent = formatStockValue(recommendation.availableQty);
+        document.getElementById("requestSummary").textContent = `Required: ${quantity} ${materialLabel}`;
+        document.getElementById("supplySummary").textContent = `${recommendation.warehouse.packageType} | ${recommendation.warehouse.status}`;
+        document.getElementById("bestInCharge").textContent = recommendation.warehouse.inCharge;
+        document.getElementById("bestContact").textContent = recommendation.warehouse.contact;
+        document.getElementById("bestDistrictType").textContent = recommendation.warehouse.districtType;
+        document.getElementById("bestPackageStatus").textContent = `${recommendation.warehouse.packageType} | ${recommendation.warehouse.status}`;
+    }
+
+    function renderAlternatives(currentWarehouse, materialLabel, quantity, recommendations) {
+        const card = document.getElementById("alternativesCard");
+        const list = document.getElementById("alternativesList");
+
+        if (!recommendations.length) {
+            card.hidden = true;
+            list.innerHTML = "";
+            return;
+        }
+
+        card.hidden = false;
+        list.innerHTML = recommendations.map((entry) => `
+        <div class="alternative-item" style="cursor: pointer;" onclick="selectAlternative('${entry.warehouse.id}')">
+            <div>
+                <strong>${entry.warehouse.name}</strong>
+                <span>${entry.warehouse.districtName} | ${entry.warehouse.districtType} | ${entry.warehouse.packageType} | ${entry.warehouse.status}<br>${entry.warehouse.inCharge} | ${entry.warehouse.contact}<br>Available stock: ${formatStockValue(entry.availableQty)}</span>
+            </div>
+            <div class="alternative-metrics">
+                <div class="mini-chip">${entry.distanceKm.toFixed(2)} km</div>
+                <div class="mini-chip">${formatDuration(entry.route.duration || 0)}</div>
+            </div>
+        </div>
+    `).join("");
+    }
+
+    async function selectAlternative(warehouseId) {
+        if (!currentRecommendations) return;
+        
+        const selectedIndex = currentRecommendations.findIndex(r => r.warehouse.id === warehouseId);
+        if (selectedIndex === -1) return;
+        
+        const selected = currentRecommendations[selectedIndex];
+        
+        const currentWarehouse = getSelectedCurrentWarehouse();
+        const materialId = document.getElementById("materialType").value;
+        const material = materialOptions.find((item) => item.id === materialId);
+        const requiredQty = parseInt(document.getElementById("requiredQty").value, 10) || 0;
+        
+        activeRecommendation = {
+            currentWarehouse,
+            recommendedWarehouse: selected.warehouse,
+            recommendation: selected
+        };
+        
+        renderNearestResult(currentWarehouse, material.label, requiredQty, selected);
+        
+        const otherRecommendations = currentRecommendations.filter((_, idx) => idx !== selectedIndex);
+        renderAlternatives(currentWarehouse, material.label, requiredQty, otherRecommendations.slice(0, 3));
+        
+        await drawTrackingRoute(currentWarehouse, selected.warehouse, selected.route.geometry.coordinates);
+        renderRouteInfoPanel(currentWarehouse, selected.warehouse, selected);
+        
+        document.getElementById("nearestResultCard").scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function showPlannerError(msg) {
+        const errDiv = document.getElementById("plannerErrorMsg");
+        if (errDiv) {
+            if (msg) {
+                errDiv.textContent = msg;
+                errDiv.style.display = "block";
+            } else {
+                errDiv.style.display = "none";
+            }
+        } else if (msg) {
+            alert(msg);
+        }
+    }
+
+    async function findNearestWarehouse() {
+        showPlannerError(null);
+        
+        const materialId = document.getElementById("materialType").value;
+        const requiredQty = parseInt(document.getElementById("requiredQty").value, 10) || 0;
+        const findBtn = document.getElementById("findBtn");
+
+        const currentWarehouse = getSelectedCurrentWarehouse();
+        const material = materialOptions.find((item) => item.id === materialId);
+
+        if (!currentWarehouse || !material) {
+            showPlannerError("Your login is not mapped to a warehouse in the tracking list.");
+            return;
+        }
+
+        if (requiredQty <= 0) {
+            showPlannerError("Please enter a valid required quantity.");
+            return;
+        }
+
+        const candidateWarehouses = getAvailableWarehouses().filter((warehouse) =>
+            warehouse.id !== currentWarehouse.id && (warehouse.stock[materialId] || 0) >= requiredQty
+        );
+
+        if (!candidateWarehouses.length) {
+            document.getElementById("nearestResultCard").hidden = true;
+            document.getElementById("alternativesCard").hidden = true;
+            activeRecommendation = null;
+            showPlannerError(`No other warehouse currently has ${requiredQty} units of ${material.label} available in stock.`);
+            await drawWarehouseMarkers();
+            document.getElementById("routeMapBadge").textContent = "Live Route Preview";
+            return;
+        }
+
+        const originalBtnText = findBtn ? findBtn.innerHTML : "";
+        if (findBtn) {
+            findBtn.disabled = true;
+            findBtn.style.opacity = "0.8";
+            findBtn.style.cursor = "wait";
+            findBtn.innerHTML = `<svg style="display:inline-block; vertical-align:middle; margin-right:8px; animation: spin 1s linear infinite;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg> Searching...`;
+        }
+
+        try {
+            // Add a small UX delay so the searching state is actually visible to the user
+            await new Promise(resolve => setTimeout(resolve, 600));
+
+            const recommendations = [];
+
+            for (const warehouse of candidateWarehouses) {
+                const route = await fetchWarehouseRoute(currentWarehouse, warehouse);
+                recommendations.push({
+                    warehouse,
+                    route,
+                    availableQty: warehouse.stock[materialId] || 0,
+                    distanceKm: route.distance / 1000
+                });
+            }
+
+            recommendations.sort((a, b) => a.distanceKm - b.distanceKm);
+            
+            currentRecommendations = recommendations;
+
+            const nearest = recommendations[0];
+            activeRecommendation = {
+                currentWarehouse,
+                recommendedWarehouse: nearest.warehouse,
+                recommendation: nearest
+            };
+
+            renderNearestResult(currentWarehouse, material.label, requiredQty, nearest);
+            renderAlternatives(currentWarehouse, material.label, requiredQty, recommendations.slice(1, 4));
+            await drawTrackingRoute(currentWarehouse, nearest.warehouse, nearest.route.geometry.coordinates);
+            renderRouteInfoPanel(currentWarehouse, nearest.warehouse, nearest);
+        } catch (error) {
+            console.error(error);
+            document.getElementById("nearestResultCard").hidden = true;
+            document.getElementById("alternativesCard").hidden = true;
+            activeRecommendation = null;
+            showPlannerError(error.message || "Unable to calculate warehouse routes right now.");
+        } finally {
+            if (findBtn) {
+                findBtn.disabled = false;
+                findBtn.style.opacity = "1";
+                findBtn.style.cursor = "pointer";
+                findBtn.innerHTML = originalBtnText;
+            }
+        }
+    }
+
+    async function initializeTrackingPlanner() {
+        try {
+            await loadTrackingInventoryData();
+            populatePlannerFields();
+            await ensureTrackingMap();
+        } catch (error) {
+            console.error(error);
+            populatePlannerFields();
+            await ensureTrackingMap();
+        }
+    }
+
+    initializeTrackingPlanner();
+</script>
+{% endblock %}

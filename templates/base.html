@@ -4,34 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ panel_title or "ERP Dashboard" }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --nav-height: 78px;
-            --primary: #30466f;
-            --primary-strong: #243453;
-            --accent: #4f78d1;
-            --accent-soft: #eaf1ff;
+            --primary: #223861;
+            --primary-light: #4A6491;
+            --primary-strong: #12203A;
+            --accent: #64A0F8;
+            --accent-soft: #F0F6FF;
             --surface: #ffffff;
             --surface-soft: #f7f9fe;
             --surface-muted: #eef3fb;
-            --border: #d6e0f1;
-            --text: #25324a;
-            --muted: #66748f;
-            --success: #21835f;
-            --shadow: 0 18px 40px rgba(39, 56, 92, 0.08);
+            --background: #F4F8FE;
+            --border: #D7E2F0;
+            --text: #12243E;
+            --muted: #6A7D9D;
+            --success: #13865E;
+            --warning: #B16E1E;
+            --danger: #B91C1C;
+            --shadow: 0 18px 42px rgba(18, 32, 58, 0.07);
         }
 
         * {
             box-sizing: border-box;
         }
 
+        html {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            width: 100%;
+            min-width: 0;
+            overflow-x: hidden;
+            font-family: "Inter", Arial, sans-serif;
             color: var(--text);
             background:
-                radial-gradient(circle at top left, rgba(96, 138, 233, 0.12), transparent 24%),
-                linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+                radial-gradient(circle at top left, rgba(100, 160, 248, 0.13), transparent 24%),
+                linear-gradient(180deg, #EFF4FC 0%, var(--background) 48%, #F7F9FE 100%);
+        }
+
+        img,
+        svg,
+        canvas,
+        video {
+            max-width: 100%;
+        }
+
+        a,
+        button,
+        input,
+        select,
+        textarea {
+            max-width: 100%;
         }
 
         .navbar {
@@ -45,10 +75,10 @@
             justify-content: space-between;
             gap: 24px;
             padding: 0 28px;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(214, 224, 241, 0.95);
-            box-shadow: 0 10px 24px rgba(37, 52, 85, 0.06);
+            box-shadow: 0 10px 28px rgba(18, 32, 58, 0.07);
             z-index: 1000;
         }
 
@@ -56,8 +86,9 @@
             color: var(--primary);
             text-decoration: none;
             font-size: 28px;
-            font-weight: 700;
-            letter-spacing: -0.06em;
+            font-family: "Space Grotesk", "Inter", Arial, sans-serif;
+            font-weight: 800;
+            letter-spacing: 0;
             white-space: nowrap;
         }
 
@@ -71,14 +102,15 @@
             justify-content: flex-end;
             gap: 8px;
             align-items: center;
+            min-width: 0;
         }
 
         .nav-link {
             padding: 10px 14px;
-            color: #53627d;
+            color: var(--muted);
             text-decoration: none;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 800;
             border-radius: 999px;
             transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
         }
@@ -147,17 +179,19 @@
 
         .nav-logout {
             color: #fff;
-            background: linear-gradient(135deg, #3559a6 0%, #5079d1 100%);
-            box-shadow: 0 12px 24px rgba(54, 88, 163, 0.18);
+            background: linear-gradient(135deg, var(--primary-strong) 0%, var(--primary) 58%, var(--primary-light) 100%);
+            box-shadow: 0 12px 24px rgba(34, 56, 97, 0.18);
         }
 
         .nav-logout:hover {
             color: #fff;
-            background: linear-gradient(135deg, #2f4f95 0%, #446cc0 100%);
+            background: linear-gradient(135deg, #0F1B32 0%, var(--primary) 100%);
         }
 
         .page {
             padding: calc(var(--nav-height) + 28px) 32px 32px;
+            width: 100%;
+            min-width: 0;
         }
 
         .welcome-box {
@@ -167,7 +201,7 @@
             gap: 18px;
             margin-bottom: 18px;
             padding: 18px 22px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.94);
             border: 1px solid var(--border);
             border-radius: 20px;
             box-shadow: var(--shadow);
@@ -201,9 +235,9 @@
         .action-btn,
         .small-btn {
             color: #fff;
-            background: linear-gradient(135deg, #3559a6 0%, #5079d1 100%);
+            background: linear-gradient(135deg, var(--primary-strong) 0%, var(--primary) 58%, var(--primary-light) 100%);
             border: none;
-            box-shadow: 0 12px 24px rgba(54, 88, 163, 0.18);
+            box-shadow: 0 12px 24px rgba(34, 56, 97, 0.18);
         }
 
         .action-btn:hover,
@@ -226,15 +260,17 @@
             padding: 11px 18px;
             color: var(--primary);
             background: var(--accent-soft);
-            border: 1px solid #d4e0fb;
+            border: 1px solid var(--border);
         }
 
         .panel {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.96);
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: var(--shadow);
+            min-width: 0;
+            animation: portalCardEnter 520ms cubic-bezier(.2, .8, .2, 1) both;
         }
 
         .panel-title {
@@ -243,13 +279,14 @@
             align-items: center;
             gap: 16px;
             padding: 18px 22px;
-            background: linear-gradient(180deg, #eef4ff 0%, #e3ecff 100%);
+            background: linear-gradient(180deg, #F7F9FE 0%, #EEF4FF 100%);
             border-bottom: 1px solid var(--border);
         }
 
         .panel-title-text {
             font-size: 24px;
-            font-weight: 700;
+            font-family: "Space Grotesk", "Inter", Arial, sans-serif;
+            font-weight: 800;
             color: var(--primary);
         }
 
@@ -263,6 +300,7 @@
         .panel-body {
             padding: 24px;
             min-height: 460px;
+            min-width: 0;
         }
 
         .profile-grid {
@@ -281,8 +319,22 @@
         .feature-card {
             background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
             border: 1px solid var(--border);
-            border-radius: 22px;
+            border-radius: 18px;
             box-shadow: var(--shadow);
+            min-width: 0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .photo-card:hover,
+        .tile:hover,
+        .form-card:hover,
+        .list-card:hover,
+        .details-card:hover,
+        .records-card:hover,
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(100, 160, 248, 0.46);
+            box-shadow: 0 22px 46px rgba(18, 32, 58, 0.1);
         }
 
         .photo-card,
@@ -324,7 +376,7 @@
 
         .details-header {
             padding: 20px 22px 16px;
-            background: linear-gradient(135deg, var(--primary-strong) 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, var(--primary-strong) 0%, var(--primary) 58%, var(--primary-light) 100%);
             color: #fff;
         }
 
@@ -336,8 +388,9 @@
 
         .designation {
             margin: 0;
-            color: #ffe67a;
-            font-weight: 700;
+            color: #D9E8FF;
+            font-family: "Space Grotesk", "Inter", Arial, sans-serif;
+            font-weight: 800;
         }
 
         .designation span {
@@ -410,6 +463,7 @@
         .feature-card h3 {
             margin: 0 0 12px;
             color: var(--primary);
+            font-family: "Space Grotesk", "Inter", Arial, sans-serif;
             font-size: 20px;
         }
 
@@ -489,8 +543,8 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #5f84d8;
-            box-shadow: 0 0 0 4px rgba(95, 132, 216, 0.13);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(100, 160, 248, 0.16);
         }
 
         ul {
@@ -518,7 +572,7 @@
             gap: 16px;
             padding: 18px 22px;
             border-bottom: 1px solid #e4ebf7;
-            background: linear-gradient(180deg, #f9fbff 0%, #eef3ff 100%);
+            background: linear-gradient(180deg, #F9FBFF 0%, #EEF4FF 100%);
         }
 
         .records-header h3 {
@@ -533,6 +587,8 @@
 
         .table-wrap {
             overflow-x: auto;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -551,7 +607,7 @@
         }
 
         th {
-            color: #536a98;
+            color: var(--primary);
             background: #edf3ff;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -572,7 +628,7 @@
         .eyebrow {
             display: inline-block;
             margin-bottom: 10px;
-            color: #5f78a8;
+            color: var(--primary);
             background: var(--accent-soft);
             border-radius: 999px;
             padding: 7px 12px;
@@ -582,21 +638,69 @@
             letter-spacing: 0.08em;
         }
 
+        @keyframes portalCardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 1ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 1ms !important;
+            }
+        }
+
         @media (max-width: 980px) {
             .navbar {
+                position: sticky;
                 height: auto;
-                align-items: flex-start;
+                align-items: stretch;
                 flex-direction: column;
-                padding: 16px 18px;
+                padding: 14px 16px;
+            }
+
+            .brand {
+                font-size: 24px;
+            }
+
+            .nav-links {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+                scrollbar-width: thin;
+            }
+
+            .nav-link {
+                white-space: nowrap;
+            }
+
+            .nav-group {
+                flex: 0 0 auto;
             }
 
             .page {
-                padding: 150px 16px 22px;
+                padding: 16px;
             }
 
             .nav-dropdown {
-                left: 0;
-                right: auto;
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                top: auto;
+                min-width: 0;
+                max-width: calc(100vw - 24px);
             }
 
             .welcome-box {
@@ -612,21 +716,111 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 760px) {
+            :root {
+                --shadow: 0 10px 24px rgba(39, 56, 92, 0.07);
+            }
+
+            .page {
+                padding: 12px;
+            }
+
+            .panel {
+                border-radius: 16px;
+            }
+
+            .panel-title {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 14px 16px;
+            }
+
+            .panel-title-text {
+                font-size: 20px;
+            }
+
+            .panel-title-actions {
+                width: 100%;
+                margin-left: 0;
+                flex-wrap: wrap;
+            }
+
+            .panel-body {
+                padding: 14px;
+                min-height: auto;
+            }
+
+            .welcome-box,
+            .records-header,
+            .info-row,
+            .feature-row {
+                border-radius: 14px;
+            }
+
+            .simple-grid,
+            .stats-grid,
+            .feature-grid,
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+
+            .details-header h2 {
+                font-size: 24px;
+            }
+
+            .action-btn,
+            .secondary-btn,
+            .small-btn {
+                width: 100%;
+            }
+
+            .page-actions {
+                width: 100%;
+            }
+
+            th,
+            td {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .page {
+                padding: 8px;
+            }
+
+            .panel-body {
+                padding: 10px;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
+    {% if app_settings and app_settings.get('compact_tables') %}
+    <style>
+        th, td { padding: 8px 10px !important; font-size: 12px !important; }
+        .action-btn, .small-btn, .secondary-btn { padding: 6px 12px !important; font-size: 11px !important; }
+        .status-pill, .status-badge { padding: 4px 10px !important; font-size: 11px !important; }
+        .records-header { padding: 12px 16px !important; }
+        .panel-body { padding: 16px !important; }
+    </style>
+    {% endif %}
 <body>
     {% include "partials/navbar.html" %}
 
     <main class="page">
-        {% if active_page in ["admin_dashboard", "ground_dashboard", "user_dashboard"] %}
-        <div class="welcome-box">
-            <div>
-                <strong>Welcome, {{ user }}</strong>
-                <div class="muted">{{ panel_title }} panel</div>
-            </div>
-        </div>
-        {% endif %}
-
         {% if not frameless_page %}
         <section class="panel">
             <div class="panel-title">

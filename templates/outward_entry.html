@@ -91,6 +91,13 @@
         transform: translateY(-1px);
     }
 
+    .material-choice-note {
+        margin: 0;
+        color: #667089;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
     .field.span-2,
     .field.span-3 {
         grid-column: span 2;
@@ -185,6 +192,8 @@
 
     .table-wrap {
         overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
         padding: 0 8px 10px;
         background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
     }
@@ -235,6 +244,28 @@
     }
 
     @media (max-width: 760px) {
+        .entry-shell,
+        .entry-grid,
+        .entry-card,
+        .records-card {
+            min-width: 0;
+        }
+
+        .entry-card {
+            border-radius: 14px;
+        }
+
+        .entry-card-header,
+        .records-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .entry-card-body {
+            padding: 16px;
+        }
+
         .grid-form {
             grid-template-columns: 1fr;
         }
@@ -247,6 +278,12 @@
         .submit-bar {
             align-items: flex-start;
             flex-direction: column;
+            position: static;
+            padding: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
         }
     }
 </style>
@@ -285,7 +322,10 @@
                     <div class="field"><label for="out_block">Block</label><input id="out_block"></div>
                     <div class="field"><label for="out_dist">Dist</label><input id="out_dist"></div>
                     <div class="field"><label for="out_item_code">Item Code</label><input id="out_item_code"></div>
-                    <div class="field span-2"><label for="out_description">Description</label><input id="out_description"></div>
+                    <div class="field"><label for="out_material_category">Categorised Item/Services</label><select id="out_material_category" onchange="populateOutMaterialSubCategories()"><option value="">Loading categories...</option></select></div>
+                    <div class="field"><label for="out_material_sub_category">Short Description</label><select id="out_material_sub_category" onchange="populateOutMaterialTrackers()"><option value="">Select short description</option></select></div>
+                    <div class="field span-2"><label for="out_material_tracker">Tracker Description</label><select id="out_material_tracker" onchange="applySelectedOutMaterial()"><option value="">Select tracker description</option></select></div>
+                    <div class="field span-2"><label for="out_description">Description</label><input id="out_description" placeholder="Enter material description"><p class="material-choice-note">Choose from categorised materials or type new material details here.</p></div>
                     <div class="field"><label for="out_qty">NO/Qty</label><input id="out_qty" oninput="calculateOutwardTotals()"></div>
                     <div class="field"><label for="out_physical_qty">Physical NO/Qty</label><input id="out_physical_qty"></div>
                     <div class="field"><label for="out_unit">Unit</label><input id="out_unit"></div>
@@ -412,6 +452,122 @@ const outwardFieldIds = [
     "out_dispatched_date", "out_mode_of_delivery", "out_reporting_time", "out_loading_time", "out_remark", "out_ug_aerial", "out_frt"
 ];
 
+let outMaterialOptions = [];
+let lastAppliedOutMaterialDescription = "";
+
+function createOutMaterialOption(value, label) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    return option;
+}
+
+function setOutSelectOptions(selectId, options, placeholder) {
+    const select = document.getElementById(selectId);
+    if (!select) {
+        return;
+    }
+
+    select.innerHTML = "";
+    select.appendChild(createOutMaterialOption("", placeholder));
+    options.forEach((option) => {
+        select.appendChild(createOutMaterialOption(option.value, option.label));
+    });
+}
+
+function sortedOutUnique(values) {
+    return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+}
+
+function populateOutMaterialCategories() {
+    const categories = sortedOutUnique(outMaterialOptions.map((item) => item.category));
+    setOutSelectOptions(
+        "out_material_category",
+        categories.map((category) => ({ value: category, label: category })),
+        "Select categorised item/services"
+    );
+    populateOutMaterialSubCategories();
+}
+
+function populateOutMaterialSubCategories() {
+    clearAppliedOutMaterialDescription();
+    const category = outwardValue("out_material_category");
+    const subCategories = sortedOutUnique(
+        outMaterialOptions
+            .filter((item) => !category || item.category === category)
+            .map((item) => item.subCategory)
+            .filter(Boolean)
+    );
+    const subCategoryField = document.getElementById("out_material_sub_category")?.closest(".field");
+    if (subCategoryField) {
+        subCategoryField.style.display = subCategories.length ? "" : "none";
+    }
+    setOutSelectOptions(
+        "out_material_sub_category",
+        subCategories.map((subCategory) => ({ value: subCategory, label: subCategory })),
+        "Select short description"
+    );
+    populateOutMaterialTrackers();
+}
+
+function populateOutMaterialTrackers() {
+    clearAppliedOutMaterialDescription();
+    const category = outwardValue("out_material_category");
+    const subCategory = outwardValue("out_material_sub_category");
+    const visibleSubCategories = sortedOutUnique(
+        outMaterialOptions
+            .filter((item) => !category || item.category === category)
+            .map((item) => item.subCategory)
+            .filter(Boolean)
+    );
+    const trackers = outMaterialOptions
+        .filter((item) => (
+            (!category || item.category === category) &&
+            (!visibleSubCategories.length || !subCategory || item.subCategory === subCategory)
+        ))
+        .map((item) => ({ value: item.description, label: item.description }));
+
+    setOutSelectOptions("out_material_tracker", trackers, "Select tracker description");
+}
+
+function applySelectedOutMaterial() {
+    const selectedDescription = outwardValue("out_material_tracker");
+    if (selectedDescription) {
+        document.getElementById("out_description").value = selectedDescription;
+        lastAppliedOutMaterialDescription = selectedDescription;
+    }
+}
+
+function clearAppliedOutMaterialDescription() {
+    const descriptionInput = document.getElementById("out_description");
+    if (descriptionInput && descriptionInput.value === lastAppliedOutMaterialDescription) {
+        descriptionInput.value = "";
+    }
+    lastAppliedOutMaterialDescription = "";
+}
+
+function loadOutMaterialCategories() {
+    fetch("/material-categories")
+    .then(async (res) => {
+        if (!res.ok) {
+            throw new Error(`Material categories failed with status ${res.status}`);
+        }
+        return res.json();
+    })
+    .then((payload) => {
+        outMaterialOptions = Object.entries(payload || {}).map(([description, info]) => ({
+            description,
+            category: info.category || "Uncategorized",
+            subCategory: info.sub_category || ""
+        }));
+        populateOutMaterialCategories();
+    })
+    .catch((error) => {
+        console.error(error);
+        setOutSelectOptions("out_material_category", [], "Categories unavailable");
+    });
+}
+
 function outwardValue(id) {
     const element = document.getElementById(id);
     return element ? element.value : "";
@@ -449,6 +605,14 @@ function resetOutwardForm() {
         }
         element.value = "";
     });
+    ["out_material_category", "out_material_sub_category", "out_material_tracker"].forEach((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.value = "";
+        }
+    });
+    lastAppliedOutMaterialDescription = "";
+    populateOutMaterialSubCategories();
 }
 
 function submitOutwardForm() {
@@ -523,5 +687,6 @@ function loadOutwardData() {
 }
 
 loadOutwardData();
+loadOutMaterialCategories();
 </script>
 {% endblock %}

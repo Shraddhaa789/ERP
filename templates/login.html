@@ -1,106 +1,297 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ERP Login</title>
-
+    <title>SITESYNC Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
         body {
             margin: 0;
-            font-family: Arial;
-            background: linear-gradient(135deg, #31456f, #4e6fb7);
-            height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(100, 160, 248, 0.14), transparent 26%),
+                linear-gradient(180deg, #EFF4FC 0%, #F4F8FE 55%, #F7F9FE 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 24px;
+            color: #12243E;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(74, 100, 145, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(74, 100, 145, 0.08) 1px, transparent 1px);
+            background-size: 42px 42px;
+            animation: gridDrift 7s ease-in-out infinite alternate;
+            pointer-events: none;
         }
 
         .container {
             display: flex;
-            width: 850px;
-            background: white;
-            border-radius: 12px;
+            width: min(900px, 100%);
+            min-height: 500px;
+            background: #ffffff;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            box-shadow: 0 22px 48px rgba(18, 32, 58, 0.12);
+            border: 1px solid #D7E2F0;
+            position: relative;
+            z-index: 1;
+            animation: cardEnter 760ms cubic-bezier(.2, .8, .2, 1) both;
         }
 
         .left {
-            width: 50%;
-            background: #273c75;
+            width: 45%;
+            background: linear-gradient(135deg, #12203A 0%, #223861 58%, #4A6491 100%);
             color: white;
-            padding: 50px 40px;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.05)" stroke-width="2" fill="none"/></svg>') repeat;
+            opacity: 0.5;
+            pointer-events: none;
+            animation: gridDrift 8s ease-in-out infinite alternate;
+        }
+
+        .hero-logo-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            margin-bottom: 40px;
+            display: flex;
+            animation: floatHero 4s ease-in-out infinite alternate;
+        }
+
+        .hero-logo-wrapper img {
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+            filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.6)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
         }
 
         .left h1 {
-            margin-bottom: 10px;
-            font-size: 28px;
+            margin: 0 0 16px;
+            font-size: 36px;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0;
+            line-height: 1.2;
+            z-index: 1;
+            animation: textEnter 720ms 140ms cubic-bezier(.2, .8, .2, 1) both;
         }
 
         .left p {
-            opacity: 0.9;
+            margin: 0 0 20px;
+            opacity: 0.85;
             line-height: 1.6;
+            font-size: 15px;
+            z-index: 1;
+            animation: textEnter 720ms 220ms cubic-bezier(.2, .8, .2, 1) both;
         }
 
         .right {
-            width: 50%;
-            padding: 40px;
+            width: 55%;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: formEnter 760ms 220ms cubic-bezier(.2, .8, .2, 1) both;
         }
 
         .right h2 {
+            margin: 0 0 30px;
+            color: #12243E;
+            font-size: 28px;
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0;
+        }
+
+        .input-group {
             margin-bottom: 20px;
-            color: #2f3640;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #6A7D9D;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
+            padding: 14px 16px;
+            border: 1px solid #D7E2F0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #12243E;
+            background: #F0F6FF;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #64A0F8;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(100, 160, 248, 0.16);
         }
 
         select {
-            background: #fff;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background: #273c75;
+            padding: 16px;
+            background: linear-gradient(135deg, #12203A 0%, #223861 58%, #4A6491 100%);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 16px;
+            font-weight: 800;
             margin-top: 10px;
+            transition: all 0.2s ease;
+            box-shadow: 0 12px 24px rgba(34, 56, 97, 0.18);
         }
 
         button:hover {
-            background: #192a56;
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(34, 56, 97, 0.24);
+            background: linear-gradient(135deg, #0F1B32 0%, #223861 100%);
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.985);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes formEnter {
+            from {
+                opacity: 0;
+                transform: translateX(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes textEnter {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatHero {
+            from { transform: translateY(0); }
+            to { transform: translateY(-12px); }
         }
 
         .footer-text {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #888;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #6A7D9D;
             text-align: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                min-height: 0;
+            }
+            .left, .right {
+                width: 100%;
+            }
+            .left {
+                padding: 40px;
+            }
+        }
+
+        @media (max-width: 560px) {
+            body {
+                align-items: stretch;
+                padding: 12px;
+            }
+
+            .container {
+                border-radius: 16px;
+            }
+
+            .left,
+            .right {
+                padding: 28px 20px;
+            }
+
+            .left h1 {
+                font-size: 28px;
+            }
+
+            .right h2 {
+                font-size: 24px;
+                margin-bottom: 22px;
+            }
         }
     </style>
 </head>
-
 <body>
 
 <div class="container">
-
     <!-- LEFT SIDE -->
     <div class="left">
-        <h1> Construction ERP</h1>
-        <p>
-            Manage materials, projects, billing, and workforce efficiently.
-        </p>
-        <p>
-            Built for Admins, Ground Teams, and Individual Users.
-        </p>
+        <div class="hero-logo-wrapper" aria-hidden="true">
+            <img src="/static/logo_cropped.png" alt="SITESYNC">
+        </div>
+        <p>Manage materials, projects, billing, and workforce efficiently in one unified platform.</p>
+        <p>Built for Admins, Ground Teams, and Individual Users.</p>
     </div>
 
     <!-- RIGHT SIDE -->
@@ -108,24 +299,32 @@
         <h2>Login to your account</h2>
 
         <form method="POST" action="/login">
-            <input name="username" placeholder="Username" required>
-            <input name="password" type="password" placeholder="Password" required>
+            <div class="input-group">
+                <label>Username</label>
+                <input name="username" placeholder="Enter your username" required>
+            </div>
+            
+            <div class="input-group">
+                <label>Password</label>
+                <input name="password" type="password" placeholder="Enter your password" required>
+            </div>
 
-            <!-- Optional role UI -->
-            <select name="role">
-                <option value="admin">Admin</option>
-                <option value="ground">Ground Team</option>
-                <option value="user">User</option>
-            </select>
+            <div class="input-group">
+                <label>Role</label>
+                <select name="role">
+                    <option value="admin">Admin</option>
+                    <option value="ground">Ground Team</option>
+                    <option value="user">User</option>
+                </select>
+            </div>
 
-            <button type="submit">Login</button>
+            <button type="submit">Sign In</button>
         </form>
 
         <div class="footer-text">
-            ERP System © 2026
+            SITESYNC © 2026
         </div>
     </div>
-
 </div>
 
 </body>

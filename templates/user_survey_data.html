@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .survey-container {
+        padding-bottom: 40px;
+    }
+
+    .top-bar {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 24px;
+        align-items: stretch;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        width: 320px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 4px 12px rgba(33, 49, 85, 0.03);
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stat-info h3 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .stat-info p {
+        margin: 4px 0 0;
+        font-size: 24px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .filter-bar {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 20px;
+        flex: 1;
+        box-shadow: 0 4px 12px rgba(33, 49, 85, 0.03);
+    }
+
+    .filter-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-end;
+    }
+
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+
+    .filter-control {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        background-color: #f8fafc;
+        font-size: 14px;
+        color: #1e293b;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .filter-control:focus {
+        outline: none;
+        border-color: #4f46e5;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .btn-filter {
+        height: 42px;
+        padding: 0 20px;
+        border-radius: 10px;
+        background: #4f46e5;
+        color: #ffffff;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-filter:hover {
+        background: #4338ca;
+    }
+
+    .btn-reset {
+        height: 42px;
+        padding: 0 20px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        color: #475569;
+        font-weight: 700;
+        border: 1px solid #e2e8f0;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .btn-reset:hover {
+        background: #e2e8f0;
+    }
+
+    .survey-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        box-shadow: 0 12px 32px rgba(33, 49, 85, 0.04);
+        overflow: hidden;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .survey-table {
+        width: 100%;
+        min-width: 980px;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .survey-table th {
+        background: #f8fafc;
+        padding: 16px 20px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #475569;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid #e2e8f0;
+        white-space: nowrap;
+    }
+
+    .survey-table td {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #1e293b;
+        border-bottom: 1px solid #e2e8f0;
+        vertical-align: middle;
+    }
+
+    .survey-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .survey-table tr:hover {
+        background: #f1f5f9;
+    }
+
+    .meta-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 8px;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        margin-bottom: 4px;
+    }
+
+    .btn-photo {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 10px;
+        background: #4f46e5;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .btn-photo:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-photo.disabled {
+        background: #e2e8f0;
+        color: #64748b;
+        pointer-events: none;
+        box-shadow: none;
+    }
+
+    .btn-delete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: #fee2e2;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-left: 8px;
+    }
+
+    .btn-delete:hover {
+        background: #fecaca;
+        color: #dc2626;
+        transform: scale(1.05);
+    }
+
+    @media (max-width: 1024px) {
+        .top-bar {
+            flex-direction: column;
+            gap: 16px;
+        }
+        .stat-card {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 760px) {
+        .filter-bar {
+            padding: 16px;
+        }
+        .filter-group {
+            flex: 1 1 100%;
+        }
+        .survey-card {
+            border-radius: 14px;
+        }
+
+        .survey-table {
+            min-width: 0;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            background: #f8fafc;
+        }
+
+        .survey-table thead {
+            display: none;
+        }
+
+        .survey-table,
+        .survey-table tbody,
+        .survey-table tr,
+        .survey-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .survey-table tr {
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .survey-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .survey-table td:last-child {
+            border-bottom: none;
+        }
+
+        .btn-photo {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="survey-container">
+    <div class="top-bar">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3>Total Material Items</h3>
+                <p>{{ material_count }}</p>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <form class="filter-form" method="GET" action="/user-survey-data">
+                <div class="filter-group">
+                    <label for="warehouse">Warehouse</label>
+                    <select name="warehouse" id="warehouse" class="filter-control">
+                        <option value="">All Warehouses</option>
+                        {% for wh in warehouses %}
+                        <option value="{{ wh }}" {% if wh == selected_warehouse %}selected{% endif %}>{{ wh }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="category">Category</label>
+                    <select name="category" id="category" class="filter-control">
+                        <option value="">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}" {% if cat == selected_category %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" class="btn-filter">Apply Filters</button>
+                    <a href="/user-survey-data" class="btn-reset">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="survey-card">
+        <div class="table-responsive">
+            <table class="survey-table">
+                <thead>
+                    <tr>
+                        <th>ID & Date</th>
+                        <th>Location</th>
+                        <th>Material Info</th>
+                        <th>Description</th>
+                        <th>GPS Data</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in surveys %}
+                    <tr>
+                        <td>
+                            <span style="font-weight: 800; color: #0f172a;">#{{ row.id }}</span><br>
+                            <span style="color: #64748b; font-size: 13px;">{{ row.created_at }}</span>
+                            <br><span style="color: #64748b; font-size: 13px;">User ID: {{ row.user_id }}</span>
+                        </td>
+                        <td>
+                            <span style="font-weight: 700;">{{ row.warehouse }}</span>
+                            {% if row.address %}
+                            <br><span style="color: #64748b; font-size: 13px;">{{ row.address }}</span>
+                            {% endif %}
+                            <br><span style="color: #64748b; font-size: 13px;">
+                                {{ row.taluka }}{% if row.taluka and row.district %}, {% endif %}{{ row.district }}
+                                {% if row.pincode %} - {{ row.pincode }}{% endif %}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="meta-pill">{{ row.category }}</span><br>
+                            <strong>Item {{ row.item_index or 1 }}:</strong> {{ row.item }}<br>
+                            <strong>Qty:</strong> {{ row.qty }}{% if row.unit %} {{ row.unit }}{% endif %}
+                        </td>
+                        <td>
+                            <p style="margin: 0; max-width: 250px; color: #475569; line-height: 1.4;">{{ row.desc }}</p>
+                        </td>
+                        <td>
+                            <div style="color: #64748b; font-size: 13px;">
+                                <strong>Lat:</strong> {{ row.lat }}<br>
+                                <strong>Lon:</strong> {{ row.lon }}<br>
+                                <strong>Accuracy:</strong> {{ row.accuracy }} m
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center;">
+                                {% if row.photo_path %}
+                                <a href="/uploads/{{ row.photo_path }}" class="btn-photo" target="_blank">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    See Photo
+                                </a>
+                                {% else %}
+                                <span class="btn-photo disabled">No Photo</span>
+                                {% endif %}
+
+                                <form action="/delete-survey" method="POST" onsubmit="return confirm('Are you sure you want to delete this survey and its photo? This cannot be undone.');" style="margin: 0;">
+                                    <input type="hidden" name="id" value="{{ row.id }}">
+                                    <button type="submit" class="btn-delete" title="Delete Survey">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: #64748b;">
+                            No survey data has been uploaded yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,784 @@
+{% extends "base.html" %}
+
+{% block panel_actions %}
+<a class="secondary-btn" href="/report" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    <span>Back to Report</span>
+</a>
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Premium Modern Design System for Document Hub */
+    .doc-hub-container {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    /* Message Banner styling */
+    .doc-alert {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        animation: slideInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid transparent;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .doc-alert.status-success {
+        background-color: #f0fdf4;
+        border-color: #bbf7d0;
+        color: #15803d;
+    }
+
+    .doc-alert.status-info {
+        background-color: #eff6ff;
+        border-color: #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .doc-alert.status-warning {
+        background-color: #fffbeb;
+        border-color: #fde68a;
+        color: #b45309;
+    }
+
+    .doc-alert.status-error {
+        background-color: #fef2f2;
+        border-color: #fecaca;
+        color: #b91c1c;
+    }
+
+    /* Toolbar Header Card */
+    .doc-header-card {
+        background: linear-gradient(135deg, #ffffff 0%, #fcfdfe 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .doc-header-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, #3b82f6, #2563eb);
+    }
+
+    .doc-header-info h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -0.02em;
+    }
+
+    .doc-header-info p {
+        margin: 6px 0 0 0;
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .doc-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* Buttons Style */
+    .doc-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+        white-space: nowrap;
+    }
+
+    .doc-btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
+    }
+
+    .doc-btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    .doc-btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .doc-btn-danger-outline {
+        background: #ffffff;
+        border-color: #fee2e2;
+        color: #ef4444;
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.04);
+        opacity: 0;
+        transform: scale(0.95);
+        pointer-events: none;
+    }
+
+    .doc-btn-danger-outline.visible {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+    }
+
+    .doc-btn-danger-outline:hover {
+        background: #fef2f2;
+        border-color: #fca5a5;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);
+    }
+
+    /* Upload Panel Styling */
+    .doc-upload-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .doc-upload-card.open {
+        display: block;
+    }
+
+    .doc-upload-form {
+        display: grid;
+        grid-template-columns: minmax(180px, 240px) minmax(280px, 1fr) auto;
+        gap: 20px;
+        align-items: end;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+    }
+
+    .form-group select,
+    .form-group input[type="file"] {
+        width: 100%;
+        height: 44px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        font-size: 13px;
+        font-weight: 500;
+        background-color: #f8fafc;
+        color: #334155;
+        transition: all 0.2s ease;
+    }
+
+    .form-group input[type="file"] {
+        padding: 10px 14px;
+    }
+
+    .form-group select:focus,
+    .form-group input[type="file"]:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Modern Table Card Design */
+    .doc-table-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .doc-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .doc-table th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .doc-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 500;
+        vertical-align: middle;
+    }
+
+    .doc-table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+    .doc-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    .doc-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Custom Checkbox Design */
+    .checkbox-cell {
+        width: 48px;
+        text-align: center;
+        padding-right: 0 !important;
+    }
+
+    .custom-checkbox {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .custom-checkbox input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+    }
+
+    .checkmark {
+        height: 18px;
+        width: 18px;
+        background-color: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-block;
+        position: relative;
+    }
+
+    .custom-checkbox:hover input ~ .checkmark {
+        background-color: #e2e8f0;
+        border-color: #94a3b8;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+        background-color: #2563eb;
+        border-color: #2563eb;
+    }
+
+    .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+        left: 5px;
+        top: 2px;
+        width: 5px;
+        height: 9px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    .custom-checkbox input:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    /* Beautiful Pills & Badges */
+    .doc-type-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+    .doc-type-pill.pdf {
+        background-color: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .doc-type-pill.xls, .doc-type-pill.xlsx {
+        background-color: #ecfdf5;
+        color: #047857;
+    }
+
+    .doc-type-pill.doc, .doc-type-pill.docx {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .doc-type-pill.img, .doc-type-pill.png, .doc-type-pill.jpg, .doc-type-pill.jpeg {
+        background-color: #faf5ff;
+        color: #7e22ce;
+    }
+
+    .doc-type-pill.other {
+        background-color: #f1f5f9;
+        color: #475569;
+    }
+
+    .doc-id-badge {
+        font-family: monospace;
+        background-color: #f1f5f9;
+        color: #475569;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .report-type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .report-type-badge.inward {
+        color: #2563eb;
+    }
+
+    .report-type-badge.outward {
+        color: #d97706;
+    }
+
+    /* Modern Action Buttons inside rows */
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .row-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #64748b;
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        text-decoration: none;
+    }
+
+    .row-btn:hover {
+        transform: scale(1.05);
+    }
+
+    .row-btn-view:hover {
+        color: #059669;
+        background-color: #ecfdf5;
+        border-color: #a7f3d0;
+        box-shadow: 0 4px 10px rgba(5, 150, 105, 0.1);
+    }
+
+    .row-btn-link:hover {
+        color: #2563eb;
+        background-color: #eff6ff;
+        border-color: #bfdbfe;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+    }
+
+    .row-btn-delete:hover {
+        color: #dc2626;
+        background-color: #fef2f2;
+        border-color: #fecaca;
+        box-shadow: 0 4px 10px rgba(220, 38, 38, 0.1);
+    }
+
+    /* Empty state styling */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 24px;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        background-color: #f1f5f9;
+        color: #94a3b8;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 16px;
+    }
+
+    .empty-state h4 {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .empty-state p {
+        margin: 0;
+        font-size: 13px;
+        color: #64748b;
+        max-width: 320px;
+    }
+
+    /* Animations */
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @media (max-width: 860px) {
+        .doc-upload-form {
+            grid-template-columns: 1fr;
+        }
+        
+        .doc-header-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .doc-header-actions {
+            justify-content: space-between;
+        }
+    }
+</style>
+
+{% set messages = {
+    "matched": {"text": "Document scanned and matched successfully!", "class": "status-success", "icon": "M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"},
+    "no_match": {"text": "Document uploaded successfully, but no matching records were found.", "class": "status-warning", "icon": "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"},
+    "missing": {"text": "Please choose a valid document to upload.", "class": "status-error", "icon": "M12 8v4M12 16h.01M22 12a10 10 0 1 1-10-10 10 10 0 0 1 10 10z"},
+    "too_large": {"text": "File is too large. Size limit is 10MB.", "class": "status-error", "icon": "M12 8v4M12 16h.01M22 12a10 10 0 1 1-10-10 10 10 0 0 1 10 10z"},
+    "bulk_deleted": {"text": "Selected documents have been permanently deleted.", "class": "status-success", "icon": "M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"}
+} %}
+
+<div class="doc-hub-container">
+    {# Display Alert Message if state exists #}
+    {% if doc_status and messages.get(doc_status) %}
+    <div id="doc_alert_banner" class="doc-alert {{ messages[doc_status]['class'] }}">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="{{ messages[doc_status]['icon'] }}"></path>
+        </svg>
+        <span>{{ messages[doc_status]['text'] }}</span>
+    </div>
+    {% endif %}
+
+    {# Top Title Bar & Header Actions #}
+    <div class="doc-header-card">
+        <div class="doc-header-info">
+            <h2>Document Hub</h2>
+            <p>Scan, match, and organize your inward & outward logistics documents.</p>
+        </div>
+        <div class="doc-header-actions">
+            {# Bulk Delete Button #}
+            <button id="bulk_delete_btn" class="doc-btn doc-btn-danger-outline" onclick="triggerBulkDelete()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <span>Delete Selected (<span id="selected_count">0</span>)</span>
+            </button>
+            {# Open Upload Form Toggle #}
+            <button class="doc-btn doc-btn-primary" onclick="toggleDocUpload()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Upload & Scan</span>
+            </button>
+        </div>
+    </div>
+
+    {# Interactive File Upload Card #}
+    <section class="doc-upload-card {% if doc_status in ['missing', 'too_large', 'no_match'] %}open{% endif %}" id="doc_upload_panel">
+        <form class="doc-upload-form" action="/upload-report-document" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="redirect_to" value="documents">
+            <div class="form-group">
+                <label for="doc_report_type">Match Target</label>
+                <select id="doc_report_type" name="type">
+                    <option value="inward" {% if selected_type == "inward" %}selected{% endif %}>Inward Entries</option>
+                    <option value="outward" {% if selected_type == "outward" %}selected{% endif %}>Outward Entries</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="report_document">Choose PDF or Image File</label>
+                <input id="report_document" type="file" name="document" accept=".pdf,image/*" required>
+            </div>
+            <button class="doc-btn doc-btn-primary" type="submit" style="height: 44px; padding: 0 24px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                </svg>
+                <span>Scan & Link Document</span>
+            </button>
+        </form>
+    </section>
+
+    {# Primary Table Wrapper with Form wrapper for Bulk Action #}
+    <section class="doc-table-card">
+        {% if documents %}
+        <form id="bulk_delete_form" action="/delete-multiple-report-documents" method="POST" style="margin:0;">
+            <div class="table-responsive">
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th class="checkbox-cell">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="select_all" onchange="selectAll(this)">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                            <th>Filename</th>
+                            <th>Format</th>
+                            <th>Matched No.</th>
+                            <th>Report Link</th>
+                            <th>Warehouse</th>
+                            <th>Uploaded At</th>
+                            <th style="width: 120px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for doc in documents %}
+                        <tr>
+                            <td class="checkbox-cell">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" name="doc_ids" value="{{ doc.id }}" class="doc-checkbox" onchange="updateSelectedCount()">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </td>
+                            <td style="font-weight: 700; color: #1e293b;">{{ doc.file_name }}</td>
+                            <td>
+                                <span class="doc-type-pill {{ doc.doc_type|lower }}">
+                                    {{ doc.doc_type|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="doc-id-badge">{{ doc.matched_no }}</span>
+                            </td>
+                            <td>
+                                <span class="report-type-badge {{ doc.report_type|lower }}">
+                                    {{ doc.report_type|title }} Entry #{{ doc.report_id }}
+                                </span>
+                            </td>
+                            <td>
+                                <span style="font-weight: 600; color: #475569;">{{ doc.warehouse }}</span>
+                            </td>
+                            <td style="color: #64748b; font-size: 12px;">{{ doc.uploaded_at }}</td>
+                            <td>
+                                <div class="action-group">
+                                    {# View Action #}
+                                    <a class="row-btn row-btn-view" href="/uploads/{{ doc.file_path }}" target="_blank" title="View Document">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </a>
+                                    {# Navigate to Report Action #}
+                                    <a class="row-btn row-btn-link" href="/report?type={{ doc.report_type }}&search={{ doc.matched_no|urlencode }}&field=all" title="View Associated Report">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                                            <polyline points="10 9 9 9 8 9"></polyline>
+                                        </svg>
+                                    </a>
+                                    {# Row Level Delete Action #}
+                                    <button type="button" class="row-btn row-btn-delete" onclick="deleteSingleDoc({{ doc.id }}, '{{ doc.report_type }}', {{ doc.report_id }})" title="Delete Document">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </form>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <h4>No Documents Uploaded</h4>
+            <p>Documents uploaded through scan matching or manually will show up here.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+{# Hidden Single Delete Form to avoid nested forms #}
+<form id="single_delete_form" action="/delete-report-document" method="POST" style="display: none;">
+    <input type="hidden" name="id" id="single_delete_id">
+    <input type="hidden" name="type" id="single_delete_type">
+    <input type="hidden" name="report_id" id="single_delete_report_id">
+    <input type="hidden" name="redirect_to" value="hub">
+</form>
+
+<script>
+    // Toggle Slide open for Upload form panel
+    function toggleDocUpload() {
+        document.getElementById("doc_upload_panel").classList.toggle("open");
+    }
+
+    // Custom helper to submit single deletion
+    function deleteSingleDoc(id, type, reportId) {
+        if (confirm("Are you sure you want to permanently delete this document?")) {
+            document.getElementById("single_delete_id").value = id;
+            document.getElementById("single_delete_type").value = type;
+            document.getElementById("single_delete_report_id").value = reportId;
+            document.getElementById("single_delete_form").submit();
+        }
+    }
+
+    // Select all checkboxes logic
+    function selectAll(masterCheckbox) {
+        const checkboxes = document.querySelectorAll(".doc-checkbox");
+        checkboxes.forEach(cb => {
+            cb.checked = masterCheckbox.checked;
+        });
+        updateSelectedCount();
+    }
+
+    // Dynamic show / count select updates
+    function updateSelectedCount() {
+        const selected = document.querySelectorAll(".doc-checkbox:checked");
+        const countSpan = document.getElementById("selected_count");
+        const bulkDeleteBtn = document.getElementById("bulk_delete_btn");
+        const selectAllCheckbox = document.getElementById("select_all");
+        const totalCount = document.querySelectorAll(".doc-checkbox").length;
+        
+        countSpan.textContent = selected.length;
+        
+        if (selected.length > 0) {
+            bulkDeleteBtn.classList.add("visible");
+        } else {
+            bulkDeleteBtn.classList.remove("visible");
+        }
+
+        // Keep header master checkbox in sync
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = (selected.length === totalCount && totalCount > 0);
+        }
+    }
+
+    // Perform bulk delete confirmation & submit
+    function triggerBulkDelete() {
+        const selected = document.querySelectorAll(".doc-checkbox:checked");
+        if (selected.length === 0) return;
+        
+        if (confirm(`Are you sure you want to permanently delete all ${selected.length} selected documents?`)) {
+            document.getElementById("bulk_delete_form").submit();
+        }
+    }
+
+    // Auto-dismiss alert banner after 4 seconds with smooth height collapse
+    document.addEventListener("DOMContentLoaded", () => {
+        const banner = document.getElementById("doc_alert_banner");
+        if (banner) {
+            setTimeout(() => {
+                banner.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), margin 0.5s ease, padding 0.5s ease, height 0.5s ease";
+                banner.style.opacity = "0";
+                banner.style.transform = "translateY(-10px)";
+                setTimeout(() => {
+                    banner.style.margin = "0";
+                    banner.style.padding = "0";
+                    banner.style.height = "0";
+                    banner.style.border = "none";
+                    banner.style.overflow = "hidden";
+                    setTimeout(() => {
+                        banner.remove();
+                    }, 500);
+                }, 400);
+            }, 4000);
+        }
+    });
+</script>
+{% endblock %}
